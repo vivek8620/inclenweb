@@ -1,0 +1,32 @@
+{
+  "tabs": [
+    { "key": "national",      "label": "National (India)" },
+    { "key": "international", "label": "International"    }
+  ],
+  "collaborators": {
+    "international": [
+      { "name": "Johns Hopkins University", "location": "USA",    "initial": "JH" },
+      { "name": "McMaster University",      "location": "Canada", "initial": "MU" },
+      { "name": "McGill University",        "location": "Canada", "initial": "Mg" },
+      { "name": "Boston University",        "location": "USA",    "initial": "BU" },
+      { "name": "University of Tromsø",     "location": "Norway", "initial": "UT" }
+    ],
+    "national": [
+      { "name": "AIIMS",             "location": "New Delhi",   "initial": "AI" },
+      { "name": "PHFI",              "location": "New Delhi",   "initial": "PH" },
+      { "name": "KGMU",              "location": "Lucknow",     "initial": "KG" },
+      { "name": "Jamia Hamdard",     "location": "New Delhi",   "initial": "JH" },
+      { "name": "IGNOU",             "location": "New Delhi",   "initial": "IG" },
+      { "name": "IIIT Delhi",        "location": "New Delhi",   "initial": "II" },
+      { "name": "AIIMS Bhubaneswar", "location": "Bhubaneswar", "initial": "AI" },
+      { "name": "KIMS Bhubaneswar",  "location": "Bhubaneswar", "initial": "KI" },
+      { "name": "AIIMS",             "location": "Patna",       "initial": "AI" },
+      { "name": "AIIMS",             "location": "Madurai",     "initial": "AI" },
+      { "name": "ICMR",              "location": "New Delhi",   "initial": "IC" },
+      { "name": "PHFI",              "location": "New Delhi",   "initial": "PH" },
+      { "name": "INDEPTH",           "location": "Delhi",       "initial": "IN" },
+      { "name": "NII",               "location": "New Delhi",   "initial": "NI" },
+      { "name": "SRU",               "location": "Tamil Nadu",  "initial": "SR" }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+# System and shell files
+.bash_history
+.bash_logout
+.bashrc
+.cache/
+.local/
+.mysql_history
+.pm2/
+.profile
+.ssh/
+.sudo_as_admin_successful
+.wget-hsts
+
+# Large Archives and Zip Files
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+admin.zip
+
+# WordPress uploads/cache (Optional but recommended)
+admin/admin/wp-content/uploads/
+admin/admin/wp-content/cache/
+admin/admin/wp-content/backups/
+**/wp-config.php
+

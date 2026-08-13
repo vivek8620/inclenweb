@@ -1,0 +1,173 @@
+{
+  "tabs": [
+    { "key": "board", "label": "Board of Trustees" },
+    { "key": "leadership", "label": "Leadership & Management" },
+    { "key": "research", "label": "Research & Implementation" },
+    { "key": "ethics", "label": "Ethics Committee" },
+    { "key": "scientific", "label": "Scientific Advisory Group" }
+  ],
+
+  "members": {
+
+    "board": [
+      {
+        "name": "Dr. Virander Singh Chauhan",
+        "role": "Chairperson",
+        "designation": "Emeritus Scientist, ICGEB & EC Chairman, NAAC",
+        "image": "/images/member/dr-vs-chauhan.PNG",
+        "bio": "Dr. Virander Singh Chauhan is a distinguished scientist serving as the Chairperson. He is an Emeritus Scientist at ICGEB, New Delhi, and EC Chairman of NAAC. He previously served as Chairman of the University Grants Commission (UGC) and Director of ICGEB. A Padma Shri awardee, his work focuses on vaccine development (Malaria), biological standards, and higher education reform. Qualification: PhD (Chemistry), Postdoc Fellow, Rhodes Scholar."
+      },
+      {
+        "name": "Dr. K. Srinath Reddy",
+        "role": "Member",
+        "designation": "Honorary Distinguished Professor, PHFI",
+        "image": "/images/member/Dr-K-Srinath-Reddy.jpg",
+        "bio": "Dr. K. Srinath Reddy is a Padma Bhushan awardee and Honorary Distinguished Professor at the Public Health Foundation of India (PHFI). Formerly the President of PHFI and Head of Cardiology at AIIMS, he has also served as an Adjunct Professor at Harvard and Emory. He has chaired major health expert groups, including the High Level Expert Group on UHC. Specialisation: Non-communicable diseases and health policy. Qualification: MBBS, MD, MSc."
+      },
+      {
+        "name": "Mr. C. N. Raghupathi",
+        "role": "Member",
+        "designation": "Head, India Business, Infosys",
+        "image": "/images/member/CN Ragupathi.jpg",
+        "bio": "Mr. C. N. Raghupathi leads the India Business for Infosys. He is a member of the Standards Committee at the Bureau of Industrial Standards and a visiting faculty at various universities. He has made significant program and policy contributions through government committees on Energy & Sustainability. Specialisation: Information and Technology EPC, Energy & Utilities, and manufacturing. Qualification: BE, MSc."
+      },
+      {
+        "name": "Dr. Sanjay Madhav Mehendale",
+        "role": "Member",
+        "designation": "Director Research, Hinduja Hospital & Research",
+        "image": "/images/member/Sanjay Mehendale.JPG",
+        "bio": "Dr. Sanjay Madhav Mehendale is the Director of Research at Hinduja Hospital, Mumbai. His career includes roles as Additional Director General at ICMR and Director of the ICMR-National Institute of Epidemiology. He advises several government bodies, contributing to infectious disease epidemiology, HIV/AIDS research, and health systems. Specialisation: Infectious diseases, HIV/AIDS, and medical informatics. Qualification: MBBS, MD, MPH."
+      },
+      {
+        "name": "Dr. Anurag Agrawal",
+        "role": "Member",
+        "designation": "Dean, BioSciences and Health Research, Ashoka University",
+        "image": "/images/member/Dr-Anurag-Agarwal.png",
+        "bio": "Dr. Anurag Agrawal is the Dean of BioSciences and Health Research at Ashoka University. Formerly the Director of CSIR-IGIB, he is a leading expert in pulmonology and public health informatics. His research focuses on the pathobiological genesis of lung diseases and using AI and digital data for universal health coverage. Qualification: MBBS, MD, PhD."
+      },
+      {
+        "name": "Mr. Anil Wadhwa",
+        "role": "Member",
+        "designation": "Former Indian Ambassador & Secretary, MEA",
+        "image": "/images/member/Anil Wadwa.jpg",
+        "bio": "Mr. Anil Wadhwa is a distinguished former Indian diplomat and Secretary at the Ministry of External Affairs. He served as the Indian Ambassador to Italy, Thailand, Oman, and Poland, and represented India at numerous international summits. He leads the CII task force on Economic Strategy for the Indian government. Specialisation: Diplomacy and External Affairs. Qualification: MA."
+      }
+    ],
+
+    "leadership": [
+      {
+        "name": "Dr. N.K. Arora",
+        "role": "Executive Director",
+        "designation": "Steering INCLEN's global vision",
+        "image": "",
+        "bio": "Dr. N.K. Arora is the Executive Director of INCLEN. A renowned leader in public health policy and implementation research, he steers the organization's global vision and strategic initiatives."
+      },
+      {
+        "name": "Dr. Manoj Kumar Das",
+        "role": "Director (Projects)",
+        "designation": "Leading large-scale clinical projects",
+        "image": "",
+        "bio": "Dr. Manoj Kumar Das directs projects at INCLEN, leading large-scale clinical projects and fostering research excellence across the network. His expertise lies in clinical trials and public health interventions."
+      },
+      {
+        "name": "Amit Juneja",
+        "role": "Finance & Administration",
+        "designation": "Finance Lead",
+        "image": "",
+        "bio": "Amit Juneja leads the Finance and Administration department, ensuring robust financial management and operational efficiency for the organization."
+      },
+      {
+        "name": "Gaurav Bansal",
+        "role": "Info. Technology (IT)",
+        "designation": "IT Lead",
+        "image": "",
+        "bio": "Gaurav Bansal heads the Information Technology division, overseeing digital infrastructure, data security, and IT support systems."
+      },
+      {
+        "name": "Sunita Joti",
+        "role": "Project Manager",
+        "designation": "Project Management",
+        "image": "",
+        "bio": "Sunita Joti serves as Project Manager, coordinating various research projects and ensuring timely delivery of milestones and objectives."
+      }
+    ],
+
+    "research": [],
+
+    "ethics": [
+      {
+        "name": "Dr. Kusum Verma",
+        "role": "Chairperson",
+        "designation": "Basic Scientist/Medical Ethics Expert",
+        "image": "/images/member/dr_kusum_verma.png",
+        "bio": "Sr. Consultant & Chairperson, Department of Cytopathology, Sir GangaRam Hospital, Old Rajinder Nagar, New Delhi. Email: kusumv1943@gmail.com"
+      },
+      {
+        "name": "Dr. Jenifer Lobo",
+        "role": "Member",
+        "designation": "Clinician, Public Health Specialist",
+        "image": "/images/member/dr_jenifer_lobo.png",
+        "bio": "Retired, Ex-Medical superintendent, Holy Family Hospital, Okhla Main Road, Jamia nagar, Delhi-110025. Email: drloboj@gmail.com"
+      },
+      {
+        "name": "Dr. Nalin Mehta",
+        "role": "Member",
+        "designation": "Basic Scientist/Biomedical Ethics Expert",
+        "image": "/images/member/dr_nalin_mehta.png",
+        "bio": "Professor, Department of Physiology, All India Institute of Medical Sciences, Ansari Nagar, New Delhi-110029. Email: nalinaiims.mehta@gmail.com"
+      },
+      {
+        "name": "Dr. Roli Mathur",
+        "role": "Member",
+        "designation": "Basic Scientist/Biomedical Ethics Expert",
+        "image": "/images/member/dr_roli_mathur.png",
+        "bio": "Scientist E & Head, ICMR Bioethics Unit, National Center for Disease Informatics and Research, Nirmal Bhawan, Kannamangala, Bangalore-562 110. Email: rolimath@gmail.com"
+      },
+      {
+        "name": "Dr. Naresh Gupta",
+        "role": "Member",
+        "designation": "Alternate Chairperson, Clinician",
+        "image": "/images/member/dr_naresh_gupta.png",
+        "bio": "Medical Consultant and Advisor for Hemophilia, Maulana Azad Medical College & LNJP Hospital, New Delhi-110002. Email: doctornaresh@gmail.com"
+      }
+    ],
+    
+    "scientific": [
+      {
+        "name": "Dr Renu Swarup",
+        "role": "External Member",
+        "designation": "Former Secretary to Government of India",
+        "image": "/images/member/advisory_group/Renu-Swarup.png",
+        "bio": "Department of Biotechnology, Ministry of Science & Technology, Government of India. Address: CGO Complex, Lodhi Road, New Delhi - 110 003."
+      },
+      {
+        "name": "Prof. Naveet Wig",
+        "role": "External Member",
+        "designation": "Professor & Head, AIIMS",
+        "image": "/images/member/advisory_group/imgi_7_dr. wig.png",
+        "bio": "AIIMS, Ansari Nagar, New Delhi 110029 INDIA"
+      },
+      {
+        "name": "Dr. R.M. Pandey",
+        "role": "External Member",
+        "designation": "Prof. in Charge, AIIMS",
+        "image": "/images/member/advisory_group/rm_panday.PNG",
+        "bio": "AIIMS, Ansari Nagar, New Delhi 110029 INDIA"
+      },
+      {
+        "name": "Dr. Tavpritesh Sethi",
+        "role": "External Member",
+        "designation": "Associate Professor",
+        "image": "/images/member/advisory_group/imgi_5_dr-tavpritesh.png",
+        "bio": "Institute of Information Technology, Okhla Industrial Estate, Phase-III, New Delhi - 110 020"
+      },
+      {
+        "name": "Prof. Prashant Mathur",
+        "role": "External Member",
+        "designation": "Director, ICMR",
+        "image": "/images/member/advisory_group/imgi_17_Profile-400-×-411-px-10.png",
+        "bio": "Indian Council of Medical Research, Nirmal Bhawan-ICMR Complex (II Floor), Poojanahalli, Bengaluru - 562 110"
+      }
+    ]
+  }
+}
