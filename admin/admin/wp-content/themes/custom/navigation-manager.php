@@ -29,6 +29,18 @@ add_action('rest_api_init', function () {
         'callback' => 'save_navigation_settings',
         'permission_callback' => '__return_true'
     ]);
+
+    register_rest_route('navigation/v1', '/create', [
+        'methods'  => 'POST',
+        'callback' => 'create_navigation_item',
+        'permission_callback' => '__return_true'
+    ]);
+
+    register_rest_route('navigation/v1', '/delete', [
+        'methods'  => 'POST',
+        'callback' => 'delete_navigation_item',
+        'permission_callback' => '__return_true'
+    ]);
 });
 
 // Returns default menu structure
@@ -161,6 +173,7 @@ function sanitize_menu_structure_recursive($structure) {
         $sanitized_item = [
             'key' => sanitize_key($item['key']),
             'label' => sanitize_text_field($item['label']),
+            'href' => isset($item['href']) ? sanitize_text_field($item['href']) : '#',
             'visible' => filter_var($item['visible'], FILTER_VALIDATE_BOOLEAN)
         ];
         if (isset($item['children']) && is_array($item['children'])) {
@@ -196,6 +209,132 @@ function save_navigation_settings($request) {
     }
 
     return ['status' => 'success'];
+}
+
+// Create a new navigation item in the database JSON
+function create_navigation_item($request) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'site_navigation';
+    $params = json_decode($request->get_body(), true);
+
+    $label = isset($params['label']) ? sanitize_text_field($params['label']) : '';
+    $href = isset($params['href']) ? sanitize_text_field($params['href']) : '#';
+    $parent_key = isset($params['parent_key']) ? sanitize_key($params['parent_key']) : '';
+
+    if (empty($label)) {
+        return new WP_Error('empty_label', 'Label is required', ['status' => 400]);
+    }
+
+    $settings = get_all_navigation_settings();
+    $structure = $settings['menu_structure'];
+    $id = $settings['id'];
+
+    // Generate unique key
+    $clean_label = strtolower(preg_replace('/[^a-z0-9]/', '_', $label));
+    $key = 'custom_' . $clean_label . '_' . rand(100, 999);
+
+    $new_item = [
+        'key' => $key,
+        'label' => $label,
+        'href' => $href,
+        'visible' => true
+    ];
+
+    if (!empty($parent_key)) {
+        // Add as child
+        $added = false;
+        foreach ($structure as &$item) {
+            if ($item['key'] === $parent_key) {
+                if (!isset($item['children']) || !is_array($item['children'])) {
+                    $item['children'] = [];
+                }
+                $item['children'][] = $new_item;
+                $added = true;
+                break;
+            }
+        }
+        if (!$added) {
+            return new WP_Error('parent_not_found', 'Parent item not found', ['status' => 404]);
+        }
+    } else {
+        // Add as top-level parent
+        $new_item['children'] = [];
+        $structure[] = $new_item;
+    }
+
+    // Save back to DB
+    if ($id) {
+        $wpdb->update($table, [
+            'menu_structure' => wp_json_encode($structure)
+        ], ['id' => $id]);
+    } else {
+        $wpdb->query("TRUNCATE TABLE $table");
+        $wpdb->insert($table, [
+            'menu_structure' => wp_json_encode($structure)
+        ]);
+    }
+
+    return ['status' => 'success', 'key' => $key, 'menu_structure' => $structure];
+}
+
+// Delete a navigation item from the database JSON
+function delete_navigation_item($request) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'site_navigation';
+    $params = json_decode($request->get_body(), true);
+
+    $key = isset($params['key']) ? sanitize_key($params['key']) : '';
+
+    if (empty($key)) {
+        return new WP_Error('empty_key', 'Key is required', ['status' => 400]);
+    }
+
+    $settings = get_all_navigation_settings();
+    $structure = $settings['menu_structure'];
+    $id = $settings['id'];
+
+    // Recursive deletion helper
+    if (!function_exists('delete_item_recursive_helper')) {
+        function delete_item_recursive_helper(&$items, $target_key) {
+            $deleted = false;
+            foreach ($items as $index => &$item) {
+                if ($item['key'] === $target_key) {
+                    unset($items[$index]);
+                    $deleted = true;
+                    break;
+                }
+                if (isset($item['children']) && is_array($item['children'])) {
+                    if (delete_item_recursive_helper($item['children'], $target_key)) {
+                        $deleted = true;
+                        break;
+                    }
+                }
+            }
+            if ($deleted) {
+                $items = array_values($items); // re-index array
+            }
+            return $deleted;
+        }
+    }
+
+    $success = delete_item_recursive_helper($structure, $key);
+    if (!$success) {
+        return new WP_Error('item_not_found', 'Item not found in menu structure', ['status' => 404]);
+    }
+
+    // Save back to DB
+    if ($id) {
+        $wpdb->update($table, [
+            'menu_structure' => wp_json_encode($structure)
+        ], ['id' => $id]);
+    } else {
+        $wpdb->query("TRUNCATE TABLE $table");
+        $wpdb->insert($table, [
+            'menu_structure' => wp_json_encode($structure)
+        ]);
+    }
+
+    return ['status' => 'success', 'menu_structure' => $structure];
 }
 
 // Admin page markup
@@ -672,7 +811,7 @@ function navigation_settings_page() { ?>
                 
                 <!-- Left Panel Controls -->
                 <div class="settings-card">
-                    <h2>Navigation Items Tree</h2>
+                    <h2>Navigation Items Tree <button type="button" class="button button-primary button-small" onclick="openAddNodeModal(null)" style="float: right; margin-top: -3px;">+ Add Top-Level Menu</button></h2>
                     <div id="tree_controls_container" style="margin-top: 15px;"></div>
                 </div>
 
@@ -712,6 +851,28 @@ function navigation_settings_page() { ?>
                     </div>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- Add Item Modal Dialog -->
+        <div id="add_node_modal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.4); backdrop-filter: blur(2px);">
+            <div class="modal-content" style="background-color:#fefefe; margin:12% auto; padding:25px; border:1px solid #ccd0d4; width:450px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.15); box-sizing: border-box;">
+                <h2 id="modal_title" style="margin-top:0; font-size:18px; font-weight:600; padding-bottom:12px; border-bottom:1px solid #eee; color:#1d2327;">Add Menu Item</h2>
+                <input type="hidden" id="modal_parent_key">
+                
+                <div style="margin-top:15px; margin-bottom:15px;">
+                    <label for="modal_item_label" style="font-weight:600; color:#1d2327;">Menu Label (Display Text):</label>
+                    <input type="text" id="modal_item_label" class="regular-text" style="width:100%; margin-top:5px; padding:6px 10px; border-radius:4px; border:1px solid #8c8f94;" placeholder="e.g. Services">
+                </div>
+                <div style="margin-top:15px; margin-bottom:20px;">
+                    <label for="modal_item_href" style="font-weight:600; color:#1d2327;">Link URL (Href Path):</label>
+                    <input type="text" id="modal_item_href" class="regular-text" style="width:100%; margin-top:5px; padding:6px 10px; border-radius:4px; border:1px solid #8c8f94;" placeholder="e.g. /services or #">
+                </div>
+                
+                <div style="text-align:right; gap:10px; display:flex; justify-content:flex-end;">
+                    <button type="button" class="button button-secondary" onclick="closeAddNodeModal()">Cancel</button>
+                    <button type="button" class="button button-primary" onclick="submitAddNode()">Add Menu Item</button>
+                </div>
             </div>
         </div>
 
@@ -895,8 +1056,6 @@ function navigation_settings_page() { ?>
         container.innerHTML = '';
 
         menuStructure.forEach((item, parentIdx) => {
-            const hasChildren = item.children && item.children.length > 0;
-            
             // Parent Row Node
             const parentDiv = document.createElement('div');
             parentDiv.className = 'tree-node parent-node';
@@ -906,35 +1065,40 @@ function navigation_settings_page() { ?>
                     <div class="node-label-container">
                         <span class="node-label">${item.label}</span>
                     </div>
-                    <label class="switch">
-                        <input type="checkbox" id="switch_${item.key}" 
-                               data-key="${item.key}" 
-                               ${item.visible ? 'checked' : ''} 
-                               onchange="toggleParent('${item.key}', ${parentIdx})">
-                        <span class="slider"></span>
-                    </label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button type="button" class="button-link button-link-delete" onclick="deleteNode('${item.key}')" title="Delete Parent Menu" style="color: #a10000; text-decoration: none; padding: 0; margin-right: 5px; cursor: pointer; display: flex; align-items: center;"><span class="dashicons dashicons-trash" style="font-size: 18px; width: 18px; height: 18px;"></span></button>
+                        <label class="switch">
+                            <input type="checkbox" id="switch_${item.key}" 
+                                   data-key="${item.key}" 
+                                   ${item.visible ? 'checked' : ''} 
+                                   onchange="toggleParent('${item.key}', ${parentIdx})">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
             `;
             
             // Sub-items list
-            if (hasChildren) {
-                const childContainer = document.createElement('div');
-                childContainer.className = 'child-nodes';
-                childContainer.id = `children_${item.key}`;
-                
-                // If parent is disabled, visual grey out of child container
-                if (!item.visible) {
-                    childContainer.style.opacity = '0.5';
-                }
+            const childContainer = document.createElement('div');
+            childContainer.className = 'child-nodes';
+            childContainer.id = `children_${item.key}`;
+            
+            // If parent is disabled, visual grey out of child container
+            if (!item.visible) {
+                childContainer.style.opacity = '0.5';
+            }
 
-                item.children.forEach((child, childIdx) => {
-                    const childDiv = document.createElement('div');
-                    childDiv.className = 'tree-node';
-                    childDiv.innerHTML = `
-                        <div class="node-row" id="row_${child.key}">
-                            <div class="node-label-container">
-                                <span class="node-label">${child.label}</span>
-                            </div>
+            const children = item.children || [];
+            children.forEach((child, childIdx) => {
+                const childDiv = document.createElement('div');
+                childDiv.className = 'tree-node';
+                childDiv.innerHTML = `
+                    <div class="node-row" id="row_${child.key}">
+                        <div class="node-label-container">
+                            <span class="node-label">${child.label}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button type="button" class="button-link button-link-delete" onclick="deleteNode('${child.key}')" title="Delete Sub-item" style="color: #a10000; text-decoration: none; padding: 0; margin-right: 5px; cursor: pointer; display: flex; align-items: center;"><span class="dashicons dashicons-trash" style="font-size: 18px; width: 18px; height: 18px;"></span></button>
                             <label class="switch">
                                 <input type="checkbox" id="switch_${child.key}" 
                                        data-key="${child.key}" 
@@ -944,11 +1108,21 @@ function navigation_settings_page() { ?>
                                 <span class="slider"></span>
                             </label>
                         </div>
-                    `;
-                    childContainer.appendChild(childDiv);
-                });
-                parentDiv.appendChild(childContainer);
-            }
+                    </div>
+                `;
+                childContainer.appendChild(childDiv);
+            });
+
+            // "+ Add Sub-item" button
+            const addBtnDiv = document.createElement('div');
+            addBtnDiv.style.marginTop = '10px';
+            addBtnDiv.style.marginBottom = '5px';
+            addBtnDiv.innerHTML = `
+                <button type="button" class="button button-secondary button-small" onclick="openAddNodeModal('${item.key}')">+ Add Sub-item</button>
+            `;
+            childContainer.appendChild(addBtnDiv);
+            
+            parentDiv.appendChild(childContainer);
             container.appendChild(parentDiv);
         });
     }
@@ -1186,6 +1360,114 @@ function navigation_settings_page() { ?>
         renderTreeControls();
         renderLivePreview();
         updateSummary();
+    }
+
+    // Modal controls for Adding Menu Item
+    function openAddNodeModal(parentKey) {
+        document.getElementById('modal_parent_key').value = parentKey || '';
+        document.getElementById('modal_item_label').value = '';
+        document.getElementById('modal_item_href').value = '';
+        
+        const titleEl = document.getElementById('modal_title');
+        if (parentKey) {
+            titleEl.innerText = `Add Sub-item under "${parentKey}"`;
+        } else {
+            titleEl.innerText = "Add Top-Level Menu";
+        }
+        
+        document.getElementById('add_node_modal').style.display = 'block';
+    }
+
+    function closeAddNodeModal() {
+        document.getElementById('add_node_modal').style.display = 'none';
+    }
+
+    // Submit newly created menu item to REST API
+    function submitAddNode() {
+        const label = document.getElementById('modal_item_label').value.trim();
+        const href = document.getElementById('modal_item_href').value.trim() || '#';
+        const parentKey = document.getElementById('modal_parent_key').value;
+
+        if (!label) {
+            alert("Please enter a menu label.");
+            return;
+        }
+
+        const primaryUrl = NAV_API_BASE + "/create";
+        const fallbackUrl = "<?php echo site_url('/index.php?rest_route=/navigation/v1/create'); ?>";
+        const data = { label, href, parent_key: parentKey };
+
+        function sendCreateRequest(url) {
+            return fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-WP-Nonce": NAV_WP_NONCE
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Create request failed");
+                return res.json();
+            });
+        }
+
+        sendCreateRequest(primaryUrl)
+        .then(res => handleCreateSuccess(res))
+        .catch(err => {
+            sendCreateRequest(fallbackUrl)
+            .then(res => handleCreateSuccess(res))
+            .catch(err2 => alert("Error creating menu item: " + err2.message));
+        });
+
+        function handleCreateSuccess(res) {
+            if (res.status === 'success') {
+                closeAddNodeModal();
+                loadNavigation();
+            } else {
+                alert("Error creating menu item.");
+            }
+        }
+    }
+
+    // Submit deletion of menu item to REST API
+    function deleteNode(key) {
+        if (!confirm(`Are you sure you want to delete the menu item "${key}"?`)) return;
+
+        const primaryUrl = NAV_API_BASE + "/delete";
+        const fallbackUrl = "<?php echo site_url('/index.php?rest_route=/navigation/v1/delete'); ?>";
+        const data = { key };
+
+        function sendDeleteRequest(url) {
+            return fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-WP-Nonce": NAV_WP_NONCE
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Delete request failed");
+                return res.json();
+            });
+        }
+
+        sendDeleteRequest(primaryUrl)
+        .then(res => handleDeleteSuccess(res))
+        .catch(err => {
+            sendDeleteRequest(fallbackUrl)
+            .then(res => handleDeleteSuccess(res))
+            .catch(err2 => alert("Error deleting menu item: " + err2.message));
+        });
+
+        function handleDeleteSuccess(res) {
+            if (res.status === 'success') {
+                loadNavigation();
+            } else {
+                alert("Error deleting menu item.");
+            }
+        }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
