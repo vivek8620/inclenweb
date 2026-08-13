@@ -855,21 +855,38 @@ function navigation_settings_page() { ?>
 
     // Load configurations from REST API
     function loadNavigation() {
-        fetch(NAV_API_BASE + "/all")
-        .then(res => res.json())
-        .then(data => {
-            dbRecordId = data.id;
-            menuStructure = data.menu_structure;
-            
-            // Auto reset if structures got mismatched or have old format keys
-            if (menuStructure.length > 0 && !menuStructure.some(x => x.key === 'about' || x.key === 'our_work')) {
-                menuStructure = <?php echo json_encode(get_default_menu_structure()); ?>;
-            }
-            
-            renderTreeControls();
-            renderLivePreview();
-            updateSummary();
+        const primaryUrl = NAV_API_BASE + "/all";
+        const fallbackUrl = "<?php echo site_url('/index.php?rest_route=/navigation/v1/all'); ?>";
+
+        fetch(primaryUrl)
+        .then(res => {
+            if (!res.ok) throw new Error("Primary failed");
+            return res.json();
+        })
+        .then(data => handleLoadedData(data))
+        .catch(err => {
+            fetch(fallbackUrl)
+            .then(res => {
+                if (!res.ok) throw new Error("Fallback failed");
+                return res.json();
+            })
+            .then(data => handleLoadedData(data))
+            .catch(err2 => console.error("Failed to load navigation configuration:", err2));
         });
+    }
+
+    function handleLoadedData(data) {
+        dbRecordId = data.id;
+        menuStructure = data.menu_structure;
+        
+        // Auto reset if structures got mismatched or have old format keys
+        if (menuStructure.length > 0 && !menuStructure.some(x => x.key === 'about' || x.key === 'our_work')) {
+            menuStructure = <?php echo json_encode(get_default_menu_structure()); ?>;
+        }
+        
+        renderTreeControls();
+        renderLivePreview();
+        updateSummary();
     }
 
     // Render left-side hierarchical controllers
@@ -1118,16 +1135,25 @@ function navigation_settings_page() { ?>
             menu_structure: menuStructure
         };
 
-        fetch(NAV_API_BASE + "/save", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-WP-Nonce": NAV_WP_NONCE
-            },
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json())
-        .then(result => {
+        const primaryUrl = NAV_API_BASE + "/save";
+        const fallbackUrl = "<?php echo site_url('/index.php?rest_route=/navigation/v1/save'); ?>";
+
+        function sendRequest(url) {
+            return fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-WP-Nonce": NAV_WP_NONCE
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Save request failed");
+                return res.json();
+            });
+        }
+
+        function handleSaveSuccess(result) {
             saveBtn.disabled = false;
             spinner.classList.remove('is-active');
 
@@ -1137,11 +1163,18 @@ function navigation_settings_page() { ?>
             } else {
                 alert("Error saving settings.");
             }
-        })
+        }
+
+        sendRequest(primaryUrl)
+        .then(result => handleSaveSuccess(result))
         .catch(err => {
-            saveBtn.disabled = false;
-            spinner.classList.remove('is-active');
-            alert("Error sending request.");
+            sendRequest(fallbackUrl)
+            .then(result => handleSaveSuccess(result))
+            .catch(err2 => {
+                saveBtn.disabled = false;
+                spinner.classList.remove('is-active');
+                alert("Error sending request: " + err2.message);
+            });
         });
     }
 
