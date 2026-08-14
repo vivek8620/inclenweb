@@ -1066,7 +1066,6 @@ function navigation_settings_page() { ?>
                         <span class="node-label">${item.label}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <button type="button" class="button-link button-link-delete" onclick="deleteNode('${item.key}')" title="Delete Parent Menu" style="color: #a10000; text-decoration: none; padding: 0; margin-right: 5px; cursor: pointer; display: flex; align-items: center;"><span class="dashicons dashicons-trash" style="font-size: 18px; width: 18px; height: 18px;"></span></button>
                         <label class="switch">
                             <input type="checkbox" id="switch_${item.key}" 
                                    data-key="${item.key}" 
@@ -1098,7 +1097,6 @@ function navigation_settings_page() { ?>
                             <span class="node-label">${child.label}</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <button type="button" class="button-link button-link-delete" onclick="deleteNode('${child.key}')" title="Delete Sub-item" style="color: #a10000; text-decoration: none; padding: 0; margin-right: 5px; cursor: pointer; display: flex; align-items: center;"><span class="dashicons dashicons-trash" style="font-size: 18px; width: 18px; height: 18px;"></span></button>
                             <label class="switch">
                                 <input type="checkbox" id="switch_${child.key}" 
                                        data-key="${child.key}" 
