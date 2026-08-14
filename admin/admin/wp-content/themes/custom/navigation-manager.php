@@ -1142,10 +1142,42 @@ function navigation_settings_page() { ?>
                 if (item.key === 'contact') return;
 
                 // Simple parent menu item without children (like Home)
-                const li = document.createElement('li');
-                li.className = 'preview-item';
-                li.innerHTML = `<a href="#" class="preview-link">${item.label}</a>`;
-                navMenu.appendChild(li);
+                // OR custom parent item with children
+                if (item.children && item.children.length > 0) {
+                    const li = document.createElement('li');
+                    li.className = 'preview-item';
+                    
+                    let columnsHtml = `
+                        <div class="dropdown-column">
+                            <div class="dropdown-column-heading">Links</div>
+                            <ul class="dropdown-column-links">
+                    `;
+                    item.children.forEach(child => {
+                        if (child.visible) {
+                            columnsHtml += `
+                                <li class="dropdown-link-item">
+                                    <a href="#" class="dropdown-link">${child.label}</a>
+                                </li>
+                            `;
+                        }
+                    });
+                    columnsHtml += `</ul></div>`;
+                    
+                    li.innerHTML = `
+                        <a href="#" class="preview-link">
+                            ${item.label} <span style="font-size: 8px; margin-left: 2px; color: #a0aec0;">▼</span>
+                        </a>
+                        <div class="preview-dropdown">
+                            <div class="dropdown-columns-wrapper">${columnsHtml}</div>
+                        </div>
+                    `;
+                    navMenu.appendChild(li);
+                } else {
+                    const li = document.createElement('li');
+                    li.className = 'preview-item';
+                    li.innerHTML = `<a href="#" class="preview-link">${item.label}</a>`;
+                    navMenu.appendChild(li);
+                }
                 return;
             }
 
@@ -1179,6 +1211,26 @@ function navigation_settings_page() { ?>
                     columnsHtml += `</ul></div>`;
                 }
             });
+
+            // Find any newly created children under this parent that aren't mapped in col.linkKeys
+            const mappedKeys = config.columns.flatMap(col => col.linkKeys);
+            const extraChildren = (item.children || []).filter(c => c.visible && !mappedKeys.includes(c.key));
+            if (extraChildren.length > 0) {
+                hasVisibleChildren = true;
+                columnsHtml += `
+                    <div class="dropdown-column">
+                        <div class="dropdown-column-heading">Other Links</div>
+                        <ul class="dropdown-column-links">
+                `;
+                extraChildren.forEach(child => {
+                    columnsHtml += `
+                        <li class="dropdown-link-item">
+                            <a href="#" class="dropdown-link">${child.label}</a>
+                        </li>
+                    `;
+                });
+                columnsHtml += `</ul></div>`;
+            }
 
             let promoHtml = '';
             if (hasVisibleChildren) {
@@ -1380,9 +1432,7 @@ function navigation_settings_page() { ?>
 
     function closeAddNodeModal() {
         document.getElementById('add_node_modal').style.display = 'none';
-    }
-
-    // Submit newly created menu item to REST API
+    }    // Submit newly created menu item to local state (saved to DB only on Save Navigation Settings click)
     function submitAddNode() {
         const label = document.getElementById('modal_item_label').value.trim();
         const href = document.getElementById('modal_item_href').value.trim() || '#';
@@ -1393,81 +1443,75 @@ function navigation_settings_page() { ?>
             return;
         }
 
-        const primaryUrl = NAV_API_BASE + "/create";
-        const fallbackUrl = "<?php echo site_url('/index.php?rest_route=/navigation/v1/create'); ?>";
-        const data = { label, href, parent_key: parentKey };
+        // Generate unique key
+        const cleanLabel = label.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        const key = 'custom_' + cleanLabel + '_' + Math.floor(100 + Math.random() * 900);
 
-        function sendCreateRequest(url) {
-            return fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-WP-Nonce": NAV_WP_NONCE
-                },
-                body: JSON.stringify(data)
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Create request failed");
-                return res.json();
-            });
-        }
+        const newItem = {
+            key: key,
+            label: label,
+            href: href,
+            visible: true
+        };
 
-        sendCreateRequest(primaryUrl)
-        .then(res => handleCreateSuccess(res))
-        .catch(err => {
-            sendCreateRequest(fallbackUrl)
-            .then(res => handleCreateSuccess(res))
-            .catch(err2 => alert("Error creating menu item: " + err2.message));
-        });
-
-        function handleCreateSuccess(res) {
-            if (res.status === 'success') {
-                closeAddNodeModal();
-                loadNavigation();
-            } else {
-                alert("Error creating menu item.");
+        if (parentKey) {
+            // Add as child
+            let added = false;
+            for (let i = 0; i < menuStructure.length; i++) {
+                if (menuStructure[i].key === parentKey) {
+                    if (!menuStructure[i].children) {
+                        menuStructure[i].children = [];
+                    }
+                    menuStructure[i].children.push(newItem);
+                    added = true;
+                    break;
+                }
             }
+            if (!added) {
+                alert("Parent item not found.");
+                return;
+            }
+        } else {
+            // Add as top-level parent
+            newItem.children = [];
+            menuStructure.push(newItem);
         }
+
+        closeAddNodeModal();
+        renderTreeControls();
+        renderLivePreview();
+        updateSummary();
     }
 
-    // Submit deletion of menu item to REST API
+    // Submit deletion of menu item to local state (saved to DB only on Save Navigation Settings click)
     function deleteNode(key) {
         if (!confirm(`Are you sure you want to delete the menu item "${key}"?`)) return;
 
-        const primaryUrl = NAV_API_BASE + "/delete";
-        const fallbackUrl = "<?php echo site_url('/index.php?rest_route=/navigation/v1/delete'); ?>";
-        const data = { key };
-
-        function sendDeleteRequest(url) {
-            return fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-WP-Nonce": NAV_WP_NONCE
-                },
-                body: JSON.stringify(data)
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Delete request failed");
-                return res.json();
-            });
-        }
-
-        sendDeleteRequest(primaryUrl)
-        .then(res => handleDeleteSuccess(res))
-        .catch(err => {
-            sendDeleteRequest(fallbackUrl)
-            .then(res => handleDeleteSuccess(res))
-            .catch(err2 => alert("Error deleting menu item: " + err2.message));
-        });
-
-        function handleDeleteSuccess(res) {
-            if (res.status === 'success') {
-                loadNavigation();
-            } else {
-                alert("Error deleting menu item.");
+        // Recursive deletion helper
+        function deleteItemRecursive(items, targetKey) {
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].key === targetKey) {
+                    items.splice(i, 1);
+                    return true;
+                }
+                if (items[i].children && items[i].children.length > 0) {
+                    if (deleteItemRecursive(items[i].children, targetKey)) {
+                        return true;
+                    }
+                }
             }
+            return false;
         }
+
+        const success = deleteItemRecursive(menuStructure, key);
+        if (!success) {
+            alert("Item not found in menu structure.");
+            return;
+        }
+
+        renderTreeControls();
+        renderLivePreview();
+        updateSummary();
     }
 
     document.addEventListener("DOMContentLoaded", () => {

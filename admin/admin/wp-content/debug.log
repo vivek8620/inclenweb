@@ -1568,3 +1568,6 @@ Stack trace:
 [13-Aug-2026 12:01:52 UTC]   Automatic theme updates starting...
 [13-Aug-2026 12:01:52 UTC]   Automatic theme updates complete.
 [13-Aug-2026 12:01:52 UTC] Automatic updates complete.
+[14-Aug-2026 05:54:32 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in E:\xampp\htdocs\inclenweb\admin\admin\wp-includes\class-wpdb.php on line 1988
+[14-Aug-2026 05:54:34 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in E:\xampp\htdocs\inclenweb\admin\admin\wp-includes\class-wpdb.php on line 1988
+[14-Aug-2026 05:54:39 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in E:\xampp\htdocs\inclenweb\admin\admin\wp-includes\class-wpdb.php on line 1988
