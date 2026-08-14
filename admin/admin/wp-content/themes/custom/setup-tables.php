@@ -368,6 +368,21 @@ function custom_setup_database_tables() {
         PRIMARY KEY  (id)
     ) $charset_collate;";
     dbDelta($sql_about_mission);
+
+    // 27. Blogs Table
+    $table_blogs = $wpdb->prefix . 'blogs';
+    $sql_blogs = "CREATE TABLE $table_blogs (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        title varchar(255) NOT NULL,
+        slug varchar(255) DEFAULT '',
+        content longtext DEFAULT '',
+        author varchar(255) DEFAULT '',
+        image varchar(255) DEFAULT '',
+        banner_image varchar(255) DEFAULT '',
+        created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+    dbDelta($sql_blogs);
 }
 
 // Hook to run during theme load or admin init

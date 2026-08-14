@@ -1433,7 +1433,9 @@ function navigation_settings_page() { ?>
     }    // Submit newly created menu item to local state (saved to DB only on Save Navigation Settings click)
     function submitAddNode() {
         const label = document.getElementById('modal_item_label').value.trim();
-        const href = document.getElementById('modal_item_href').value.trim() || '#';
+        // A Blog item should always point to the public blog listing, not the
+        // WordPress admin Blog Manager screen.
+        const href = document.getElementById('modal_item_href').value.trim() || (label.toLowerCase() === 'blog' ? '/blog/' : '#');
         const parentKey = document.getElementById('modal_parent_key').value;
 
         if (!label) {

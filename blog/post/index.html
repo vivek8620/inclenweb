@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog | INCLEN Trust International</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/_next/static/css/4111b65941303b63.css">
+  <link rel="stylesheet" href="/_next/static/css/4660d9d772edf5b2.css">
+  <link rel="stylesheet" href="/_next/static/css/f044f90a3ae243e0.css">
+  <style>
+    body{margin:0;background:#f8fafc;color:#172554;font-family:Arial,sans-serif}.detail-banner{height:255px;background:linear-gradient(90deg,#052d4cdd,#052d4c90),url('/images/banner.jpeg') center/cover;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center}.detail-banner h1{font:700 46px/1.2 Georgia,serif;margin:0}.detail-banner p{font-size:17px;color:#dbeafe;margin:10px 0 0}.post{max-width:900px;margin:52px auto;padding:0 20px}.back{display:inline-block;margin-bottom:24px;color:#e85d0c;font-weight:700;text-decoration:none}.article{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 14px #0f172a0d}.article>img{width:100%;max-height:480px;object-fit:cover}.article-body{padding:38px}.article h1{font:700 38px/1.25 Georgia,serif;color:#0f2742;margin:0 0 14px}.meta{font-size:14px;color:#64748b;margin-bottom:30px}.article-content{font-size:17px;line-height:1.8;color:#334155}.article-content p{margin:0 0 18px}.article-content h1,.article-content h2,.article-content h3,.article-content h4{color:#0f2742;margin:30px 0 14px}.article-content img{max-width:100%;height:auto}.article-content a{color:#e85d0c}.message{padding:35px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;text-align:center;color:#64748b}.error{color:#b91c1c}@media(max-width:640px){.detail-banner{height:190px}.detail-banner h1{font-size:34px}.article-body{padding:24px}.article h1{font-size:30px}}
+  </style>
+</head>
+<body>
+  <div id="shared-header"></div>
+  <section class="detail-banner" id="detail-banner"><div><h1>Blog Details</h1><p>Insights and updates from INCLEN Trust International</p></div></section>
+  <main class="post" id="post-container"><div class="message">Loading blog post…</div></main>
+  <div id="shared-footer"></div>
+  <script>
+    fetch('/')
+      .then(response => response.text())
+      .then(markup => {
+        const page = new DOMParser().parseFromString(markup, 'text/html');
+        const header = page.querySelector('header');
+        const footer = page.querySelector('footer');
+        if (header) {
+          document.getElementById('shared-header').replaceWith(header);
+          const navigation = header.querySelector('nav.hidden.lg\\:flex');
+          if (navigation && !navigation.querySelector('[data-blog-link]')) {
+            const blogLink = document.createElement('a');
+            blogLink.href = '/blog/';
+            blogLink.textContent = 'Blog';
+            blogLink.dataset.blogLink = 'true';
+            blogLink.className = 'flex items-center text-14 font-semibold font-roboto px-2 xl:px-3 py-2 transition-colors text-orange-500';
+            navigation.insertBefore(blogLink, navigation.querySelector('a[href="/contact/"]'));
+          }
+        }
+        if (footer) document.getElementById('shared-footer').replaceWith(footer);
+      })
+      .catch(() => {});
+
+    const container = document.getElementById('post-container');
+    const postId = new URLSearchParams(window.location.search).get('id');
+    const escapeHtml = value => { const el = document.createElement('div'); el.textContent = value || ''; return el.innerHTML; };
+    const apiUrl = window.location.hostname === 'localhost' && window.location.port === '3000' ? 'http://localhost/inclenweb/admin/admin/index.php?rest_route=/blogs/v1/public' : '/admin/admin/index.php?rest_route=/blogs/v1/public';
+    if (!postId) { container.innerHTML = '<div class="message error">Blog post was not found.</div>'; }
+    else fetch(apiUrl).then(r => { if (!r.ok) throw new Error('Unable to load this blog post.'); return r.json(); }).then(posts => {
+      const post = posts.find(item => String(item.id) === String(postId));
+      if (!post) throw new Error('Blog post was not found.');
+      document.title = `${post.title} | INCLEN Blog`;
+      if (post.banner_image) {
+        document.getElementById('detail-banner').style.backgroundImage = `linear-gradient(90deg,#052d4cdd,#052d4c90),url("${post.banner_image}")`;
+      }
+      const date = new Date(post.created_at).toLocaleDateString(undefined, {year:'numeric',month:'long',day:'numeric'});
+      const image = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">` : '';
+      container.innerHTML = `<a class="back" href="/blog/">← Back to all blogs</a><article class="article">${image}<div class="article-body"><h1>${escapeHtml(post.title)}</h1><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><div class="article-content">${post.content || ''}</div></div></article>`;
+    }).catch(error => { container.innerHTML = `<div class="message error">${escapeHtml(error.message)}</div>`; });
+  </script>
+</body>
+</html>

@@ -102,6 +102,7 @@ add_action('admin_menu', 'custom_remove_duplicate_submenus', 999);
 // Include Manager Files
 $managers = [
     'news-manager.php',
+    'blog-manager.php',
     'announcement.php',
     'events.php',
     'headings.php',
