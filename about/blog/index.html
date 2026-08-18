@@ -28,17 +28,8 @@
       .then(markup => {
         const page = new DOMParser().parseFromString(markup, 'text/html');
         const header = page.querySelector('header');
-        if (!header) return;
-
-        document.getElementById('shared-header').replaceWith(header);
-        const navigation = header.querySelector('nav.hidden.lg\\:flex');
-        if (navigation && !navigation.querySelector('[data-blog-link]')) {
-          const blogLink = document.createElement('a');
-          blogLink.href = '/blog/';
-          blogLink.textContent = 'Blog';
-          blogLink.dataset.blogLink = 'true';
-          blogLink.className = 'flex items-center text-14 font-semibold font-roboto px-2 xl:px-3 py-2 transition-colors text-orange-500';
-          navigation.insertBefore(blogLink, navigation.querySelector('a[href="/contact/"]'));
+        if (header) {
+          document.getElementById('shared-header').replaceWith(header);
         }
       })
       .catch(() => {});
@@ -61,7 +52,7 @@
           const excerpt = plainText(post.content).slice(0, 160);
           const date = new Date(post.created_at).toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
           const image = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">` : '';
-          return `<article class="card">${image}<div class="card-body"><h2>${escapeHtml(post.title)}</h2><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><p class="excerpt">${escapeHtml(excerpt)}${excerpt.length === 160 ? '…' : ''}</p><a class="read-more" href="/blog/post/?id=${encodeURIComponent(post.id)}">Read full blog →</a></div></article>`;
+          return `<article class="card">${image}<div class="card-body"><h2>${escapeHtml(post.title)}</h2><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><p class="excerpt">${escapeHtml(excerpt)}${excerpt.length === 160 ? '…' : ''}</p><a class="read-more" href="/about/blog/post/?id=${encodeURIComponent(post.id)}">Read full blog →</a></div></article>`;
         }).join('');
       })
       .catch(error => { list.className = 'error'; list.textContent = error.message; });

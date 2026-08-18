@@ -23,18 +23,7 @@
         const page = new DOMParser().parseFromString(markup, 'text/html');
         const header = page.querySelector('header');
         const footer = page.querySelector('footer');
-        if (header) {
-          document.getElementById('shared-header').replaceWith(header);
-          const navigation = header.querySelector('nav.hidden.lg\\:flex');
-          if (navigation && !navigation.querySelector('[data-blog-link]')) {
-            const blogLink = document.createElement('a');
-            blogLink.href = '/blog/';
-            blogLink.textContent = 'Blog';
-            blogLink.dataset.blogLink = 'true';
-            blogLink.className = 'flex items-center text-14 font-semibold font-roboto px-2 xl:px-3 py-2 transition-colors text-orange-500';
-            navigation.insertBefore(blogLink, navigation.querySelector('a[href="/contact/"]'));
-          }
-        }
+        if (header) document.getElementById('shared-header').replaceWith(header);
         if (footer) document.getElementById('shared-footer').replaceWith(footer);
       })
       .catch(() => {});
@@ -53,7 +42,7 @@
       }
       const date = new Date(post.created_at).toLocaleDateString(undefined, {year:'numeric',month:'long',day:'numeric'});
       const image = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">` : '';
-      container.innerHTML = `<a class="back" href="/blog/">← Back to all blogs</a><article class="article">${image}<div class="article-body"><h1>${escapeHtml(post.title)}</h1><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><div class="article-content">${post.content || ''}</div></div></article>`;
+      container.innerHTML = `<a class="back" href="/about/blog/">← Back to all blogs</a><article class="article">${image}<div class="article-body"><h1>${escapeHtml(post.title)}</h1><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><div class="article-content">${post.content || ''}</div></div></article>`;
     }).catch(error => { container.innerHTML = `<div class="message error">${escapeHtml(error.message)}</div>`; });
   </script>
 </body>

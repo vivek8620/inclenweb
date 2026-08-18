@@ -1449,7 +1449,7 @@ function navigation_settings_page() { ?>
         const label = document.getElementById('modal_item_label').value.trim();
         // A Blog item should always point to the public blog listing, not the
         // WordPress admin Blog Manager screen.
-        const href = document.getElementById('modal_item_href').value.trim() || (label.toLowerCase() === 'blog' ? '/blog/' : '#');
+        const href = document.getElementById('modal_item_href').value.trim() || (label.toLowerCase() === 'blog' ? '/about/blog/' : '#');
         const parentKey = document.getElementById('modal_parent_key').value;
 
         if (!label) {
@@ -1495,10 +1495,9 @@ function navigation_settings_page() { ?>
         renderTreeControls();
         renderLivePreview();
         updateSummary();
-        saveNavigation();
     }
 
-    // Submit deletion of menu item to local state (auto-saves to DB)
+    // Submit deletion of menu item to local state
     function deleteNode(key) {
         if (!confirm(`Are you sure you want to delete the menu item "${key}"?`)) return;
 
@@ -1527,7 +1526,6 @@ function navigation_settings_page() { ?>
         renderTreeControls();
         renderLivePreview();
         updateSummary();
-        saveNavigation();
     }
 
     document.addEventListener("DOMContentLoaded", () => {

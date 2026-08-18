@@ -286,16 +286,17 @@ function blog_manager_page() { ?>
         <table class="wp-list-table widefat fixed striped posts">
             <thead>
                 <tr>
-                    <th style="width: 25%;">Title</th>
-                    <th style="width: 15%;">Author</th>
-                    <th style="width: 20%;">Cover Image</th>
-                    <th style="width: 20%;">Published Date</th>
-                    <th style="width: 20%;">Actions</th>
+                    <th style="width: 20%;">Title</th>
+                    <th style="width: 12%;">Author</th>
+                    <th style="width: 15%;">Cover Image</th>
+                    <th style="width: 18%;">Published Date</th>
+                    <th style="width: 20%;">Blog URL (Link)</th>
+                    <th style="width: 15%;">Actions</th>
                 </tr>
             </thead>
             <tbody id="blogList">
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 20px; color: #666;">Loading blogs...</td>
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #666;">Loading blogs...</td>
                 </tr>
             </tbody>
         </table>
@@ -307,6 +308,13 @@ function blog_manager_page() { ?>
 // WordPress query-route format. This works both with and without rewrite rules.
 const API_BASE_BLOG = "<?php echo esc_js(site_url('/index.php?rest_route=/blogs/v1')); ?>";
 const BLOG_REST_NONCE = "<?php echo esc_js(wp_create_nonce('wp_rest')); ?>";
+const WP_SITE_URL = "<?php echo esc_js(site_url()); ?>";
+const SITE_ROOT_URL = (function() {
+    const path = window.location.pathname;
+    const adminIdx = path.indexOf('/admin/admin/');
+    const basePath = adminIdx !== -1 ? path.substring(0, adminIdx) : '';
+    return window.location.origin + basePath + '/';
+})();
 let editingId = null;
 let blogsById = {};
 
@@ -314,6 +322,24 @@ function escapeBlogHtml(value) {
     const element = document.createElement('div');
     element.textContent = value || '';
     return element.innerHTML;
+}
+
+function copyBlogLink(btn, linkText) {
+    navigator.clipboard.writeText(linkText).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = "Copied!";
+        btn.style.backgroundColor = "#46b450";
+        btn.style.color = "#fff";
+        btn.style.borderColor = "#46b450";
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.backgroundColor = "";
+            btn.style.color = "";
+            btn.style.borderColor = "";
+        }, 1500);
+    }).catch(err => {
+        console.error("Could not copy text: ", err);
+    });
 }
 
 async function blogApiRequest(path, options = {}) {
@@ -338,7 +364,7 @@ function loadBlogs() {
             let html = '';
             blogsById = {};
             if (data.length === 0) {
-                html = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: #666;">No blogs found. Add your first blog above!</td></tr>`;
+                html = `<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No blogs found. Add your first blog above!</td></tr>`;
             } else {
                 data.forEach(item => {
                     blogsById[item.id] = item;
@@ -350,12 +376,22 @@ function loadBlogs() {
                         minute: '2-digit'
                     });
                     
+                    const blogPath = `/about/blog/post/?id=${item.id}`;
+                    const fullBlogUrl = `${SITE_ROOT_URL}about/blog/post/?id=${item.id}`;
+
                     html += `
                     <tr>
                         <td><strong>${escapeBlogHtml(item.title)}</strong></td>
                         <td>${escapeBlogHtml(item.author)}</td>
                         <td>${item.image ? `<img src="${escapeBlogHtml(item.image)}" class="preview-img" style="max-height: 60px; max-width: 100px;" alt="Blog cover image">` : '<span style="color:#aaa; font-style:italic;">No image</span>'}</td>
                         <td>${formattedDate}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <input type="text" class="regular-text" style="width: 120px; margin: 0; padding: 3px 8px; font-size: 12px; height: 28px; min-height: 28px;" readonly value="${blogPath}">
+                                <button class="button button-small" onclick="copyBlogLink(this, '${blogPath}')" title="Copy Link to Clipboard">Copy</button>
+                                <a href="${fullBlogUrl}" target="_blank" class="button button-small" title="View blog post in a new tab" style="display: inline-flex; align-items: center; justify-content: center; height: 28px;">View</a>
+                            </div>
+                        </td>
                         <td>
                             <button class="button button-small" onclick="editBlogById(${Number(item.id)})">Edit</button>
                             <button class="button button-small button-link-delete" style="color: #d63638; margin-left: 5px;" onclick='deleteBlog(${item.id})'>Delete</button>
@@ -367,7 +403,7 @@ function loadBlogs() {
         })
         .catch(err => {
             console.error("Error loading blogs:", err);
-            document.getElementById("blogList").innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Failed to load blogs.</td></tr>`;
+            document.getElementById("blogList").innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Failed to load blogs.</td></tr>`;
         });
 }
 
