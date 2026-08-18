@@ -1073,7 +1073,10 @@ function navigation_settings_page() { ?>
                     <div class="node-label-container">
                         <span class="node-label">${item.label}</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${item.key}')" title="Delete '${item.label}'">
+                            <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                        </button>
                         <label class="switch">
                             <input type="checkbox" id="switch_${item.key}" 
                                    data-key="${item.key}" 
@@ -1104,7 +1107,10 @@ function navigation_settings_page() { ?>
                         <div class="node-label-container">
                             <span class="node-label">${child.label}</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${child.key}')" title="Delete '${child.label}'">
+                                <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                            </button>
                             <label class="switch">
                                 <input type="checkbox" id="switch_${child.key}" 
                                        data-key="${child.key}" 
