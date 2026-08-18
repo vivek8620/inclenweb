@@ -49,89 +49,97 @@ function get_default_menu_structure() {
         [
             'key' => 'about',
             'label' => 'About',
+            'href' => '/about',
             'visible' => true,
             'children' => [
-                ['key' => 'about_who_we_are', 'label' => 'Who We Are', 'visible' => true],
-                ['key' => 'about_mission_vision', 'label' => 'Mission & Vision', 'visible' => true],
-                ['key' => 'about_presence', 'label' => 'Global Presence', 'visible' => true],
-                ['key' => 'about_fcra', 'label' => 'FCRA & Registration', 'visible' => true],
-                ['key' => 'about_board', 'label' => 'Board of Trustees', 'visible' => true],
-                ['key' => 'about_journey', 'label' => 'Our Journey', 'visible' => true],
-                ['key' => 'about_collaborators', 'label' => 'Academic Collaborators', 'visible' => true]
+                ['key' => 'about_who_we_are', 'label' => 'Who We Are', 'href' => '/about#who-we-are', 'visible' => true],
+                ['key' => 'about_mission_vision', 'label' => 'Mission & Vision', 'href' => '/about#what-we-do', 'visible' => true],
+                ['key' => 'about_presence', 'label' => 'Global Presence', 'href' => '/about#presence', 'visible' => true],
+                ['key' => 'about_fcra', 'label' => 'FCRA & Registration', 'href' => '/fcra', 'visible' => true],
+                ['key' => 'about_board', 'label' => 'Board of Trustees', 'href' => '/about#team', 'visible' => true],
+                ['key' => 'about_journey', 'label' => 'Our Journey', 'href' => '/about#milestones', 'visible' => true],
+                ['key' => 'about_collaborators', 'label' => 'Academic Collaborators', 'href' => '/about#collaborators', 'visible' => true]
             ]
         ],
         [
             'key' => 'our_work',
             'label' => 'Our Work',
+            'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'work_area', 'label' => 'Area of Work', 'visible' => true],
-                ['key' => 'work_research', 'label' => 'Research Projects', 'visible' => true],
-                ['key' => 'work_somaarth', 'label' => 'Somaarth Sites', 'visible' => true],
-                ['key' => 'work_capacity', 'label' => 'Capacity Building', 'visible' => true],
-                ['key' => 'work_engagement', 'label' => 'Engagement & Advocacy', 'visible' => true],
-                ['key' => 'work_community', 'label' => 'Community Activities', 'visible' => true]
+                ['key' => 'work_area', 'label' => 'Area of Work', 'href' => '/area-of-work', 'visible' => true],
+                ['key' => 'work_research', 'label' => 'Research Projects', 'href' => '/research', 'visible' => true],
+                ['key' => 'work_somaarth', 'label' => 'Somaarth Sites', 'href' => '/somarth-sites', 'visible' => true],
+                ['key' => 'work_capacity', 'label' => 'Capacity Building', 'href' => '/capacity-building', 'visible' => true],
+                ['key' => 'work_engagement', 'label' => 'Engagement & Advocacy', 'href' => '/engagement-advocacy', 'visible' => true],
+                ['key' => 'work_community', 'label' => 'Community Activities', 'href' => '/community-activities', 'visible' => true]
             ]
         ],
         [
             'key' => 'our_impact',
             'label' => 'Our Impact',
+            'href' => '/our-impact',
             'visible' => true,
             'children' => [
-                ['key' => 'impact_summary', 'label' => 'Impact Summary', 'visible' => true],
-                ['key' => 'impact_partners', 'label' => 'Partners', 'visible' => true],
-                ['key' => 'impact_findings', 'label' => 'Key Research Findings', 'visible' => true],
-                ['key' => 'impact_device_products', 'label' => 'Device Products', 'visible' => true],
-                ['key' => 'impact_policy_influence', 'label' => 'Policy Influence', 'visible' => true]
+                ['key' => 'impact_summary', 'label' => 'Impact Summary', 'href' => '/our-impact', 'visible' => true],
+                ['key' => 'impact_partners', 'label' => 'Partners', 'href' => '/partners', 'visible' => true],
+                ['key' => 'impact_findings', 'label' => 'Key Research Findings', 'href' => '/key-research-findings', 'visible' => true],
+                ['key' => 'impact_device_products', 'label' => 'Device Products', 'href' => '/device-products', 'visible' => true],
+                ['key' => 'impact_policy_influence', 'label' => 'Policy Influence', 'href' => '/policy-influence', 'visible' => true]
             ]
         ],
         [
             'key' => 'careers',
             'label' => 'Careers',
+            'href' => '/careers',
             'visible' => true,
             'children' => [
-                ['key' => 'careers_openings', 'label' => 'Current Openings', 'visible' => true],
-                ['key' => 'careers_fellowships', 'label' => 'Fellowships', 'visible' => true],
-                ['key' => 'careers_internships', 'label' => 'Internships', 'visible' => true]
+                ['key' => 'careers_openings', 'label' => 'Current Openings', 'href' => '/careers', 'visible' => true],
+                ['key' => 'careers_fellowships', 'label' => 'Fellowships', 'href' => '/fellowship', 'visible' => true],
+                ['key' => 'careers_internships', 'label' => 'Internships', 'href' => '/internships', 'visible' => true]
             ]
         ],
         [
             'key' => 'get_involved',
             'label' => 'Get Involved',
+            'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'involved_academic', 'label' => 'Academic Association', 'visible' => true],
-                ['key' => 'involved_research', 'label' => 'Research Partnership', 'visible' => true],
-                ['key' => 'involved_industry', 'label' => 'Industry Partnership', 'visible' => true]
+                ['key' => 'involved_academic', 'label' => 'Academic Association', 'href' => '/academic-association', 'visible' => true],
+                ['key' => 'involved_research', 'label' => 'Research Partnership', 'href' => '/partnership', 'visible' => true],
+                ['key' => 'involved_industry', 'label' => 'Industry Partnership', 'href' => '/industry-partnership', 'visible' => true]
             ]
         ],
         [
             'key' => 'insights',
             'label' => 'Insights',
+            'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'insights_news', 'label' => 'News', 'visible' => true],
-                ['key' => 'insights_events', 'label' => 'Events', 'visible' => true],
-                ['key' => 'insights_announcements', 'label' => 'Announcements', 'visible' => true],
-                ['key' => 'insights_headlines', 'label' => 'Headlines', 'visible' => true]
+                ['key' => 'insights_news', 'label' => 'News', 'href' => '/news', 'visible' => true],
+                ['key' => 'insights_events', 'label' => 'Events', 'href' => '/events', 'visible' => true],
+                ['key' => 'insights_announcements', 'label' => 'Announcements', 'href' => '/announcements', 'visible' => true],
+                ['key' => 'insights_headlines', 'label' => 'Headlines', 'href' => '/headlines', 'visible' => true]
             ]
         ],
         [
             'key' => 'resources',
             'label' => 'Resources',
+            'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'resources_all', 'label' => 'All Publications', 'visible' => true],
-                ['key' => 'resources_reports', 'label' => 'Annual Reports', 'visible' => true],
-                ['key' => 'resources_newsletters', 'label' => 'Newsletters', 'visible' => true],
-                ['key' => 'resources_repository', 'label' => 'Data Repository', 'visible' => true],
-                ['key' => 'resources_tools', 'label' => 'Research Tools', 'visible' => true],
-                ['key' => 'resources_training', 'label' => 'Training Materials', 'visible' => true]
+                ['key' => 'resources_all', 'label' => 'All Publications', 'href' => '/publications', 'visible' => true],
+                ['key' => 'resources_reports', 'label' => 'Annual Reports', 'href' => '/annual-reports', 'visible' => true],
+                ['key' => 'resources_newsletters', 'label' => 'Newsletters', 'href' => '/newsletters', 'visible' => true],
+                ['key' => 'resources_repository', 'label' => 'Data Repository', 'href' => '/data-repository', 'visible' => true],
+                ['key' => 'resources_tools', 'label' => 'Research Tools', 'href' => '/research-tools', 'visible' => true],
+                ['key' => 'resources_training', 'label' => 'Training Materials', 'href' => '/training-materials', 'visible' => true]
             ]
         ],
         [
             'key' => 'contact',
             'label' => 'Contact',
+            'href' => '/contact',
             'visible' => true
         ]
     ];

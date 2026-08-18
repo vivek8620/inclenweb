@@ -211,7 +211,7 @@
                         if (dbChild && dbChild.visible) {
                             newLinks.push({
                                 label: dbChild.label,
-                                href: dbChild.href || origLink.href,
+                                href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
                                 desc: origLink.desc
                             });
                         }
