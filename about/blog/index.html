@@ -23,6 +23,472 @@
   <script>
     // Reuse the actual header emitted by the public website, keeping Blog in
     // the same position and visual system as every other public page.
+    const originalC_Template = [
+      {
+        label: "About",
+        href: "/about",
+        columns: [
+          {
+            heading: "Organization",
+            links: [
+              {label: "Who We Are", href: "/about#who-we-are"},
+              {label: "Mission & Vision", href: "/about#what-we-do"},
+              {label: "Global Presence", href: "/about#presence"},
+              {label: "FCRA & Registration", href: "/fcra"}
+            ]
+          },
+          {
+            heading: "Leadership",
+            links: [
+              {label: "Board of Trustees", href: "/about#team"},
+              {label: "Our Journey", href: "/about#milestones"},
+              {label: "Academic Collaborators", href: "/about#collaborators"}
+            ]
+          }
+        ],
+        promo: {
+          variant: "gray",
+          title: "Empowering Global Health",
+          description: "Learn how INCLEN is working with global health stakeholders to drive meaningful change.",
+          href: "/about",
+          ctaLabel: "Read More",
+          image: "/images/team_collaboration.png",
+          imageAlt: "Team collaboration"
+        }
+      },
+      {
+        label: "Our Work",
+        href: "#",
+        columns: [
+          {
+            heading: "Focus Areas",
+            links: [
+              {label: "Area of Work", href: "/area-of-work", desc: "Explore our key focus areas and strategic impact domains."},
+              {label: "Research Projects", href: "/research", desc: "Cutting-edge health research, synthesis and analysis."}
+            ]
+          },
+          {
+            heading: "Key Initiatives",
+            links: [
+              {label: "Somarth Sites", href: "/somarth-sites", desc: "Demographic Development & Environmental Surveillance."},
+              {label: "Capacity Building", href: "/capacity-building", desc: "Strengthening healthcare systems and leadership capabilities."}
+            ]
+          },
+          {
+            heading: "Outreach",
+            links: [
+              {label: "Engagement & Advocacy", href: "/engagement-advocacy", desc: "Policy advocacy and multi-stakeholder engagement."},
+              {label: "Community Activities", href: "/community-activities", desc: "Community activities and engagement."}
+            ]
+          }
+        ]
+      },
+      {
+        label: "Our Impact",
+        href: "/our-impact",
+        columns: [
+          {
+            heading: "Overview",
+            links: [
+              {label: "Impact Summary", href: "/our-impact"},
+              {label: "Partners", href: "/partners"}
+            ]
+          },
+          {
+            heading: "Achievements",
+            links: [
+              {label: "Key Research Findings", href: "/key-research-findings"},
+              {label: "Device Products", href: "/device-products"},
+              {label: "Policy Influence", href: "/policy-influence"}
+            ]
+          }
+        ],
+        promo: {
+          variant: "brand",
+          title: "Transforming Lives",
+          description: "See how our research translates into real-world health solutions.",
+          href: "/our-impact",
+          ctaLabel: "Explore Impact",
+          image: "https://images.pexels.com/photos/6120214/pexels-photo-6120214.jpeg",
+          imageAlt: "Health impact"
+        }
+      },
+      {
+        label: "Careers",
+        href: "/careers",
+        columns: [
+          {
+            heading: "Opportunities",
+            links: [
+              {label: "Current Openings", href: "/careers"},
+              {label: "Fellowships", href: "/fellowship"},
+              {label: "Internships", href: "/internships"}
+            ]
+          }
+        ],
+        heroBanner: {
+          image: "/images/hero_village_data.png",
+          title: "Shape the Future of Health",
+          description: "Join a team of dedicated professionals working towards global health equity.",
+          ctaLabel: "View All Openings",
+          ctaHref: "/careers"
+        }
+      },
+      {
+        label: "Get Involved",
+        href: "#",
+        columns: [
+          {
+            heading: "Academic & Research Calls",
+            links: [
+              {label: "Academic Association", href: "/academic-association", desc: "Join our global network of academic professionals and researchers."},
+              {label: "Research Partnership", href: "/partnership", desc: "Collaborate with INCLEN on groundbreaking health studies."}
+            ]
+          },
+          {
+            heading: "Strategic Partnerships",
+            links: [
+              {label: "Industry Partnership", href: "/industry-partnership", desc: "Strategic alliances for healthcare innovation and delivery."}
+            ]
+          }
+        ]
+      },
+      {
+        label: "Insights",
+        href: "#",
+        columns: [
+          {
+            heading: "Updates",
+            links: [
+              {label: "News", href: "/news", desc: "Latest updates and press releases from INCLEN."},
+              {label: "Events", href: "/events", desc: "Upcoming conferences, workshops, and webinars."}
+            ]
+          },
+          {
+            heading: "Media",
+            links: [
+              {label: "Announcements", href: "/announcements", desc: "Official notifications and public notices."},
+              {label: "Headlines", href: "/headlines", desc: "INCLEN in the news and media features."}
+            ]
+          }
+        ]
+      },
+      {
+        label: "Resources",
+        href: "#",
+        columns: [
+          {
+            heading: "Publications",
+            links: [
+              {label: "All Publications", href: "/publications"},
+              {label: "Annual Reports", href: "/annual-reports"},
+              {label: "Newsletters", href: "/newsletters"}
+            ]
+          },
+          {
+            heading: "Tools & Data",
+            links: [
+              {label: "Data Repository", href: "/data-repository"},
+              {label: "Research Tools", href: "/research-tools"},
+              {label: "Training Materials", href: "/training-materials"}
+            ]
+          }
+        ],
+        imageCard: {
+          image: "/images/publication_hero.jpg",
+          title: "Knowledge Hub",
+          description: "Access our extensive library of research and resources."
+        }
+      }
+    ];
+
+    function formatTitleCase(str) {
+      if (!str) return '';
+      return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+    }
+
+    function buildReactMenu(dbStructure) {
+      return dbStructure.map(dbParent => {
+        const origParent = originalC_Template.find(p => p.label.toLowerCase() === dbParent.label.toLowerCase() || p.href.includes(dbParent.key));
+        const formattedLabel = origParent ? origParent.label : formatTitleCase(dbParent.label);
+
+        if (!origParent) {
+          const activeChildren = dbParent.children ? dbParent.children.filter(c => c.visible) : [];
+          return {
+            label: formattedLabel,
+            href: dbParent.href || "#",
+            visible: dbParent.visible,
+            columns: activeChildren.length > 0 ? [{
+              heading: "Links",
+              links: activeChildren.map(c => ({ label: formatTitleCase(c.label), href: (c.href && c.href !== '#') ? c.href : "#" }))
+            }] : []
+          };
+        }
+
+        const rebuiltColumns = [];
+        if (origParent.columns && dbParent.children) {
+          origParent.columns.forEach(origCol => {
+            const newLinks = [];
+            origCol.links.forEach(origLink => {
+              const dbChild = dbParent.children.find(c => c.label.toLowerCase() === origLink.label.toLowerCase());
+              if (dbChild && dbChild.visible) {
+                newLinks.push({
+                  label: dbChild.label,
+                  href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
+                  desc: origLink.desc
+                });
+              }
+            });
+            if (newLinks.length > 0) {
+              rebuiltColumns.push({
+                heading: origCol.heading,
+                links: newLinks
+              });
+            }
+          });
+
+          // Find any newly created children under this parent
+          const allOriginalLinkLabels = origParent.columns.flatMap(col => col.links.map(l => l.label.toLowerCase()));
+          const newChildren = dbParent.children.filter(c => c.visible && !allOriginalLinkLabels.includes(c.label.toLowerCase()));
+          if (newChildren.length > 0) {
+            if (rebuiltColumns.length > 0) {
+              rebuiltColumns[0].links.push(...newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" })));
+            } else {
+              rebuiltColumns.push({
+                heading: "Links",
+                links: newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" }))
+              });
+            }
+          }
+        }
+
+        return {
+          ...origParent,
+          label: formattedLabel,
+          visible: dbParent.visible,
+          columns: rebuiltColumns
+        };
+      }).filter(p => p.visible);
+    }
+
+    let megaMenuTimeout = null;
+
+    function showMegaMenu(item) {
+      if (megaMenuTimeout) clearTimeout(megaMenuTimeout);
+      const megaMenu = document.querySelector('header div.absolute.left-0.w-full.bg-white.border-t');
+      const megaMenuContent = megaMenu ? megaMenu.querySelector('div.max-w-7xl.mx-auto.px-6.py-8') : null;
+      if (!megaMenu || !megaMenuContent) return;
+
+      let columnsHtml = '';
+      item.columns.forEach(col => {
+        columnsHtml += `
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3 pb-2 border-b border-gray-100">${col.heading}</p>
+            <div class="space-y-3">
+        `;
+        col.links.forEach(link => {
+          const desc = link.desc ? `<p class="text-xs text-gray-500 mt-0.5">${link.desc}</p>` : '';
+          columnsHtml += `
+            <a href="${link.href}" class="block group">
+              <span class="text-sm font-semibold text-gray-800 transition-colors group-hover:text-[#c95714]">${link.label}</span>
+              ${desc}
+            </a>
+          `;
+        });
+        columnsHtml += `</div></div>`;
+      });
+
+      let promoHtml = '';
+      if (item.promo) {
+        promoHtml = `
+          <div class="col-span-2 rounded-xl p-5 flex items-start gap-4 border h-full ${item.promo.variant === 'brand' ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 border-gray-200'}">
+            <div class="flex-1 min-w-0">
+              <h4 class="font-bold text-sm mb-1 ${item.promo.variant === 'brand' ? 'text-blue-900' : 'text-gray-900'}">${item.promo.title}</h4>
+              <p class="text-xs mb-4 leading-relaxed ${item.promo.variant === 'brand' ? 'text-blue-700/80' : 'text-gray-500'}">${item.promo.description}</p>
+              <a href="${item.promo.href}" class="inline-block text-white text-xs font-bold px-4 py-2 rounded-lg transition-opacity hover:opacity-90" style="background-color: #c95714;">${item.promo.ctaLabel || 'Read More'}</a>
+            </div>
+            <div class="w-24 h-24 shrink-0 rounded-lg overflow-hidden">
+              <img src="${item.promo.image}" alt="" class="w-full h-full object-cover">
+            </div>
+          </div>
+        `;
+      } else if (item.heroBanner) {
+        promoHtml = `
+          <div class="col-span-3 relative rounded-xl overflow-hidden h-36">
+            <img src="${item.heroBanner.image}" alt="" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gray-800/65"></div>
+            <div class="relative z-10 flex flex-col justify-center h-full px-7">
+              <h4 class="text-white font-bold text-lg mb-1">${item.heroBanner.title}</h4>
+              <p class="text-white/75 text-xs mb-3 max-w-sm">${item.heroBanner.description}</p>
+              <a href="${item.heroBanner.ctaHref}" class="text-white text-xs font-bold underline hover:text-blue-300 w-fit">${item.heroBanner.ctaLabel}</a>
+            </div>
+          </div>
+        `;
+      } else if (item.imageCard) {
+        promoHtml = `
+          <div class="col-span-2 relative rounded-xl overflow-hidden h-full min-h-[140px] group">
+            <img src="${item.imageCard.image}" alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 z-10">
+              <h4 class="text-white font-bold text-sm mb-1">${item.imageCard.title}</h4>
+              <p class="text-white/75 text-xs">${item.imageCard.description}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      const hasPromo = item.promo || item.heroBanner || item.imageCard;
+      const totalCols = item.columns.length;
+      const gridCols = hasPromo ? 'grid-cols-4' : `grid-cols-${totalCols}`;
+      const leftColsSpan = 1 === totalCols ? "col-span-2 grid grid-cols-1" : 2 === totalCols ? "col-span-2 grid grid-cols-2" : "col-span-3 grid grid-cols-3";
+
+      megaMenuContent.innerHTML = `
+        <div class="grid gap-8 ${gridCols}">
+          <div class="${leftColsSpan} gap-8">
+            ${columnsHtml}
+          </div>
+          ${promoHtml}
+        </div>
+      `;
+
+      megaMenu.style.opacity = '1';
+      megaMenu.style.transform = 'translateY(0)';
+      megaMenu.style.pointerEvents = 'auto';
+
+      megaMenu.onmouseenter = () => {
+        if (megaMenuTimeout) clearTimeout(megaMenuTimeout);
+      };
+      megaMenu.onmouseleave = () => {
+        hideMegaMenu();
+      };
+    }
+
+    function hideMegaMenu() {
+      if (megaMenuTimeout) clearTimeout(megaMenuTimeout);
+      megaMenuTimeout = setTimeout(() => {
+        const megaMenu = document.querySelector('header div.absolute.left-0.w-full.bg-white.border-t');
+        if (megaMenu) {
+          megaMenu.style.opacity = '0';
+          megaMenu.style.transform = 'translateY(-8px)';
+          megaMenu.style.pointerEvents = 'none';
+        }
+      }, 200);
+    }
+
+    function renderHeaderMenu(menuStructure) {
+      const nav = document.querySelector('nav.hidden.lg\\:flex');
+      if (!nav) return;
+      nav.innerHTML = '';
+
+      menuStructure.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'h-full flex items-center relative';
+
+        const hasChildren = item.columns && item.columns.length > 0;
+        const arrowSvg = hasChildren 
+          ? `<svg class="w-3.5 h-3.5 ml-1 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>` 
+          : '';
+
+        const link = document.createElement('a');
+        link.href = item.href || '#';
+        link.className = 'flex items-center text-14 font-semibold font-roboto px-2 xl:px-3 py-2 transition-colors text-gray-700 hover:text-[#c95714]';
+        link.innerHTML = `${item.label}${arrowSvg}`;
+        itemDiv.appendChild(link);
+
+        if (hasChildren) {
+          itemDiv.addEventListener('mouseenter', () => showMegaMenu(item));
+          itemDiv.addEventListener('mouseleave', () => hideMegaMenu());
+        } else {
+          itemDiv.addEventListener('mouseenter', () => hideMegaMenu());
+        }
+        nav.appendChild(itemDiv);
+      });
+
+      const contactLink = document.createElement('a');
+      contactLink.href = '/contact/';
+      contactLink.className = 'lg:ml-6 text-white text-xs font-bold uppercase tracking-wider px-5 py-3 rounded shadow-sm transition-colors';
+      contactLink.style.backgroundColor = '#F7610C';
+      contactLink.textContent = 'Contact Us';
+      nav.appendChild(contactLink);
+
+      // Mobile Menu binding
+      const openMobileBtn = document.querySelector('header button[aria-label="Open menu"]');
+      const closeMobileBtn = document.querySelector('header button[aria-label="Close menu"]');
+      const mobileDrawer = document.querySelector('header div.lg\\:hidden.fixed.right-0');
+
+      if (openMobileBtn && mobileDrawer) {
+        openMobileBtn.onclick = (e) => {
+          e.preventDefault();
+          mobileDrawer.style.transform = 'translateX(0)';
+        };
+      }
+      if (closeMobileBtn && mobileDrawer) {
+        closeMobileBtn.onclick = (e) => {
+          e.preventDefault();
+          mobileDrawer.style.transform = 'translateX(100%)';
+        };
+      }
+
+      const mobileNavContainer = document.querySelector('header div.px-3.py-3.space-y-0.5');
+      if (mobileNavContainer) {
+        mobileNavContainer.innerHTML = '';
+        const homeLink = document.createElement('a');
+        homeLink.href = '/';
+        homeLink.className = 'block px-3 py-2.5 rounded text-sm font-semibold text-gray-700 hover:bg-gray-50';
+        homeLink.textContent = 'Home';
+        mobileNavContainer.appendChild(homeLink);
+
+        menuStructure.forEach(item => {
+          const itemDiv = document.createElement('div');
+          const hasChildren = item.columns && item.columns.length > 0;
+
+          if (hasChildren) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'w-full flex justify-between items-center px-3 py-2.5 rounded text-sm font-semibold text-gray-700 hover:bg-gray-50';
+            toggleBtn.innerHTML = `<span>${item.label}</span><svg class="w-3.5 h-3.5 ml-1 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
+            
+            const childrenDiv = document.createElement('div');
+            childrenDiv.className = 'pl-4 pb-1 space-y-0.5 hidden';
+
+            item.columns.forEach(col => {
+              col.links.forEach(link => {
+                const childLink = document.createElement('a');
+                childLink.href = link.href || '#';
+                childLink.className = 'block px-3 py-1.5 rounded text-sm text-gray-600 hover:bg-gray-50';
+                childLink.textContent = link.label;
+                childrenDiv.appendChild(childLink);
+              });
+            });
+
+            toggleBtn.onclick = () => {
+              childrenDiv.classList.toggle('hidden');
+              const svg = toggleBtn.querySelector('svg');
+              if (svg) {
+                svg.style.transform = childrenDiv.classList.contains('hidden') ? 'rotate(0)' : 'rotate(180deg)';
+              }
+            };
+
+            itemDiv.appendChild(toggleBtn);
+            itemDiv.appendChild(childrenDiv);
+          } else {
+            const itemLink = document.createElement('a');
+            itemLink.href = item.href || '#';
+            itemLink.className = 'block px-3 py-2.5 rounded text-sm font-semibold text-gray-700 hover:bg-gray-50';
+            itemLink.textContent = item.label;
+            itemDiv.appendChild(itemLink);
+          }
+          mobileNavContainer.appendChild(itemDiv);
+        });
+
+        const contactMobileLink = document.createElement('a');
+        contactMobileLink.href = '/contact/';
+        contactMobileLink.className = 'block mt-3 mx-3 px-3 py-2.5 rounded text-center text-sm font-bold text-white';
+        contactMobileLink.style.backgroundColor = '#F7610C';
+        contactMobileLink.textContent = 'Contact Us';
+        mobileNavContainer.appendChild(contactMobileLink);
+      }
+    }
+
     fetch('/')
       .then(response => response.text())
       .then(markup => {
@@ -30,9 +496,24 @@
         const header = page.querySelector('header');
         if (header) {
           document.getElementById('shared-header').replaceWith(header);
+          
+          // Load navigation dynamically
+          const navApiUrl = window.location.hostname === 'localhost' && window.location.port === '3000'
+            ? 'http://localhost/inclenweb/admin/admin/index.php?rest_route=/navigation/v1/all'
+            : '/admin/admin/index.php?rest_route=/navigation/v1/all';
+
+          fetch(navApiUrl)
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.menu_structure) {
+                const rebuiltMenu = buildReactMenu(data.menu_structure);
+                renderHeaderMenu(rebuiltMenu);
+              }
+            })
+            .catch(err => console.error("Error fetching menu structure:", err));
         }
       })
-      .catch(() => {});
+      .catch((err) => console.error("Error loading header:", err));
 
     const list = document.getElementById('blog-list');
     const escapeHtml = value => { const el = document.createElement('div'); el.textContent = value || ''; return el.innerHTML; };
