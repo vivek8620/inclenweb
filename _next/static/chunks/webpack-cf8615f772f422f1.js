@@ -186,20 +186,26 @@
         }
     ];
 
+    function formatTitleCase(str) {
+        if (!str) return '';
+        return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+    }
+
     function buildReactMenu(dbStructure) {
         return dbStructure.map(dbParent => {
             const origParent = originalC_Template.find(p => p.label.toLowerCase() === dbParent.label.toLowerCase() || p.href.includes(dbParent.key));
-            
+            const formattedLabel = origParent ? origParent.label : formatTitleCase(dbParent.label);
+
             if (!origParent) {
                 // Newly created parent
                 const activeChildren = dbParent.children ? dbParent.children.filter(c => c.visible) : [];
                 return {
-                    label: dbParent.label,
+                    label: formattedLabel,
                     href: dbParent.href || "#",
                     visible: dbParent.visible,
                     columns: activeChildren.length > 0 ? [{
                         heading: "Links",
-                        links: activeChildren.map(c => ({ label: c.label, href: (c.href && c.href !== '#') ? c.href : "#" }))
+                        links: activeChildren.map(c => ({ label: formatTitleCase(c.label), href: (c.href && c.href !== '#') ? c.href : "#" }))
                     }] : []
                 };
             }
@@ -231,11 +237,11 @@
                 const newChildren = dbParent.children.filter(c => c.visible && !allOriginalLinkLabels.includes(c.label.toLowerCase()));
                 if (newChildren.length > 0) {
                     if (rebuiltColumns.length > 0) {
-                        rebuiltColumns[0].links.push(...newChildren.map(c => ({ label: c.label, href: c.href || "#" })));
+                        rebuiltColumns[0].links.push(...newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" })));
                     } else {
                         rebuiltColumns.push({
                             heading: "Links",
-                            links: newChildren.map(c => ({ label: c.label, href: c.href || "#" }))
+                            links: newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" }))
                         });
                     }
                 }
@@ -243,7 +249,7 @@
 
             return {
                 ...origParent,
-                label: dbParent.label,
+                label: formattedLabel,
                 visible: dbParent.visible,
                 columns: rebuiltColumns
             };
