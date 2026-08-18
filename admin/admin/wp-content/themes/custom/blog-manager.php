@@ -376,8 +376,8 @@ function loadBlogs() {
                         minute: '2-digit'
                     });
                     
-                    const blogPath = `/about/blog/post/?id=${item.id}`;
-                    const fullBlogUrl = `${SITE_ROOT_URL}about/blog/post/?id=${item.id}`;
+                    const blogPath = `/about/blog/post/?id=${item.slug || item.id}`;
+                    const fullBlogUrl = `${SITE_ROOT_URL}about/blog/post/?id=${item.slug || item.id}`;
 
                     html += `
                     <tr>

@@ -517,7 +517,7 @@
     const apiUrl = window.location.hostname === 'localhost' && window.location.port === '3000' ? 'http://localhost/inclenweb/admin/admin/index.php?rest_route=/blogs/v1/public' : '/admin/admin/index.php?rest_route=/blogs/v1/public';
     if (!postId) { container.innerHTML = '<div class="message error">Blog post was not found.</div>'; }
     else fetch(apiUrl).then(r => { if (!r.ok) throw new Error('Unable to load this blog post.'); return r.json(); }).then(posts => {
-      const post = posts.find(item => String(item.id) === String(postId));
+      const post = posts.find(item => String(item.id) === String(postId) || String(item.slug) === String(postId));
       if (!post) throw new Error('Blog post was not found.');
       document.title = `${post.title} | INCLEN Blog`;
       const date = new Date(post.created_at).toLocaleDateString(undefined, {year:'numeric',month:'long',day:'numeric'});
