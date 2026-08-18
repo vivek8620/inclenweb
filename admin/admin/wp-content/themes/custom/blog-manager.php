@@ -389,7 +389,6 @@ function loadBlogs() {
                             <div style="display: flex; align-items: center; gap: 5px;">
                                 <input type="text" class="regular-text" style="width: 120px; margin: 0; padding: 3px 8px; font-size: 12px; height: 28px; min-height: 28px;" readonly value="${blogPath}">
                                 <button class="button button-small" onclick="copyBlogLink(this, '${blogPath}')" title="Copy Link to Clipboard">Copy</button>
-                                <a href="${fullBlogUrl}" target="_blank" class="button button-small" title="View blog post in a new tab" style="display: inline-flex; align-items: center; justify-content: center; height: 28px;">View</a>
                             </div>
                         </td>
                         <td>
