@@ -192,12 +192,14 @@
             
             if (!origParent) {
                 // Newly created parent
+                const activeChildren = dbParent.children ? dbParent.children.filter(c => c.visible) : [];
                 return {
                     label: dbParent.label,
                     href: dbParent.href || "#",
-                    columns: dbParent.children ? [{
+                    visible: dbParent.visible,
+                    columns: activeChildren.length > 0 ? [{
                         heading: "Links",
-                        links: dbParent.children.map(c => ({ label: c.label, href: c.href || "#" }))
+                        links: activeChildren.map(c => ({ label: c.label, href: (c.href && c.href !== '#') ? c.href : "#" }))
                     }] : []
                 };
             }

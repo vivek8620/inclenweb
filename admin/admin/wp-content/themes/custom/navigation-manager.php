@@ -1489,9 +1489,10 @@ function navigation_settings_page() { ?>
         renderTreeControls();
         renderLivePreview();
         updateSummary();
+        saveNavigation();
     }
 
-    // Submit deletion of menu item to local state (saved to DB only on Save Navigation Settings click)
+    // Submit deletion of menu item to local state (auto-saves to DB)
     function deleteNode(key) {
         if (!confirm(`Are you sure you want to delete the menu item "${key}"?`)) return;
 
@@ -1520,6 +1521,7 @@ function navigation_settings_page() { ?>
         renderTreeControls();
         renderLivePreview();
         updateSummary();
+        saveNavigation();
     }
 
     document.addEventListener("DOMContentLoaded", () => {
