@@ -41,6 +41,12 @@ add_action('rest_api_init', function () {
         'callback' => 'delete_navigation_item',
         'permission_callback' => '__return_true'
     ]);
+
+    register_rest_route('navigation/v1', '/update', [
+        'methods'  => 'POST',
+        'callback' => 'update_navigation_item',
+        'permission_callback' => '__return_true'
+    ]);
 });
 
 // Returns default menu structure
@@ -326,6 +332,69 @@ function delete_navigation_item($request) {
     }
 
     $success = delete_item_recursive_helper($structure, $key);
+    if (!$success) {
+        return new WP_Error('item_not_found', 'Item not found in menu structure', ['status' => 404]);
+    }
+
+    // Save back to DB
+    if ($id) {
+        $wpdb->update($table, [
+            'menu_structure' => wp_json_encode($structure)
+        ], ['id' => $id]);
+    } else {
+        $wpdb->query("TRUNCATE TABLE $table");
+        $wpdb->insert($table, [
+            'menu_structure' => wp_json_encode($structure)
+        ]);
+    }
+
+    return ['status' => 'success', 'menu_structure' => $structure];
+}
+
+// Update a navigation item (label and href) in the database JSON
+function update_navigation_item($request) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'site_navigation';
+    $params = json_decode($request->get_body(), true);
+
+    $key = isset($params['key']) ? sanitize_key($params['key']) : '';
+    $label = isset($params['label']) ? sanitize_text_field($params['label']) : '';
+    $href = isset($params['href']) ? sanitize_text_field($params['href']) : '';
+
+    if (empty($key)) {
+        return new WP_Error('empty_key', 'Key is required', ['status' => 400]);
+    }
+    if (empty($label)) {
+        return new WP_Error('empty_label', 'Label is required', ['status' => 400]);
+    }
+
+    $settings = get_all_navigation_settings();
+    $structure = $settings['menu_structure'];
+    $id = $settings['id'];
+
+    // Recursive update helper
+    if (!function_exists('update_item_recursive_helper')) {
+        function update_item_recursive_helper(&$items, $target_key, $new_label, $new_href) {
+            $updated = false;
+            foreach ($items as &$item) {
+                if ($item['key'] === $target_key) {
+                    $item['label'] = $new_label;
+                    $item['href'] = $new_href;
+                    $updated = true;
+                    break;
+                }
+                if (isset($item['children']) && is_array($item['children'])) {
+                    if (update_item_recursive_helper($item['children'], $target_key, $new_label, $new_href)) {
+                        $updated = true;
+                        break;
+                    }
+                }
+            }
+            return $updated;
+        }
+    }
+
+    $success = update_item_recursive_helper($structure, $key, $label, $href);
     if (!$success) {
         return new WP_Error('item_not_found', 'Item not found in menu structure', ['status' => 404]);
     }
@@ -879,7 +948,7 @@ function navigation_settings_page() { ?>
                 
                 <div style="text-align:right; gap:10px; display:flex; justify-content:flex-end;">
                     <button type="button" class="button button-secondary" onclick="closeAddNodeModal()">Cancel</button>
-                    <button type="button" class="button button-primary" onclick="submitAddNode()">Add Menu Item</button>
+                    <button type="button" class="button button-primary" id="modal_submit_btn" onclick="submitAddNode()">Add Menu Item</button>
                 </div>
             </div>
         </div>
@@ -1074,6 +1143,9 @@ function navigation_settings_page() { ?>
                         <span class="node-label">${item.label}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
+                        <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${item.key}', '${item.label.replace(/'/g, "\\'")}', '${item.href.replace(/'/g, "\\'")}')" title="Edit '${item.label}'">
+                            <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                        </button>
                         <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${item.key}')" title="Delete '${item.label}'">
                             <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                         </button>
@@ -1097,7 +1169,7 @@ function navigation_settings_page() { ?>
             if (!item.visible) {
                 childContainer.style.opacity = '0.5';
             }
-
+ 
             const children = item.children || [];
             children.forEach((child, childIdx) => {
                 const childDiv = document.createElement('div');
@@ -1108,6 +1180,9 @@ function navigation_settings_page() { ?>
                             <span class="node-label">${child.label}</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
+                            <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${child.key}', '${child.label.replace(/'/g, "\\'")}', '${child.href.replace(/'/g, "\\'")}')" title="Edit '${child.label}'">
+                                <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                            </button>
                             <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${child.key}')" title="Delete '${child.label}'">
                                 <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                             </button>
@@ -1426,13 +1501,20 @@ function navigation_settings_page() { ?>
         updateSummary();
     }
 
+    let modalMode = 'add';
+    let editingNodeKey = null;
+
     // Modal controls for Adding Menu Item
     function openAddNodeModal(parentKey) {
+        modalMode = 'add';
         document.getElementById('modal_parent_key').value = parentKey || '';
         document.getElementById('modal_item_label').value = '';
         document.getElementById('modal_item_href').value = '';
         
         const titleEl = document.getElementById('modal_title');
+        const submitBtn = document.getElementById('modal_submit_btn');
+        if (submitBtn) submitBtn.innerText = "Add Menu Item";
+
         if (parentKey) {
             titleEl.innerText = `Add Sub-item under "${parentKey}"`;
         } else {
@@ -1442,53 +1524,88 @@ function navigation_settings_page() { ?>
         document.getElementById('add_node_modal').style.display = 'block';
     }
 
+    function openEditNodeModal(key, label, href) {
+        modalMode = 'edit';
+        editingNodeKey = key;
+        document.getElementById('modal_item_label').value = label;
+        document.getElementById('modal_item_href').value = href;
+        
+        const titleEl = document.getElementById('modal_title');
+        titleEl.innerText = `Edit Menu Item "${label}"`;
+        
+        const submitBtn = document.getElementById('modal_submit_btn');
+        if (submitBtn) submitBtn.innerText = "Save Changes";
+        
+        document.getElementById('add_node_modal').style.display = 'block';
+    }
+
     function closeAddNodeModal() {
         document.getElementById('add_node_modal').style.display = 'none';
-    }    // Submit newly created menu item to local state (saved to DB only on Save Navigation Settings click)
+    }
+
+    // Submit newly created or updated menu item to local state
     function submitAddNode() {
         const label = document.getElementById('modal_item_label').value.trim();
-        // A Blog item should always point to the public blog listing, not the
-        // WordPress admin Blog Manager screen.
         const href = document.getElementById('modal_item_href').value.trim() || (label.toLowerCase() === 'blog' ? '/about/blog/' : '#');
-        const parentKey = document.getElementById('modal_parent_key').value;
 
         if (!label) {
             alert("Please enter a menu label.");
             return;
         }
 
-        // Generate unique key
-        const cleanLabel = label.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        const key = 'custom_' + cleanLabel + '_' + Math.floor(100 + Math.random() * 900);
+        if (modalMode === 'add') {
+            const parentKey = document.getElementById('modal_parent_key').value;
+            // Generate unique key
+            const cleanLabel = label.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const key = 'custom_' + cleanLabel + '_' + Math.floor(100 + Math.random() * 900);
 
-        const newItem = {
-            key: key,
-            label: label,
-            href: href,
-            visible: true
-        };
+            const newItem = {
+                key: key,
+                label: label,
+                href: href,
+                visible: true
+            };
 
-        if (parentKey) {
-            // Add as child
-            let added = false;
-            for (let i = 0; i < menuStructure.length; i++) {
-                if (menuStructure[i].key === parentKey) {
-                    if (!menuStructure[i].children) {
-                        menuStructure[i].children = [];
+            if (parentKey) {
+                // Add as child
+                let added = false;
+                for (let i = 0; i < menuStructure.length; i++) {
+                    if (menuStructure[i].key === parentKey) {
+                        if (!menuStructure[i].children) {
+                            menuStructure[i].children = [];
+                        }
+                        menuStructure[i].children.push(newItem);
+                        added = true;
+                        break;
                     }
-                    menuStructure[i].children.push(newItem);
-                    added = true;
-                    break;
                 }
+                if (!added) {
+                    alert("Parent item not found.");
+                    return;
+                }
+            } else {
+                // Add as top-level parent
+                newItem.children = [];
+                menuStructure.push(newItem);
             }
-            if (!added) {
-                alert("Parent item not found.");
-                return;
+        } else if (modalMode === 'edit') {
+            // Find and update item recursive
+            function updateItemRecursive(items, targetKey) {
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].key === targetKey) {
+                        items[i].label = label;
+                        items[i].href = href;
+                        return true;
+                    }
+                    if (items[i].children && items[i].children.length > 0) {
+                        if (updateItemRecursive(items[i].children, targetKey)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
-        } else {
-            // Add as top-level parent
-            newItem.children = [];
-            menuStructure.push(newItem);
+            updateItemRecursive(menuStructure, editingNodeKey);
         }
 
         closeAddNodeModal();
