@@ -268,20 +268,13 @@ function loadBlogs() {
                         : `<span style="color:#ccc;font-size:11px;">No image</span>`;
                     const blogUrl = item.slug ? '/about/blog/post/?id=' + item.slug : '';
                     const urlCell = blogUrl
-                        ? `<div style="display:flex;align-items:center;gap:5px;">
-                              <a href="${blogUrl}" target="_blank" title="${blogUrl}" style="
-                                  display:inline-flex;align-items:center;gap:4px;
-                                  padding:4px 10px;
-                                  background:#f0f4ff;border:1px solid #c7d4f8;
-                                  color:#4a6cf7;border-radius:20px;
+                        ? `<div style="display:flex;align-items:center;gap:6px;">
+                              <span style="
                                   font-size:10.5px;font-family:monospace;
-                                  text-decoration:none;white-space:nowrap;
+                                  color:#555;white-space:nowrap;
                                   max-width:140px;overflow:hidden;text-overflow:ellipsis;
-                                  flex-shrink:1;transition:background 0.2s;
-                              " onmouseover="this.style.background='#dce6ff'" onmouseout="this.style.background='#f0f4ff'">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4a6cf7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                                ${blogUrl}
-                              </a>
+                                  display:inline-block;
+                              " title="${blogUrl}">${blogUrl}</span>
                               <button onclick="copyBlogUrl('${blogUrl}', this)" title="Copy URL" style="
                                   background:#fff;border:1px solid #ddd;border-radius:6px;
                                   padding:3px 6px;cursor:pointer;font-size:12px;
@@ -292,7 +285,7 @@ function loadBlogs() {
                         : '';
                     html += `
                     <tr>
-                        <td><strong>${item.title}</strong><br><small style="color:#888;">slug: ${item.slug || ''}</small></td>
+                        <td><strong>${item.title}</strong></td>
                         <td>${item.author || '-'}</td>
                         <td style="vertical-align:middle;">${imgHtml}</td>
                         <td style="vertical-align:middle;">${urlCell}</td>
