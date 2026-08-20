@@ -286,17 +286,18 @@ function blog_manager_page() { ?>
         <table class="wp-list-table widefat fixed striped posts">
             <thead>
                 <tr>
-                    <th style="width: 20%;">Title</th>
-                    <th style="width: 12%;">Author</th>
-                    <th style="width: 15%;">Cover Image</th>
-                    <th style="width: 18%;">Published Date</th>
-                    <th style="width: 20%;">Blog URL (Link)</th>
+                    <th style="width: 18%;">Title</th>
+                    <th style="width: 10%;">Author</th>
+                    <th style="width: 12%;">Cover Image</th>
+                    <th style="width: 12%;">Banner Image</th>
+                    <th style="width: 15%;">Published Date</th>
+                    <th style="width: 18%;">Blog URL (Link)</th>
                     <th style="width: 15%;">Actions</th>
                 </tr>
             </thead>
             <tbody id="blogList">
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 20px; color: #666;">Loading blogs...</td>
+                    <td colspan="7" style="text-align: center; padding: 20px; color: #666;">Loading blogs...</td>
                 </tr>
             </tbody>
         </table>
@@ -364,7 +365,7 @@ function loadBlogs() {
             let html = '';
             blogsById = {};
             if (data.length === 0) {
-                html = `<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No blogs found. Add your first blog above!</td></tr>`;
+                html = `<tr><td colspan="7" style="text-align: center; padding: 20px; color: #666;">No blogs found. Add your first blog above!</td></tr>`;
             } else {
                 data.forEach(item => {
                     blogsById[item.id] = item;
@@ -378,12 +379,13 @@ function loadBlogs() {
                     
                     const blogPath = `/about/blog/post/?id=${item.slug || item.id}`;
                     const fullBlogUrl = `${SITE_ROOT_URL}about/blog/post/?id=${item.slug || item.id}`;
-
+ 
                     html += `
                     <tr>
                         <td><strong>${escapeBlogHtml(item.title)}</strong></td>
                         <td>${escapeBlogHtml(item.author)}</td>
                         <td>${item.image ? `<img src="${escapeBlogHtml(item.image)}" class="preview-img" style="max-height: 60px; max-width: 100px;" alt="Blog cover image">` : '<span style="color:#aaa; font-style:italic;">No image</span>'}</td>
+                        <td>${item.banner_image ? `<img src="${escapeBlogHtml(item.banner_image)}" class="preview-img" style="max-height: 60px; max-width: 100px;" alt="Blog banner image">` : '<span style="color:#aaa; font-style:italic;">No image</span>'}</td>
                         <td>${formattedDate}</td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 5px;">
@@ -402,7 +404,7 @@ function loadBlogs() {
         })
         .catch(err => {
             console.error("Error loading blogs:", err);
-            document.getElementById("blogList").innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Failed to load blogs.</td></tr>`;
+            document.getElementById("blogList").innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Failed to load blogs.</td></tr>`;
         });
 }
 
