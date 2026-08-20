@@ -171,17 +171,17 @@ function blog_manager_page() { ?>
 </tr>
 
 <tr>
-<th>Content <span style="color:red;">*</span></th>
+<th>Author</th>
 <td>
-    <?php wp_editor('', 'blog_content_editor'); ?>
-    <span id="blog_content_error" class="error-msg"></span>
+    <input type="text" id="blog_author" class="regular-text" placeholder="Author name">
 </td>
 </tr>
 
 <tr>
-<th>Author</th>
+<th>Content <span style="color:red;">*</span></th>
 <td>
-    <input type="text" id="blog_author" class="regular-text" placeholder="Author name">
+    <?php wp_editor('', 'blog_content_editor'); ?>
+    <span id="blog_content_error" class="error-msg"></span>
 </td>
 </tr>
 
@@ -193,17 +193,6 @@ function blog_manager_page() { ?>
     <br><br>
     <img id="blog_preview_image" style="max-width:200px;display:none;border-radius:5px;border:1px solid #ddd;padding:5px;">
     <span id="blog_image_status" style="font-size:12px;color:#666;margin-left:8px;"></span>
-</td>
-</tr>
-
-<tr>
-<th>Banner Image</th>
-<td>
-    <input type="file" id="blog_banner_file" accept="image/*">
-    <input type="hidden" id="blog_banner_image">
-    <br><br>
-    <img id="blog_preview_banner" style="max-width:200px;display:none;border-radius:5px;border:1px solid #ddd;padding:5px;">
-    <span id="blog_banner_status" style="font-size:12px;color:#666;margin-left:8px;"></span>
 </td>
 </tr>
 
@@ -234,29 +223,46 @@ function blog_manager_page() { ?>
 
 </div>
 
+
 <script>
 const BLOG_API = "<?php echo site_url('/wp-json/blogs/v1'); ?>";
+// Frontend site root (e.g. http://localhost:3000 or https://inclentrust.org)
+const FRONTEND_ROOT = "<?php
+$h = (isset($_SERVER['HTTP_HOST']) && (strpos($_SERVER['HTTP_HOST'],'localhost') !== false || strpos($_SERVER['HTTP_HOST'],'127.0.0.1') !== false))
+    ? 'http://localhost:3000'
+    : 'https://inclentrust.org';
+echo $h;
+?>";
+function resolveImgUrl(url) {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url)) return url;   // already absolute
+    return FRONTEND_ROOT + (url.startsWith('/') ? url : '/' + url);
+}
 let editingBlogId = null;
+const blogDataMap = {}; // stores blog objects keyed by id
 
 function loadBlogs() {
     fetch(BLOG_API + '/all')
         .then(res => res.json())
         .then(data => {
             let html = '';
-            if (!data.length) {
+            if (!data || !data.length) {
                 html = '<tr><td colspan="5" style="text-align:center;color:#999;">No blog posts yet.</td></tr>';
             } else {
                 data.forEach(item => {
+                    blogDataMap[item.id] = item; // store in map
                     const date = item.created_at ? new Date(item.created_at).toLocaleDateString('en-IN', {year:'numeric',month:'short',day:'numeric'}) : '-';
+                    const resolvedImg = resolveImgUrl(item.image);
+                    const imgHtml = resolvedImg ? '<img src="' + resolvedImg + '" width="70" height="50" style="border-radius:3px;border:1px solid #ddd;object-fit:cover;">' : '-';
                     html += `
                     <tr>
                         <td><strong>${item.title}</strong><br><small style="color:#888;">slug: ${item.slug || ''}</small></td>
                         <td>${item.author || '-'}</td>
-                        <td>${item.image ? '<img src="' + item.image + '" width="70" style="border-radius:3px;border:1px solid #ddd;">' : '-'}</td>
+                        <td>${imgHtml}</td>
                         <td>${date}</td>
                         <td>
-                            <button onclick='editBlog(${JSON.stringify(item)})' class="button button-small">Edit</button>
-                            <button onclick='deleteBlog(${item.id})' class="button button-small" style="color:#b32d2e;margin-left:4px;">Delete</button>
+                            <button onclick="editBlog(${item.id})" class="button button-small">Edit</button>
+                            <button onclick="deleteBlog(${item.id})" class="button button-small" style="color:#b32d2e;margin-left:4px;">Delete</button>
                         </td>
                     </tr>`;
                 });
@@ -280,7 +286,6 @@ function saveBlog() {
     const editor     = tinymce.get('blog_content_editor');
     const contentVal = editor ? editor.getContent().trim() : '';
     const imageVal   = document.getElementById('blog_image').value;
-    const bannerVal  = document.getElementById('blog_banner_image').value;
 
     let isValid = true;
 
@@ -297,7 +302,7 @@ function saveBlog() {
     }
     if (!isValid) return;
 
-    const payload = { title: titleVal, content: contentVal, author: authorVal, image: imageVal, banner_image: bannerVal };
+    const payload = { title: titleVal, content: contentVal, author: authorVal, image: imageVal };
     const url = editingBlogId ? BLOG_API + '/update/' + editingBlogId : BLOG_API + '/add';
 
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
@@ -310,23 +315,20 @@ function saveBlog() {
         .catch(err => alert('Error saving blog: ' + err));
 }
 
-function editBlog(item) {
+function editBlog(id) {
+    const item = blogDataMap[id];
+    if (!item) { alert('Blog data not found, please refresh.'); return; }
     clearBlogErrors();
     editingBlogId = item.id;
     document.getElementById('blog-form-heading').innerText = 'Edit Blog';
-    document.getElementById('blog_title').value  = item.title;
+    document.getElementById('blog_title').value  = item.title || '';
     document.getElementById('blog_author').value = item.author || '';
     document.getElementById('blog_image').value  = item.image || '';
-    document.getElementById('blog_banner_image').value = item.banner_image || '';
 
-    if (item.image) {
-        const p = document.getElementById('blog_preview_image');
-        p.src = item.image; p.style.display = 'block';
-    }
-    if (item.banner_image) {
-        const p = document.getElementById('blog_preview_banner');
-        p.src = item.banner_image; p.style.display = 'block';
-    }
+    const prevImg = document.getElementById('blog_preview_image');
+    if (item.image) { prevImg.src = resolveImgUrl(item.image); prevImg.style.display = 'block'; }
+    else { prevImg.style.display = 'none'; }
+
     const editor = tinymce.get('blog_content_editor');
     if (editor) editor.setContent(item.content || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -346,11 +348,8 @@ function resetBlogForm() {
     document.getElementById('blog_title').value  = '';
     document.getElementById('blog_author').value = '';
     document.getElementById('blog_image').value  = '';
-    document.getElementById('blog_banner_image').value = '';
     document.getElementById('blog_preview_image').style.display = 'none';
-    document.getElementById('blog_preview_banner').style.display = 'none';
     document.getElementById('blog_image_status').innerText  = '';
-    document.getElementById('blog_banner_status').innerText = '';
     const editor = tinymce.get('blog_content_editor');
     if (editor) editor.setContent('');
     clearBlogErrors();
@@ -380,8 +379,7 @@ function setupBlogImageUpload(inputId, hiddenId, previewId, statusId) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    setupBlogImageUpload('blog_image_file',  'blog_image',        'blog_preview_image', 'blog_image_status');
-    setupBlogImageUpload('blog_banner_file', 'blog_banner_image', 'blog_preview_banner','blog_banner_status');
+    setupBlogImageUpload('blog_image_file', 'blog_image', 'blog_preview_image', 'blog_image_status');
     loadBlogs();
 });
 </script>
