@@ -3,6 +3,7 @@
 
   function moveBlogLinksToOtherLinks() {
     document.querySelectorAll('header').forEach(header => {
+      if (header.dataset.blogAboutMenuActive !== 'true') return;
       const organizationHeading = [...header.querySelectorAll('p, div')]
         .find(element => element.textContent.trim() === 'Organization');
       if (!organizationHeading) return;
@@ -12,9 +13,7 @@
       if (!blogLinks.length) return;
 
       const columnsContainer = organizationColumn.parentElement;
-      let otherLinksColumn = [...columnsContainer.children].find(column =>
-        [...column.querySelectorAll('p, div')].some(element => element.textContent.trim() === 'Other Links')
-      );
+      let otherLinksColumn = header.querySelector('[data-blog-other-links]');
 
       if (!otherLinksColumn) {
         otherLinksColumn = document.createElement('div');
@@ -23,16 +22,80 @@
         const linksContainer = document.createElement('div');
         linksContainer.className = organizationHeading.nextElementSibling?.className || 'space-y-3';
         otherLinksColumn.append(heading, linksContainer);
+        otherLinksColumn.dataset.blogOtherLinks = 'true';
         columnsContainer.appendChild(otherLinksColumn);
       }
 
       const linksContainer = otherLinksColumn.lastElementChild;
-      blogLinks.forEach(link => linksContainer.appendChild(link));
+      const existingLinks = new Set(
+        [...linksContainer.querySelectorAll('a')].map(link => `${link.textContent.trim()}|${link.href}`)
+      );
+      blogLinks.forEach(link => {
+        const linkKey = `${link.textContent.trim()}|${link.href}`;
+        if (existingLinks.has(linkKey)) {
+          link.remove();
+          return;
+        }
+        existingLinks.add(linkKey);
+        linksContainer.appendChild(link);
+      });
+
+      // The original About menu reserves two columns for links. Expand that
+      // area to three columns so "Other Links" stays beside Leadership,
+      // rather than wrapping beneath Organization.
+      const megaMenuGrid = columnsContainer.parentElement;
+      megaMenuGrid.dataset.blogMenuGrid = 'true';
+      megaMenuGrid.style.gridTemplateColumns = 'repeat(5, minmax(0, 1fr))';
+      columnsContainer.style.gridColumn = 'span 3 / span 3';
+      columnsContainer.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
+      organizationColumn.style.gridColumn = '1';
+      const leadershipColumn = [...columnsContainer.children].find(column =>
+        [...column.querySelectorAll('p, div')].some(element => element.textContent.trim() === 'Leadership')
+      );
+      if (leadershipColumn) leadershipColumn.style.gridColumn = '2';
+      otherLinksColumn.style.gridColumn = '3';
     });
   }
 
-  moveBlogLinksToOtherLinks();
-  new MutationObserver(moveBlogLinksToOtherLinks).observe(document.documentElement, {
+  function clearBlogMenuLayout(header) {
+    header.querySelectorAll('[data-blog-other-links]').forEach(column => column.remove());
+    header.querySelectorAll('[data-blog-menu-grid]').forEach(grid => {
+      grid.style.gridTemplateColumns = '';
+      grid.removeAttribute('data-blog-menu-grid');
+      [...grid.children].forEach(column => {
+        column.style.gridColumn = '';
+        column.style.gridTemplateColumns = '';
+        [...column.children].forEach(child => { child.style.gridColumn = ''; });
+      });
+    });
+  }
+
+  function bindAboutMenuOnly() {
+    document.querySelectorAll('header').forEach(header => {
+      if (header.dataset.blogMenuBound === 'true') return;
+      const menuLinks = [...header.querySelectorAll('nav a')];
+      const aboutLink = menuLinks.find(link => link.textContent.trim().startsWith('About'));
+      if (!aboutLink) return;
+
+      header.dataset.blogMenuBound = 'true';
+      aboutLink.addEventListener('mouseenter', () => {
+        header.dataset.blogAboutMenuActive = 'true';
+        setTimeout(moveBlogLinksToOtherLinks, 0);
+      });
+      menuLinks.filter(link => link !== aboutLink).forEach(link => {
+        link.addEventListener('mouseenter', () => {
+          header.dataset.blogAboutMenuActive = 'false';
+          clearBlogMenuLayout(header);
+        });
+      });
+    });
+  }
+
+  bindAboutMenuOnly();
+  new MutationObserver(() => {
+    bindAboutMenuOnly();
+    moveBlogLinksToOtherLinks();
+  }).observe(document.documentElement, {
     childList: true,
     subtree: true
   });
