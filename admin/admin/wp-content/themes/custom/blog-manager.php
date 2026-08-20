@@ -261,18 +261,6 @@ function blog_manager_page() { ?>
                     </div>
                 </td>
             </tr>
-
-            <tr>
-                <th><label for="banner_image_file">Banner Image</label></th>
-                <td>
-                    <input type="file" id="banner_image_file" accept="image/*">
-                    <input type="hidden" id="banner_image">
-                    <p class="description">Used at a fixed height on the Blog Detail page.</p>
-                    <div class="preview-img-container">
-                        <img id="preview_banner_image" class="preview-img" style="display:none;" alt="Banner image preview">
-                    </div>
-                </td>
-            </tr>
         </table>
 
         <p class="submit">
@@ -286,10 +274,9 @@ function blog_manager_page() { ?>
         <table class="wp-list-table widefat fixed striped posts">
             <thead>
                 <tr>
-                    <th style="width: 18%;">Title</th>
-                    <th style="width: 10%;">Author</th>
-                    <th style="width: 12%;">Cover Image</th>
-                    <th style="width: 12%;">Banner Image</th>
+                    <th style="width: 25%;">Title</th>
+                    <th style="width: 12%;">Author</th>
+                    <th style="width: 15%;">Cover Image</th>
                     <th style="width: 15%;">Published Date</th>
                     <th style="width: 18%;">Blog URL (Link)</th>
                     <th style="width: 15%;">Actions</th>
@@ -297,7 +284,7 @@ function blog_manager_page() { ?>
             </thead>
             <tbody id="blogList">
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 20px; color: #666;">Loading blogs...</td>
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #666;">Loading blogs...</td>
                 </tr>
             </tbody>
         </table>
@@ -365,7 +352,7 @@ function loadBlogs() {
             let html = '';
             blogsById = {};
             if (data.length === 0) {
-                html = `<tr><td colspan="7" style="text-align: center; padding: 20px; color: #666;">No blogs found. Add your first blog above!</td></tr>`;
+                html = `<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No blogs found. Add your first blog above!</td></tr>`;
             } else {
                 data.forEach(item => {
                     blogsById[item.id] = item;
@@ -385,7 +372,6 @@ function loadBlogs() {
                         <td><strong>${escapeBlogHtml(item.title)}</strong></td>
                         <td>${escapeBlogHtml(item.author)}</td>
                         <td>${item.image ? `<img src="${escapeBlogHtml(item.image)}" class="preview-img" style="max-height: 60px; max-width: 100px;" alt="Blog cover image">` : '<span style="color:#aaa; font-style:italic;">No image</span>'}</td>
-                        <td>${item.banner_image ? `<img src="${escapeBlogHtml(item.banner_image)}" class="preview-img" style="max-height: 60px; max-width: 100px;" alt="Blog banner image">` : '<span style="color:#aaa; font-style:italic;">No image</span>'}</td>
                         <td>${formattedDate}</td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 5px;">
@@ -404,7 +390,7 @@ function loadBlogs() {
         })
         .catch(err => {
             console.error("Error loading blogs:", err);
-            document.getElementById("blogList").innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Failed to load blogs.</td></tr>`;
+            document.getElementById("blogList").innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Failed to load blogs.</td></tr>`;
         });
 }
 

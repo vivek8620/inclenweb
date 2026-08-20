@@ -144,12 +144,6 @@
 
 <body>
   <div id="shared-header"></div>
-  <section class="detail-banner" id="detail-banner">
-    <div>
-      <h1>Blog Details</h1>
-      <p>Insights and updates from INCLEN Trust International</p>
-    </div>
-  </section>
   <main class="post" id="post-container">
     <div class="message">Loading blog post…</div>
   </main>
@@ -660,22 +654,7 @@
       document.title = `${post.title} | INCLEN Blog`;
       const date = new Date(post.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
       const image = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">` : '';
-      if (post.banner_image && post.banner_image !== 'null' && post.banner_image.trim() !== '') {
-        const banner = document.getElementById('detail-banner');
-        if (banner) {
-          banner.style.backgroundImage = `linear-gradient(rgba(15, 23, 43, 0.7), rgba(15, 23, 43, 0.7)), url('${post.banner_image}')`;
-          banner.style.backgroundSize = 'cover';
-          banner.style.backgroundPosition = 'center';
-          banner.style.backgroundRepeat = 'no-repeat';
-        }
-      }
-      if (post.banner_text && post.banner_text !== 'null' && post.banner_text.trim() !== '') {
-        const bannerP = document.querySelector('#detail-banner p');
-        if (bannerP) {
-          bannerP.textContent = post.banner_text;
-        }
-      }
-      container.innerHTML = `<a class="back" href="/about/blog/">← Back to all blogs</a><article class="article">${image}<div class="article-body"><h1>${escapeHtml(post.title)}</h1><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><div class="article-content">${post.content || ''}</div></div></article>`;
+      container.innerHTML = `<article class="article">${image}<div class="article-body"><h1>${escapeHtml(post.title)}</h1><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><div class="article-content">${post.content || ''}</div></div></article>`;
     }).catch(error => { container.innerHTML = `<div class="message error">${escapeHtml(error.message)}</div>`; });
   </script>
 </body>
