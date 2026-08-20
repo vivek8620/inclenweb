@@ -219,12 +219,12 @@ function blog_manager_page() { ?>
 <table class="wp-list-table widefat fixed striped">
 <thead>
 <tr>
-<th style="width:30%;">Title</th>
-<th>Author</th>
-<th>Card Image</th>
-<th>URL Path</th>
-<th>Date</th>
-<th>Actions</th>
+<th style="width:28%;">Title</th>
+<th style="width:12%;">Author</th>
+<th style="width:8%;">Card Image</th>
+<th style="width:18%;">URL Path</th>
+<th style="width:10%;">Date</th>
+<th style="width:10%;">Actions</th>
 </tr>
 </thead>
 <tbody id="blogList"><tr><td colspan="6" style="text-align:center;color:#999;">Loading&hellip;</td></tr></tbody>
@@ -267,35 +267,35 @@ function loadBlogs() {
                         ? `<img src="${resolvedImg}" width="60" height="45" style="border-radius:5px;border:1px solid #ddd;object-fit:cover;flex-shrink:0;">`
                         : `<span style="color:#ccc;font-size:11px;">No image</span>`;
                     const blogUrl = item.slug ? '/about/blog/post/?id=' + item.slug : '';
-                    const urlBadge = blogUrl
-                        ? `<a href="${blogUrl}" target="_blank" title="${blogUrl}" style="
-                                display:inline-flex;
-                                align-items:center;
-                                gap:4px;
-                                padding:4px 10px;
-                                background:#f0f4ff;
-                                border:1px solid #c7d4f8;
-                                color:#4a6cf7;
-                                border-radius:20px;
-                                font-size:10.5px;
-                                font-family:monospace;
-                                text-decoration:none;
-                                white-space:nowrap;
-                                max-width:160px;
-                                overflow:hidden;
-                                text-overflow:ellipsis;
-                                transition:background 0.2s;
+                    const urlCell = blogUrl
+                        ? `<div style="display:flex;align-items:center;gap:5px;">
+                              <a href="${blogUrl}" target="_blank" title="${blogUrl}" style="
+                                  display:inline-flex;align-items:center;gap:4px;
+                                  padding:4px 10px;
+                                  background:#f0f4ff;border:1px solid #c7d4f8;
+                                  color:#4a6cf7;border-radius:20px;
+                                  font-size:10.5px;font-family:monospace;
+                                  text-decoration:none;white-space:nowrap;
+                                  max-width:140px;overflow:hidden;text-overflow:ellipsis;
+                                  flex-shrink:1;transition:background 0.2s;
                               " onmouseover="this.style.background='#dce6ff'" onmouseout="this.style.background='#f0f4ff'">
-                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4a6cf7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                              ${blogUrl}
-                           </a>`
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4a6cf7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                ${blogUrl}
+                              </a>
+                              <button onclick="copyBlogUrl('${blogUrl}', this)" title="Copy URL" style="
+                                  background:#fff;border:1px solid #ddd;border-radius:6px;
+                                  padding:3px 6px;cursor:pointer;font-size:12px;
+                                  color:#555;line-height:1;flex-shrink:0;
+                                  transition:all 0.2s;
+                              " onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='#fff'">📋</button>
+                           </div>`
                         : '';
                     html += `
                     <tr>
                         <td><strong>${item.title}</strong><br><small style="color:#888;">slug: ${item.slug || ''}</small></td>
                         <td>${item.author || '-'}</td>
                         <td style="vertical-align:middle;">${imgHtml}</td>
-                        <td style="vertical-align:middle;">${urlBadge}</td>
+                        <td style="vertical-align:middle;">${urlCell}</td>
                         <td>${date}</td>
                         <td>
                             <button onclick="editBlog(${item.id})" class="button button-small">Edit</button>
@@ -316,7 +316,18 @@ function clearBlogErrors() {
     document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
 }
 
+function copyBlogUrl(url, btn) {
+    navigator.clipboard.writeText(url).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✓';
+        btn.style.color = '#27ae60';
+        btn.style.borderColor = '#27ae60';
+        setTimeout(() => { btn.innerHTML = orig; btn.style.color = '#555'; btn.style.borderColor = '#ddd'; }, 1500);
+    }).catch(() => alert('Copy failed. URL: ' + url));
+}
+
 function saveBlog() {
+
     clearBlogErrors();
     const titleVal   = document.getElementById('blog_title').value.trim();
     const authorVal  = document.getElementById('blog_author').value.trim();
