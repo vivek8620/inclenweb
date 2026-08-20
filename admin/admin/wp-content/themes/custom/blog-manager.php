@@ -366,12 +366,13 @@ function loadBlogs() {
                     
                     const blogPath = `/about/blog/post/?id=${item.slug || item.id}`;
                     const fullBlogUrl = `${SITE_ROOT_URL}about/blog/post/?id=${item.slug || item.id}`;
+                    const displayImgUrl = item.image ? (item.image.startsWith('/') ? SITE_ROOT_URL + item.image.substring(1) : item.image) : '';
  
                     html += `
                     <tr>
                         <td><strong>${escapeBlogHtml(item.title)}</strong></td>
                         <td>${escapeBlogHtml(item.author)}</td>
-                        <td>${item.image ? `<img src="${escapeBlogHtml(item.image)}" class="preview-img" style="max-height: 60px; max-width: 100px;" alt="Blog cover image">` : '<span style="color:#aaa; font-style:italic;">No image</span>'}</td>
+                        <td>${displayImgUrl ? `<img src="${escapeBlogHtml(displayImgUrl)}" class="preview-img" style="max-height: 60px; max-width: 100px;" alt="Blog cover image">` : '<span style="color:#aaa; font-style:italic;">No image</span>'}</td>
                         <td>${formattedDate}</td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 5px;">
@@ -481,14 +482,16 @@ function editBlog(item) {
     }
     
     if (item.image) {
-        document.getElementById("preview_image").src = item.image;
+        const previewUrl = item.image.startsWith('/') ? SITE_ROOT_URL + item.image.substring(1) : item.image;
+        document.getElementById("preview_image").src = previewUrl;
         document.getElementById("preview_image").style.display = "block";
     } else {
         document.getElementById("preview_image").style.display = "none";
     }
 
     if (item.banner_image) {
-        document.getElementById("preview_banner_image").src = item.banner_image;
+        const bannerUrl = item.banner_image.startsWith('/') ? SITE_ROOT_URL + item.banner_image.substring(1) : item.banner_image;
+        document.getElementById("preview_banner_image").src = bannerUrl;
         document.getElementById("preview_banner_image").style.display = "block";
     } else {
         document.getElementById("preview_banner_image").style.display = "none";

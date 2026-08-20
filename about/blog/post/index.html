@@ -643,6 +643,13 @@
       })
       .catch((err) => console.error("Error loading header/footer:", err));
 
+    const SITE_ROOT_URL = (function() {
+      const path = window.location.pathname;
+      const idx = path.indexOf('/about/blog/post/');
+      const basePath = idx !== -1 ? path.substring(0, idx) : '';
+      return window.location.origin + basePath + '/';
+    })();
+
     const container = document.getElementById('post-container');
     const postId = new URLSearchParams(window.location.search).get('id');
     const escapeHtml = value => { const el = document.createElement('div'); el.textContent = value || ''; return el.innerHTML; };
@@ -653,7 +660,8 @@
       if (!post) throw new Error('Blog post was not found.');
       document.title = `${post.title} | INCLEN Blog`;
       const date = new Date(post.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-      const image = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">` : '';
+      const imgUrl = post.image ? (post.image.startsWith('/') ? SITE_ROOT_URL + post.image.substring(1) : post.image) : '';
+      const image = imgUrl ? `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(post.title)}">` : '';
       container.innerHTML = `<article class="article">${image}<div class="article-body"><h1>${escapeHtml(post.title)}</h1><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><div class="article-content">${post.content || ''}</div></div></article>`;
     }).catch(error => { container.innerHTML = `<div class="message error">${escapeHtml(error.message)}</div>`; });
   </script>

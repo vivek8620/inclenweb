@@ -524,6 +524,13 @@
       ? 'http://localhost/inclenweb/admin/admin/index.php?rest_route=/blogs/v1/public'
       : '/admin/admin/index.php?rest_route=/blogs/v1/public';
 
+    const SITE_ROOT_URL = (function() {
+      const path = window.location.pathname;
+      const idx = path.indexOf('/about/blog/');
+      const basePath = idx !== -1 ? path.substring(0, idx) : '';
+      return window.location.origin + basePath + '/';
+    })();
+
     fetch(blogApiUrl)
       .then(response => { if (!response.ok) throw new Error('Unable to load blog posts.'); return response.json(); })
       .then(posts => {
@@ -532,7 +539,8 @@
         list.innerHTML = posts.map(post => {
           const excerpt = plainText(post.content).slice(0, 160);
           const date = new Date(post.created_at).toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
-          const image = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">` : '';
+          const imgUrl = post.image ? (post.image.startsWith('/') ? SITE_ROOT_URL + post.image.substring(1) : post.image) : '';
+          const image = imgUrl ? `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(post.title)}">` : '';
           return `<article class="card">${image}<div class="card-body"><h2>${escapeHtml(post.title)}</h2><div class="meta">${escapeHtml(post.author || 'INCLEN')} · ${date}</div><p class="excerpt">${escapeHtml(excerpt)}${excerpt.length === 160 ? '…' : ''}</p><a class="read-more" href="/about/blog/post/?id=${encodeURIComponent(post.slug || post.id)}">Read full blog →</a></div></article>`;
         }).join('');
       })
