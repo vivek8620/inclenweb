@@ -140,7 +140,7 @@ function get_default_menu_structure() {
             'key' => 'contact',
             'label' => 'Contact',
             'href' => '/contact',
-            'visible' => true
+            'visible' => false
         ]
     ];
 }

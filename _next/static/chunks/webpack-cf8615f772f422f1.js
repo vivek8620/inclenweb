@@ -3,7 +3,7 @@
     try {
         const cached = localStorage.getItem('inclen_nav_menu_structure');
         if (cached) {
-            window.NAV_MENU_STRUCTURE = JSON.parse(cached);
+            window.NAV_MENU_STRUCTURE = JSON.parse(cached).filter(p => p.key !== 'contact');
         }
     } catch(e) {}
 
@@ -253,7 +253,7 @@
                 visible: dbParent.visible,
                 columns: rebuiltColumns
             };
-        }).filter(p => p.visible);
+        }).filter(p => p.visible && p.key !== 'contact');
     }
 
     let visibilityData = null;
@@ -357,7 +357,7 @@
             'news_events': ['insights', 'news & events', 'news \u0026 events'],
             'resources': ['resources'],
             'publications': ['resources', 'publications'],
-            'contact': ['contact', 'contact us'],
+            'contact': ['contact'],
 
             // About children
             'about_who_we_are': ['who we are'],

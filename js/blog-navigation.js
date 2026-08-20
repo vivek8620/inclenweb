@@ -1,3 +1,5 @@
+// Dynamic Blog link insertion disabled by request.
+/*
 (() => {
   const blogUrl = '/blog/';
 
@@ -35,3 +37,5 @@
     subtree: true
   });
 })();
+*/
+
