@@ -141,12 +141,6 @@ function get_default_menu_structure() {
                 ['key' => 'resources_tools', 'label' => 'Research Tools', 'href' => '/research-tools', 'visible' => true],
                 ['key' => 'resources_training', 'label' => 'Training Materials', 'href' => '/training-materials', 'visible' => true]
             ]
-        ],
-        [
-            'key' => 'contact',
-            'label' => 'Contact',
-            'href' => '/contact',
-            'visible' => false
         ]
     ];
 }
@@ -171,9 +165,15 @@ function get_all_navigation_settings() {
             'menu_structure' => get_default_menu_structure()
         ];
     }
+    $menu_structure = json_decode($result->menu_structure, true);
+    if (is_array($menu_structure)) {
+        $menu_structure = array_values(array_filter($menu_structure, function($item) {
+            return isset($item['key']) && $item['key'] !== 'contact';
+        }));
+    }
     return [
         'id' => intval($result->id),
-        'menu_structure' => json_decode($result->menu_structure, true)
+        'menu_structure' => $menu_structure
     ];
 }
 
@@ -1115,7 +1115,7 @@ function navigation_settings_page() { ?>
 
     function handleLoadedData(data) {
         dbRecordId = data.id;
-        menuStructure = data.menu_structure;
+        menuStructure = (data.menu_structure || []).filter(item => item.key !== 'contact');
         
         // Auto reset if structures got mismatched or have old format keys
         if (menuStructure.length > 0 && !menuStructure.some(x => x.key === 'about' || x.key === 'our_work')) {
@@ -1375,14 +1375,11 @@ function navigation_settings_page() { ?>
             navMenu.appendChild(li);
         });
 
-        // Contact button as CTA at the end
-        const contactItem = menuStructure.find(i => i.key === 'contact');
-        if (contactItem && contactItem.visible) {
-            const ctaLi = document.createElement('li');
-            ctaLi.style.listStyle = 'none';
-            ctaLi.innerHTML = `<a href="#" class="preview-cta-btn">Contact Us</a>`;
-            navMenu.appendChild(ctaLi);
-        }
+        // Contact button as CTA at the end (always shown to match public website)
+        const ctaLi = document.createElement('li');
+        ctaLi.style.listStyle = 'none';
+        ctaLi.innerHTML = `<a href="#" class="preview-cta-btn">Contact Us</a>`;
+        navMenu.appendChild(ctaLi);
     }
 
     // Toggle parent switch handler
