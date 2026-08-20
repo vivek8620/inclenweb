@@ -251,14 +251,10 @@
           const allOriginalLinkLabels = origParent.columns.flatMap(col => col.links.map(l => l.label.toLowerCase()));
           const newChildren = dbParent.children.filter(c => c.visible && !allOriginalLinkLabels.includes(c.label.toLowerCase()));
           if (newChildren.length > 0) {
-            if (rebuiltColumns.length > 0) {
-              rebuiltColumns[0].links.push(...newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" })));
-            } else {
-              rebuiltColumns.push({
-                heading: "Links",
-                links: newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" }))
-              });
-            }
+            rebuiltColumns.push({
+              heading: "Other Links",
+              links: newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" }))
+            });
           }
         }
 

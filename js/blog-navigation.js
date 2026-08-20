@@ -1,41 +1,40 @@
-// Dynamic Blog link insertion disabled by request.
-/*
 (() => {
-  const blogUrl = '/blog/';
+  const isBlogLink = element => /^Blog\s*\d*\s*:/i.test(element.textContent.trim());
 
-  function addBlogLinks() {
-    const header = document.querySelector('header');
-    if (!header) return;
+  function moveBlogLinksToOtherLinks() {
+    document.querySelectorAll('header').forEach(header => {
+      const organizationHeading = [...header.querySelectorAll('p, div')]
+        .find(element => element.textContent.trim() === 'Organization');
+      if (!organizationHeading) return;
 
-    const desktopNav = header.querySelector('nav.hidden.lg\\:flex');
-    if (desktopNav && !desktopNav.querySelector('[data-public-blog-link]')) {
-      const link = document.createElement('a');
-      link.href = blogUrl;
-      link.textContent = 'Blog';
-      link.dataset.publicBlogLink = 'true';
-      link.className = 'flex items-center text-14 font-semibold font-roboto px-2 xl:px-3 py-2 transition-colors text-gray-700 hover:text-orange-500';
-      const contactLink = desktopNav.querySelector('a[href="/contact/"]');
-      desktopNav.insertBefore(link, contactLink || null);
-    }
+      const organizationColumn = organizationHeading.parentElement;
+      const blogLinks = [...organizationColumn.querySelectorAll('a')].filter(isBlogLink);
+      if (!blogLinks.length) return;
 
-    const mobileHome = header.querySelector('a.block[href="/"]');
-    const mobileMenu = mobileHome && mobileHome.parentElement;
-    if (mobileMenu && !mobileMenu.querySelector('[data-public-blog-link]')) {
-      const link = document.createElement('a');
-      link.href = blogUrl;
-      link.textContent = 'Blog';
-      link.dataset.publicBlogLink = 'true';
-      link.className = 'block px-3 py-2.5 rounded text-sm font-semibold text-gray-700 hover:bg-gray-50';
-      const contactLink = mobileMenu.querySelector('a[href="/contact/"]');
-      mobileMenu.insertBefore(link, contactLink || null);
-    }
+      const columnsContainer = organizationColumn.parentElement;
+      let otherLinksColumn = [...columnsContainer.children].find(column =>
+        [...column.querySelectorAll('p, div')].some(element => element.textContent.trim() === 'Other Links')
+      );
+
+      if (!otherLinksColumn) {
+        otherLinksColumn = document.createElement('div');
+        const heading = organizationHeading.cloneNode(false);
+        heading.textContent = 'Other Links';
+        const linksContainer = document.createElement('div');
+        linksContainer.className = organizationHeading.nextElementSibling?.className || 'space-y-3';
+        otherLinksColumn.append(heading, linksContainer);
+        columnsContainer.appendChild(otherLinksColumn);
+      }
+
+      const linksContainer = otherLinksColumn.lastElementChild;
+      blogLinks.forEach(link => linksContainer.appendChild(link));
+    });
   }
 
-  addBlogLinks();
-  new MutationObserver(addBlogLinks).observe(document.documentElement, {
+  moveBlogLinksToOtherLinks();
+  new MutationObserver(moveBlogLinksToOtherLinks).observe(document.documentElement, {
     childList: true,
     subtree: true
   });
 })();
-*/
 
