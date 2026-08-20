@@ -335,11 +335,12 @@
 
       const hasPromo = item.promo || item.heroBanner || item.imageCard;
       const totalCols = item.columns.length;
-      const gridCols = hasPromo ? 'grid-cols-4' : `grid-cols-${totalCols}`;
+      const gridCols = hasPromo && totalCols === 3 ? 'grid-cols-5' : (hasPromo ? 'grid-cols-4' : `grid-cols-${totalCols}`);
       const leftColsSpan = 1 === totalCols ? "col-span-2 grid grid-cols-1" : 2 === totalCols ? "col-span-2 grid grid-cols-2" : "col-span-3 grid grid-cols-3";
+      const gridStyle = hasPromo && totalCols === 3 ? 'style="grid-template-columns:repeat(5,minmax(0,1fr))"' : '';
 
       megaMenuContent.innerHTML = `
-        <div class="grid gap-8 ${gridCols}">
+        <div class="grid gap-8 ${gridCols}" ${gridStyle}>
           <div class="${leftColsSpan} gap-8">
             ${columnsHtml}
           </div>

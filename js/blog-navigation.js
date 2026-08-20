@@ -1,5 +1,12 @@
 (() => {
-  const isBlogLink = element => /^Blog\s*\d*\s*:/i.test(element.textContent.trim());
+  const defaultOrganizationLinks = new Set([
+    'who we are',
+    'mission & vision',
+    'global presence',
+    'fcra & registration'
+  ]);
+  const isAdditionalAboutLink = element =>
+    !defaultOrganizationLinks.has(element.textContent.trim().toLowerCase());
 
   function moveBlogLinksToOtherLinks() {
     document.querySelectorAll('header').forEach(header => {
@@ -9,8 +16,8 @@
       if (!organizationHeading) return;
 
       const organizationColumn = organizationHeading.parentElement;
-      const blogLinks = [...organizationColumn.querySelectorAll('a')].filter(isBlogLink);
-      if (!blogLinks.length) return;
+      const additionalLinks = [...organizationColumn.querySelectorAll('a')].filter(isAdditionalAboutLink);
+      if (!additionalLinks.length) return;
 
       const columnsContainer = organizationColumn.parentElement;
       let otherLinksColumn = header.querySelector('[data-blog-other-links]');
@@ -30,7 +37,7 @@
       const existingLinks = new Set(
         [...linksContainer.querySelectorAll('a')].map(link => `${link.textContent.trim()}|${link.href}`)
       );
-      blogLinks.forEach(link => {
+      additionalLinks.forEach(link => {
         const linkKey = `${link.textContent.trim()}|${link.href}`;
         if (existingLinks.has(linkKey)) {
           link.remove();
