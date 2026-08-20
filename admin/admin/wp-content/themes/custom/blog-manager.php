@@ -171,6 +171,15 @@ function blog_manager_page() { ?>
 </tr>
 
 <tr>
+<th>URL / Slug <span style="color:red;">*</span></th>
+<td>
+    <input type="text" id="blog_slug" class="regular-text" placeholder="e.g. global-health-research">
+    <p class="description" style="margin-top:4px;">Blog ka URL path (sirf lowercase letters, numbers aur hyphens). Example: <code>my-blog-post</code></p>
+    <span id="blog_slug_error" class="error-msg"></span>
+</td>
+</tr>
+
+<tr>
 <th>Author</th>
 <td>
     <input type="text" id="blog_author" class="regular-text" placeholder="Author name">
@@ -210,14 +219,15 @@ function blog_manager_page() { ?>
 <table class="wp-list-table widefat fixed striped">
 <thead>
 <tr>
-<th style="width:35%;">Title</th>
+<th style="width:30%;">Title</th>
 <th>Author</th>
 <th>Card Image</th>
+<th>URL Path</th>
 <th>Date</th>
 <th>Actions</th>
 </tr>
 </thead>
-<tbody id="blogList"><tr><td colspan="5" style="text-align:center;color:#999;">Loading&hellip;</td></tr></tbody>
+<tbody id="blogList"><tr><td colspan="6" style="text-align:center;color:#999;">Loading&hellip;</td></tr></tbody>
 </table>
 </div>
 
@@ -247,18 +257,45 @@ function loadBlogs() {
         .then(data => {
             let html = '';
             if (!data || !data.length) {
-                html = '<tr><td colspan="5" style="text-align:center;color:#999;">No blog posts yet.</td></tr>';
+                html = '<tr><td colspan="6" style="text-align:center;color:#999;">No blog posts yet.</td></tr>';
             } else {
                 data.forEach(item => {
                     blogDataMap[item.id] = item; // store in map
                     const date = item.created_at ? new Date(item.created_at).toLocaleDateString('en-IN', {year:'numeric',month:'short',day:'numeric'}) : '-';
                     const resolvedImg = resolveImgUrl(item.image);
-                    const imgHtml = resolvedImg ? '<img src="' + resolvedImg + '" width="70" height="50" style="border-radius:3px;border:1px solid #ddd;object-fit:cover;">' : '-';
+                    const imgHtml = resolvedImg
+                        ? `<img src="${resolvedImg}" width="60" height="45" style="border-radius:5px;border:1px solid #ddd;object-fit:cover;flex-shrink:0;">`
+                        : `<span style="color:#ccc;font-size:11px;">No image</span>`;
+                    const blogUrl = item.slug ? '/about/blog/post/?id=' + item.slug : '';
+                    const urlBadge = blogUrl
+                        ? `<a href="${blogUrl}" target="_blank" title="${blogUrl}" style="
+                                display:inline-flex;
+                                align-items:center;
+                                gap:4px;
+                                padding:4px 10px;
+                                background:#f0f4ff;
+                                border:1px solid #c7d4f8;
+                                color:#4a6cf7;
+                                border-radius:20px;
+                                font-size:10.5px;
+                                font-family:monospace;
+                                text-decoration:none;
+                                white-space:nowrap;
+                                max-width:160px;
+                                overflow:hidden;
+                                text-overflow:ellipsis;
+                                transition:background 0.2s;
+                              " onmouseover="this.style.background='#dce6ff'" onmouseout="this.style.background='#f0f4ff'">
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4a6cf7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                              ${blogUrl}
+                           </a>`
+                        : '';
                     html += `
                     <tr>
                         <td><strong>${item.title}</strong><br><small style="color:#888;">slug: ${item.slug || ''}</small></td>
                         <td>${item.author || '-'}</td>
-                        <td>${imgHtml}</td>
+                        <td style="vertical-align:middle;">${imgHtml}</td>
+                        <td style="vertical-align:middle;">${urlBadge}</td>
                         <td>${date}</td>
                         <td>
                             <button onclick="editBlog(${item.id})" class="button button-small">Edit</button>
@@ -289,9 +326,16 @@ function saveBlog() {
 
     let isValid = true;
 
+    const slugVal = document.getElementById('blog_slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
     if (!titleVal) {
         document.getElementById('blog_title_error').innerText = 'Title is required.';
         document.getElementById('blog_title').classList.add('input-error');
+        isValid = false;
+    }
+    if (!slugVal) {
+        document.getElementById('blog_slug_error').innerText = 'URL/Slug is required.';
+        document.getElementById('blog_slug').classList.add('input-error');
         isValid = false;
     }
     if (!contentVal) {
@@ -302,7 +346,7 @@ function saveBlog() {
     }
     if (!isValid) return;
 
-    const payload = { title: titleVal, content: contentVal, author: authorVal, image: imageVal };
+    const payload = { title: titleVal, content: contentVal, author: authorVal, image: imageVal, slug: slugVal };
     const url = editingBlogId ? BLOG_API + '/update/' + editingBlogId : BLOG_API + '/add';
 
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
@@ -322,6 +366,7 @@ function editBlog(id) {
     editingBlogId = item.id;
     document.getElementById('blog-form-heading').innerText = 'Edit Blog';
     document.getElementById('blog_title').value  = item.title || '';
+    document.getElementById('blog_slug').value   = item.slug  || '';
     document.getElementById('blog_author').value = item.author || '';
     document.getElementById('blog_image').value  = item.image || '';
 
@@ -346,6 +391,7 @@ function resetBlogForm() {
     editingBlogId = null;
     document.getElementById('blog-form-heading').innerText = 'Add / Edit Blog';
     document.getElementById('blog_title').value  = '';
+    document.getElementById('blog_slug').value   = '';
     document.getElementById('blog_author').value = '';
     document.getElementById('blog_image').value  = '';
     document.getElementById('blog_preview_image').style.display = 'none';
