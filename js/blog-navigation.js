@@ -54,13 +54,19 @@
       megaMenuGrid.dataset.blogMenuGrid = 'true';
       megaMenuGrid.style.gridTemplateColumns = 'repeat(5, minmax(0, 1fr))';
       columnsContainer.style.gridColumn = 'span 3 / span 3';
+      columnsContainer.style.display = 'grid';
       columnsContainer.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
       organizationColumn.style.gridColumn = '1';
+      organizationColumn.style.gridRow = '1';
       const leadershipColumn = [...columnsContainer.children].find(column =>
         [...column.querySelectorAll('p, div')].some(element => element.textContent.trim() === 'Leadership')
       );
-      if (leadershipColumn) leadershipColumn.style.gridColumn = '2';
+      if (leadershipColumn) {
+        leadershipColumn.style.gridColumn = '2';
+        leadershipColumn.style.gridRow = '1';
+      }
       otherLinksColumn.style.gridColumn = '3';
+      otherLinksColumn.style.gridRow = '1';
     });
   }
 
@@ -72,7 +78,11 @@
       [...grid.children].forEach(column => {
         column.style.gridColumn = '';
         column.style.gridTemplateColumns = '';
-        [...column.children].forEach(child => { child.style.gridColumn = ''; });
+        column.style.display = '';
+        [...column.children].forEach(child => {
+          child.style.gridColumn = '';
+          child.style.gridRow = '';
+        });
       });
     });
   }
