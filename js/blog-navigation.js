@@ -72,17 +72,34 @@
 
   function bindAboutMenuOnly() {
     document.querySelectorAll('header').forEach(header => {
-      if (header.dataset.blogMenuBound === 'true') return;
+      if (header.dataset.blogHeaderBound !== 'true') {
+        header.dataset.blogHeaderBound = 'true';
+        header.addEventListener('mouseover', event => {
+          const link = event.target.closest('nav a');
+          if (!link) return;
+          if (link.textContent.trim().startsWith('About')) {
+            header.dataset.blogAboutMenuActive = 'true';
+            setTimeout(moveBlogLinksToOtherLinks, 0);
+          } else {
+            header.dataset.blogAboutMenuActive = 'false';
+            clearBlogMenuLayout(header);
+          }
+        });
+      }
       const menuLinks = [...header.querySelectorAll('nav a')];
       const aboutLink = menuLinks.find(link => link.textContent.trim().startsWith('About'));
       if (!aboutLink) return;
 
-      header.dataset.blogMenuBound = 'true';
-      aboutLink.addEventListener('mouseenter', () => {
-        header.dataset.blogAboutMenuActive = 'true';
-        setTimeout(moveBlogLinksToOtherLinks, 0);
-      });
+      if (aboutLink.dataset.blogAboutBound !== 'true') {
+        aboutLink.dataset.blogAboutBound = 'true';
+        aboutLink.addEventListener('mouseenter', () => {
+          header.dataset.blogAboutMenuActive = 'true';
+          setTimeout(moveBlogLinksToOtherLinks, 0);
+        });
+      }
       menuLinks.filter(link => link !== aboutLink).forEach(link => {
+        if (link.dataset.blogMenuBound === 'true') return;
+        link.dataset.blogMenuBound = 'true';
         link.addEventListener('mouseenter', () => {
           header.dataset.blogAboutMenuActive = 'false';
           clearBlogMenuLayout(header);
