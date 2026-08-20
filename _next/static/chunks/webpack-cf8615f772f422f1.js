@@ -54,7 +54,7 @@
                 {
                     heading: "Key Initiatives",
                     links: [
-                        {label: "Somarth Sites", href: "/somarth-sites", desc: "Demographic Development & Environmental Surveillance."},
+                        {label: "Somaarth Sites", href: "/somaarth-sites", desc: "Demographic Development & Environmental Surveillance."},
                         {label: "Capacity Building", href: "/capacity-building", desc: "Strengthening healthcare systems and leadership capabilities."}
                     ]
                 },
