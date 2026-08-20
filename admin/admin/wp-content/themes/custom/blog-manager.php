@@ -447,7 +447,8 @@ function saveBlog() {
         author: authorVal,
         content: contentVal,
         image: imageVal,
-        banner_image: document.getElementById("banner_image").value
+        banner_image: document.getElementById("banner_image") ? document.getElementById("banner_image").value : "",
+        banner_text: document.getElementById("banner_text") ? document.getElementById("banner_text").value : ""
     };
 
     let url = API_BASE_BLOG + "/add";
@@ -484,7 +485,12 @@ function editBlog(item) {
     document.getElementById("title").value = item.title;
     document.getElementById("author").value = item.author;
     document.getElementById("image").value = item.image || '';
-    document.getElementById("banner_image").value = item.banner_image || '';
+    if (document.getElementById("banner_image")) {
+        document.getElementById("banner_image").value = item.banner_image || '';
+    }
+    if (document.getElementById("banner_text")) {
+        document.getElementById("banner_text").value = item.banner_text || '';
+    }
     
     if (item.image) {
         document.getElementById("preview_image").src = item.image;
@@ -532,9 +538,14 @@ function resetBlogForm() {
     document.getElementById("image").value = '';
     document.getElementById("image_file").value = '';
     document.getElementById("preview_image").style.display = "none";
-    document.getElementById("banner_image").value = '';
+    if (document.getElementById("banner_image")) {
+        document.getElementById("banner_image").value = '';
+    }
     document.getElementById("banner_image_file").value = '';
     document.getElementById("preview_banner_image").style.display = "none";
+    if (document.getElementById("banner_text")) {
+        document.getElementById("banner_text").value = '';
+    }
     tinymce.get("content_editor").setContent('');
     clearErrors();
 }
