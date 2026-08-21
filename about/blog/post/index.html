@@ -340,58 +340,155 @@
 
         if (!origParent) {
           const activeChildren = dbParent.children ? dbParent.children.filter(c => c.visible) : [];
+          const cols = [];
+          const grouped = {};
+          activeChildren.forEach(c => {
+            const cat = c.subcategory || 'Links';
+            if (!grouped[cat]) {
+              grouped[cat] = [];
+              cols.push(cat);
+            }
+            grouped[cat].push({ label: formatTitleCase(c.label), href: c.href || "#", target: c.target || '' });
+          });
           return {
             label: formattedLabel,
             href: dbParent.href || "#",
             visible: dbParent.visible,
-            columns: activeChildren.length > 0 ? [{
-              heading: "Links",
-              links: activeChildren.map(c => ({ label: formatTitleCase(c.label), href: (c.href && c.href !== '#') ? c.href : "#" }))
-            }] : []
+            columns: cols.map(cat => ({ heading: cat, links: grouped[cat] }))
           };
         }
 
         const rebuiltColumns = [];
-        if (origParent.columns && dbParent.children) {
-          origParent.columns.forEach(origCol => {
-            const newLinks = [];
-            origCol.links.forEach(origLink => {
-              const dbChild = dbParent.children.find(c => c.label.toLowerCase() === origLink.label.toLowerCase());
-              if (dbChild && dbChild.visible) {
-                newLinks.push({
-                  label: dbChild.label,
-                  href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
-                  desc: origLink.desc
-                });
+        const processedKeys = new Set();
+        const activeChildren = dbParent.children ? dbParent.children.filter(c => c.visible) : [];
+
+        // Dynamic grouping based on child.subcategory
+        const grouped = {};
+        const cats = [];
+        activeChildren.forEach(child => {
+          if (child.subcategory) {
+            const cat = child.subcategory;
+            if (!grouped[cat]) {
+              grouped[cat] = [];
+              cats.push(cat);
+            }
+            let desc = '';
+            if (origParent.columns) {
+              for (const col of origParent.columns) {
+                const origLink = col.links.find(l => l.label.toLowerCase() === child.label.toLowerCase());
+                if (origLink && origLink.desc) {
+                  desc = origLink.desc;
+                  break;
+                }
+              }
+            }
+            grouped[cat].push({
+              label: child.label,
+              href: (child.href && child.href !== '#') ? child.href : "#",
+              desc: desc,
+              target: child.target || ''
+            });
+            processedKeys.add(child.key);
+          }
+        });
+
+        cats.forEach(cat => {
+          rebuiltColumns.push({
+            heading: cat,
+            links: grouped[cat]
+          });
+        });
+
+        // Fallback matching for remaining children
+        const remainingChildren = activeChildren.filter(c => !processedKeys.has(c.key));
+        if (remainingChildren.length > 0) {
+          if (origParent.columns) {
+            origParent.columns.forEach(origCol => {
+              const newLinks = [];
+              origCol.links.forEach(origLink => {
+                const dbChild = remainingChildren.find(c => c.label.toLowerCase() === origLink.label.toLowerCase());
+                if (dbChild) {
+                  newLinks.push({
+                    label: dbChild.label,
+                    href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
+                    desc: origLink.desc,
+                    target: dbChild.target || ''
+                  });
+                  processedKeys.add(dbChild.key);
+                }
+              });
+              if (newLinks.length > 0) {
+                const existingCol = rebuiltColumns.find(col => col.heading.toLowerCase() === origCol.heading.toLowerCase());
+                if (existingCol) {
+                  existingCol.links.push(...newLinks);
+                } else {
+                  rebuiltColumns.push({
+                    heading: origCol.heading,
+                    links: newLinks
+                  });
+                }
               }
             });
-            if (newLinks.length > 0) {
-              rebuiltColumns.push({
-                heading: origCol.heading,
-                links: newLinks
-              });
-            }
-          });
+          }
 
-          // Find any newly created children under this parent
-          const allOriginalLinkLabels = origParent.columns.flatMap(col => col.links.map(l => l.label.toLowerCase()));
-          const newChildren = dbParent.children.filter(c => c.visible && !allOriginalLinkLabels.includes(c.label.toLowerCase()));
-          if (newChildren.length > 0) {
-            const extraLinks = newChildren.map(c => ({
+          const leftoverChildren = remainingChildren.filter(c => !processedKeys.has(c.key));
+          if (leftoverChildren.length > 0) {
+            const extraLinks = leftoverChildren.map(c => ({
               label: formatTitleCase(c.label),
               href: c.label.trim().toLowerCase() === 'service'
                 ? 'https://indianfoundrycongress.com/'
-                : (c.href || "#")
+                : (c.href || "#"),
+              target: c.target || ''
             }));
 
-            // Home keeps Service in Careers > Opportunities, beside the banner.
-            if (formattedLabel === 'Careers' && rebuiltColumns.length > 0) {
-              rebuiltColumns[0].links.push(...extraLinks);
+            const heading = (formattedLabel === 'Careers') ? 'Opportunities' : 'Other Links';
+            const existingCol = rebuiltColumns.find(col => col.heading.toLowerCase() === heading.toLowerCase());
+            if (existingCol) {
+              existingCol.links.push(...extraLinks);
             } else {
-              rebuiltColumns.push({ heading: "Other Links", links: extraLinks });
+              rebuiltColumns.push({ heading: heading, links: extraLinks });
             }
           }
         }
+
+        // Sort rebuiltColumns to make sure original links are always first and custom links are last
+        rebuiltColumns.forEach(column => {
+          let origLinks = [];
+          if (origParent && origParent.columns) {
+            const origCol = origParent.columns.find(col => col.heading.toLowerCase() === column.heading.toLowerCase());
+            if (origCol) {
+              origLinks = origCol.links.map(l => l.label.toLowerCase());
+            }
+          }
+          
+          const origPart = [];
+          const customPart = [];
+          column.links.forEach(link => {
+            if (origLinks.includes(link.label.toLowerCase())) {
+              origPart.push(link);
+            } else {
+              customPart.push(link);
+            }
+          });
+          
+          // Sort original links exactly according to the template order
+          origPart.sort((a, b) => origLinks.indexOf(a.label.toLowerCase()) - origLinks.indexOf(b.label.toLowerCase()));
+          column.links = [...origPart, ...customPart];
+        });
+
+       // Sort rebuiltColumns headings to keep original columns first and custom columns last
+       let origColHeadings = [];
+       if (origParent && origParent.columns) {
+           origColHeadings = origParent.columns.map(col => col.heading.toLowerCase());
+       }
+       rebuiltColumns.sort((a, b) => {
+           const idxA = origColHeadings.indexOf(a.heading.toLowerCase());
+           const idxB = origColHeadings.indexOf(b.heading.toLowerCase());
+           if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+           if (idxA !== -1) return -1;
+           if (idxB !== -1) return 1;
+           return 0;
+       });
 
         return {
           ...origParent,
@@ -420,8 +517,9 @@
         `;
         col.links.forEach(link => {
           const desc = link.desc ? `<p class="text-xs text-gray-500 mt-0.5">${link.desc}</p>` : '';
+          const targetAttr = link.target ? `target="${link.target}" rel="noopener noreferrer"` : '';
           columnsHtml += `
-            <a href="${link.href}" class="block group">
+            <a href="${link.href}" ${targetAttr} class="block group">
               <span class="text-sm font-semibold text-gray-800 transition-colors group-hover:text-[#c95714]">${link.label}</span>
               ${desc}
             </a>
@@ -433,7 +531,7 @@
       let promoHtml = '';
       if (item.promo) {
         promoHtml = `
-          <div class="col-span-2 rounded-xl p-5 flex items-start gap-4 border h-full ${item.promo.variant === 'brand' ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 border-gray-200'}">
+          <div class="col-span-2 rounded-xl p-5 flex items-start gap-4 border h-full ${item.promo.variant === 'brand' ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 border-gray-200'}" style="align-self: start;">
             <div class="flex-1 min-w-0">
               <h4 class="font-bold text-sm mb-1 ${item.promo.variant === 'brand' ? 'text-blue-900' : 'text-gray-900'}">${item.promo.title}</h4>
               <p class="text-xs mb-4 leading-relaxed ${item.promo.variant === 'brand' ? 'text-blue-700/80' : 'text-gray-500'}">${item.promo.description}</p>
@@ -460,7 +558,7 @@
         `;
       } else if (item.imageCard) {
         promoHtml = `
-          <div class="col-span-2 relative rounded-xl overflow-hidden h-full min-h-[140px] group">
+          <div class="col-span-2 relative rounded-xl overflow-hidden h-full min-h-[140px] group" style="align-self: start;">
             <img src="${item.imageCard.image}" alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
             <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-5 z-10">

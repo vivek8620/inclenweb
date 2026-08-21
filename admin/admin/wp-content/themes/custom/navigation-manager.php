@@ -58,13 +58,13 @@ function get_default_menu_structure() {
             'href' => '/about',
             'visible' => true,
             'children' => [
-                ['key' => 'about_who_we_are', 'label' => 'Who We Are', 'href' => '/about#who-we-are', 'visible' => true],
-                ['key' => 'about_mission_vision', 'label' => 'Mission & Vision', 'href' => '/about#what-we-do', 'visible' => true],
-                ['key' => 'about_presence', 'label' => 'Global Presence', 'href' => '/about#presence', 'visible' => true],
-                ['key' => 'about_fcra', 'label' => 'FCRA & Registration', 'href' => '/fcra', 'visible' => true],
-                ['key' => 'about_board', 'label' => 'Board of Trustees', 'href' => '/about#team', 'visible' => true],
-                ['key' => 'about_journey', 'label' => 'Our Journey', 'href' => '/about#milestones', 'visible' => true],
-                ['key' => 'about_collaborators', 'label' => 'Academic Collaborators', 'href' => '/about#collaborators', 'visible' => true]
+                ['key' => 'about_who_we_are', 'label' => 'Who We Are', 'href' => '/about#who-we-are', 'visible' => true, 'subcategory' => 'Organization'],
+                ['key' => 'about_mission_vision', 'label' => 'Mission & Vision', 'href' => '/about#what-we-do', 'visible' => true, 'subcategory' => 'Organization'],
+                ['key' => 'about_presence', 'label' => 'Global Presence', 'href' => '/about#presence', 'visible' => true, 'subcategory' => 'Organization'],
+                ['key' => 'about_fcra', 'label' => 'FCRA & Registration', 'href' => '/fcra', 'visible' => true, 'subcategory' => 'Organization'],
+                ['key' => 'about_board', 'label' => 'Board of Trustees', 'href' => '/about#team', 'visible' => true, 'subcategory' => 'Leadership'],
+                ['key' => 'about_journey', 'label' => 'Our Journey', 'href' => '/about#milestones', 'visible' => true, 'subcategory' => 'Leadership'],
+                ['key' => 'about_collaborators', 'label' => 'Academic Collaborators', 'href' => '/about#collaborators', 'visible' => true, 'subcategory' => 'Leadership']
             ]
         ],
         [
@@ -73,12 +73,12 @@ function get_default_menu_structure() {
             'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'work_area', 'label' => 'Area of Work', 'href' => '/area-of-work', 'visible' => true],
-                ['key' => 'work_research', 'label' => 'Research Projects', 'href' => '/research', 'visible' => true],
-                ['key' => 'work_somaarth', 'label' => 'Somaarth Sites', 'href' => '/somarth-sites', 'visible' => true],
-                ['key' => 'work_capacity', 'label' => 'Capacity Building', 'href' => '/capacity-building', 'visible' => true],
-                ['key' => 'work_engagement', 'label' => 'Engagement & Advocacy', 'href' => '/engagement-advocacy', 'visible' => true],
-                ['key' => 'work_community', 'label' => 'Community Activities', 'href' => '/community-activities', 'visible' => true]
+                ['key' => 'work_area', 'label' => 'Area of Work', 'href' => '/area-of-work', 'visible' => true, 'subcategory' => 'Focus Areas'],
+                ['key' => 'work_research', 'label' => 'Research Projects', 'href' => '/research', 'visible' => true, 'subcategory' => 'Focus Areas'],
+                ['key' => 'work_somaarth', 'label' => 'Somaarth Sites', 'href' => '/somarth-sites', 'visible' => true, 'subcategory' => 'Key Initiatives'],
+                ['key' => 'work_capacity', 'label' => 'Capacity Building', 'href' => '/capacity-building', 'visible' => true, 'subcategory' => 'Key Initiatives'],
+                ['key' => 'work_engagement', 'label' => 'Engagement & Advocacy', 'href' => '/engagement-advocacy', 'visible' => true, 'subcategory' => 'Outreach'],
+                ['key' => 'work_community', 'label' => 'Community Activities', 'href' => '/community-activities', 'visible' => true, 'subcategory' => 'Outreach']
             ]
         ],
         [
@@ -87,11 +87,11 @@ function get_default_menu_structure() {
             'href' => '/our-impact',
             'visible' => true,
             'children' => [
-                ['key' => 'impact_summary', 'label' => 'Impact Summary', 'href' => '/our-impact', 'visible' => true],
-                ['key' => 'impact_partners', 'label' => 'Partners', 'href' => '/partners', 'visible' => true],
-                ['key' => 'impact_findings', 'label' => 'Key Research Findings', 'href' => '/key-research-findings', 'visible' => true],
-                ['key' => 'impact_device_products', 'label' => 'Device Products', 'href' => '/device-products', 'visible' => true],
-                ['key' => 'impact_policy_influence', 'label' => 'Policy Influence', 'href' => '/policy-influence', 'visible' => true]
+                ['key' => 'impact_summary', 'label' => 'Impact Summary', 'href' => '/our-impact', 'visible' => true, 'subcategory' => 'Overview'],
+                ['key' => 'impact_partners', 'label' => 'Partners', 'href' => '/partners', 'visible' => true, 'subcategory' => 'Overview'],
+                ['key' => 'impact_findings', 'label' => 'Key Research Findings', 'href' => '/key-research-findings', 'visible' => true, 'subcategory' => 'Achievements'],
+                ['key' => 'impact_device_products', 'label' => 'Device Products', 'href' => '/device-products', 'visible' => true, 'subcategory' => 'Achievements'],
+                ['key' => 'impact_policy_influence', 'label' => 'Policy Influence', 'href' => '/policy-influence', 'visible' => true, 'subcategory' => 'Achievements']
             ]
         ],
         [
@@ -100,9 +100,9 @@ function get_default_menu_structure() {
             'href' => '/careers',
             'visible' => true,
             'children' => [
-                ['key' => 'careers_openings', 'label' => 'Current Openings', 'href' => '/careers', 'visible' => true],
-                ['key' => 'careers_fellowships', 'label' => 'Fellowships', 'href' => '/fellowship', 'visible' => true],
-                ['key' => 'careers_internships', 'label' => 'Internships', 'href' => '/internships', 'visible' => true]
+                ['key' => 'careers_openings', 'label' => 'Current Openings', 'href' => '/careers', 'visible' => true, 'subcategory' => 'Opportunities'],
+                ['key' => 'careers_fellowships', 'label' => 'Fellowships', 'href' => '/fellowship', 'visible' => true, 'subcategory' => 'Opportunities'],
+                ['key' => 'careers_internships', 'label' => 'Internships', 'href' => '/internships', 'visible' => true, 'subcategory' => 'Opportunities']
             ]
         ],
         [
@@ -111,9 +111,9 @@ function get_default_menu_structure() {
             'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'involved_academic', 'label' => 'Academic Association', 'href' => '/academic-association', 'visible' => true],
-                ['key' => 'involved_research', 'label' => 'Research Partnership', 'href' => '/partnership', 'visible' => true],
-                ['key' => 'involved_industry', 'label' => 'Industry Partnership', 'href' => '/industry-partnership', 'visible' => true]
+                ['key' => 'involved_academic', 'label' => 'Academic Association', 'href' => '/academic-association', 'visible' => true, 'subcategory' => 'Academic & Research Calls'],
+                ['key' => 'involved_research', 'label' => 'Research Partnership', 'href' => '/partnership', 'visible' => true, 'subcategory' => 'Academic & Research Calls'],
+                ['key' => 'involved_industry', 'label' => 'Industry Partnership', 'href' => '/industry-partnership', 'visible' => true, 'subcategory' => 'Strategic Partnerships']
             ]
         ],
         [
@@ -122,10 +122,10 @@ function get_default_menu_structure() {
             'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'insights_news', 'label' => 'News', 'href' => '/news', 'visible' => true],
-                ['key' => 'insights_events', 'label' => 'Events', 'href' => '/events', 'visible' => true],
-                ['key' => 'insights_announcements', 'label' => 'Announcements', 'href' => '/announcements', 'visible' => true],
-                ['key' => 'insights_headlines', 'label' => 'Headlines', 'href' => '/headlines', 'visible' => true]
+                ['key' => 'insights_news', 'label' => 'News', 'href' => '/news', 'visible' => true, 'subcategory' => 'Updates'],
+                ['key' => 'insights_events', 'label' => 'Events', 'href' => '/events', 'visible' => true, 'subcategory' => 'Updates'],
+                ['key' => 'insights_announcements', 'label' => 'Announcements', 'href' => '/announcements', 'visible' => true, 'subcategory' => 'Media'],
+                ['key' => 'insights_headlines', 'label' => 'Headlines', 'href' => '/headlines', 'visible' => true, 'subcategory' => 'Media']
             ]
         ],
         [
@@ -134,12 +134,12 @@ function get_default_menu_structure() {
             'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'resources_all', 'label' => 'All Publications', 'href' => '/publications', 'visible' => true],
-                ['key' => 'resources_reports', 'label' => 'Annual Reports', 'href' => '/annual-reports', 'visible' => true],
-                ['key' => 'resources_newsletters', 'label' => 'Newsletters', 'href' => '/newsletters', 'visible' => true],
-                ['key' => 'resources_repository', 'label' => 'Data Repository', 'href' => '/data-repository', 'visible' => true],
-                ['key' => 'resources_tools', 'label' => 'Research Tools', 'href' => '/research-tools', 'visible' => true],
-                ['key' => 'resources_training', 'label' => 'Training Materials', 'href' => '/training-materials', 'visible' => true]
+                ['key' => 'resources_all', 'label' => 'All Publications', 'href' => '/publications', 'visible' => true, 'subcategory' => 'Publications'],
+                ['key' => 'resources_reports', 'label' => 'Annual Reports', 'href' => '/annual-reports', 'visible' => true, 'subcategory' => 'Publications'],
+                ['key' => 'resources_newsletters', 'label' => 'Newsletters', 'href' => '/newsletters', 'visible' => true, 'subcategory' => 'Publications'],
+                ['key' => 'resources_repository', 'label' => 'Data Repository', 'href' => '/data-repository', 'visible' => true, 'subcategory' => 'Tools & Data'],
+                ['key' => 'resources_tools', 'label' => 'Research Tools', 'href' => '/research-tools', 'visible' => true, 'subcategory' => 'Tools & Data'],
+                ['key' => 'resources_training', 'label' => 'Training Materials', 'href' => '/training-materials', 'visible' => true, 'subcategory' => 'Tools & Data']
             ]
         ]
     ];
@@ -190,6 +190,12 @@ function sanitize_menu_structure_recursive($structure) {
             'href' => isset($item['href']) ? sanitize_text_field($item['href']) : '#',
             'visible' => filter_var($item['visible'], FILTER_VALIDATE_BOOLEAN)
         ];
+        if (isset($item['subcategory'])) {
+            $sanitized_item['subcategory'] = sanitize_text_field($item['subcategory']);
+        }
+        if (isset($item['target'])) {
+            $sanitized_item['target'] = sanitize_text_field($item['target']);
+        }
         if (isset($item['children']) && is_array($item['children'])) {
             $sanitized_item['children'] = sanitize_menu_structure_recursive($item['children']);
         }
@@ -234,6 +240,7 @@ function create_navigation_item($request) {
     $label = isset($params['label']) ? sanitize_text_field($params['label']) : '';
     $href = isset($params['href']) ? sanitize_text_field($params['href']) : '#';
     $parent_key = isset($params['parent_key']) ? sanitize_key($params['parent_key']) : '';
+    $subcategory = isset($params['subcategory']) ? sanitize_text_field($params['subcategory']) : '';
 
     if (empty($label)) {
         return new WP_Error('empty_label', 'Label is required', ['status' => 400]);
@@ -251,7 +258,8 @@ function create_navigation_item($request) {
         'key' => $key,
         'label' => $label,
         'href' => $href,
-        'visible' => true
+        'visible' => true,
+        'subcategory' => $subcategory
     ];
 
     if (!empty($parent_key)) {
@@ -360,6 +368,7 @@ function update_navigation_item($request) {
     $key = isset($params['key']) ? sanitize_key($params['key']) : '';
     $label = isset($params['label']) ? sanitize_text_field($params['label']) : '';
     $href = isset($params['href']) ? sanitize_text_field($params['href']) : '';
+    $subcategory = isset($params['subcategory']) ? sanitize_text_field($params['subcategory']) : '';
 
     if (empty($key)) {
         return new WP_Error('empty_key', 'Key is required', ['status' => 400]);
@@ -374,17 +383,18 @@ function update_navigation_item($request) {
 
     // Recursive update helper
     if (!function_exists('update_item_recursive_helper')) {
-        function update_item_recursive_helper(&$items, $target_key, $new_label, $new_href) {
+        function update_item_recursive_helper(&$items, $target_key, $new_label, $new_href, $new_subcategory) {
             $updated = false;
             foreach ($items as &$item) {
                 if ($item['key'] === $target_key) {
                     $item['label'] = $new_label;
                     $item['href'] = $new_href;
+                    $item['subcategory'] = $new_subcategory;
                     $updated = true;
                     break;
                 }
                 if (isset($item['children']) && is_array($item['children'])) {
-                    if (update_item_recursive_helper($item['children'], $target_key, $new_label, $new_href)) {
+                    if (update_item_recursive_helper($item['children'], $target_key, $new_label, $new_href, $new_subcategory)) {
                         $updated = true;
                         break;
                     }
@@ -394,7 +404,7 @@ function update_navigation_item($request) {
         }
     }
 
-    $success = update_item_recursive_helper($structure, $key, $label, $href);
+    $success = update_item_recursive_helper($structure, $key, $label, $href, $subcategory);
     if (!$success) {
         return new WP_Error('item_not_found', 'Item not found in menu structure', ['status' => 404]);
     }
@@ -945,6 +955,31 @@ function navigation_settings_page() { ?>
                     <label for="modal_item_href" style="font-weight:600; color:#1d2327;">Link URL (Href Path):</label>
                     <input type="text" id="modal_item_href" class="regular-text" style="width:100%; margin-top:5px; padding:6px 10px; border-radius:4px; border:1px solid #8c8f94;" placeholder="e.g. /services or #">
                 </div>
+                <div id="modal_subcategory_container" style="margin-top:15px; margin-bottom:20px;">
+                    <label for="modal_item_subcategory" style="font-weight:600; color:#1d2327;">Subcategory (Group Header):</label>
+                    <input type="text" id="modal_item_subcategory" class="regular-text" style="width:100%; margin-top:5px; padding:6px 10px; border-radius:4px; border:1px solid #8c8f94;" placeholder="e.g. Organization, Leadership, Focus Areas" list="subcategory_suggestions">
+                    <datalist id="subcategory_suggestions">
+                        <option value="Organization">
+                        <option value="Leadership">
+                        <option value="Focus Areas">
+                        <option value="Key Initiatives">
+                        <option value="Outreach">
+                        <option value="Overview">
+                        <option value="Achievements">
+                        <option value="Opportunities">
+                        <option value="Academic & Research Calls">
+                        <option value="Strategic Partnerships">
+                        <option value="Updates">
+                        <option value="Media">
+                        <option value="Publications">
+                        <option value="Tools & Data">
+                        <option value="Other Links">
+                    </datalist>
+                </div>
+                <div id="modal_target_container" style="margin-top:15px; margin-bottom:20px; display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" id="modal_item_target_blank" style="margin:0;">
+                    <label for="modal_item_target_blank" style="font-weight:600; color:#1d2327;">Open in new tab (target="_blank")</label>
+                </div>
                 
                 <div style="text-align:right; gap:10px; display:flex; justify-content:flex-end;">
                     <button type="button" class="button button-secondary" onclick="closeAddNodeModal()">Cancel</button>
@@ -1143,7 +1178,7 @@ function navigation_settings_page() { ?>
                         <span class="node-label">${item.label}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${item.key}', '${item.label.replace(/'/g, "\\'")}', '${item.href.replace(/'/g, "\\'")}')" title="Edit '${item.label}'">
+                        <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${item.key}', '${item.label.replace(/'/g, "\\'")}', '${item.href.replace(/'/g, "\\'")}', '', false, '${item.target || ''}')" title="Edit '${item.label}'">
                             <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                         </button>
                         <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${item.key}')" title="Delete '${item.label}'">
@@ -1171,33 +1206,61 @@ function navigation_settings_page() { ?>
             }
  
             const children = item.children || [];
-            children.forEach((child, childIdx) => {
-                const childDiv = document.createElement('div');
-                childDiv.className = 'tree-node';
-                childDiv.innerHTML = `
-                    <div class="node-row" id="row_${child.key}">
-                        <div class="node-label-container">
-                            <span class="node-label">${child.label}</span>
+            
+            // Group children by subcategory
+            const groupedChildren = {};
+            children.forEach(child => {
+                const cat = child.subcategory || 'Uncategorized';
+                if (!groupedChildren[cat]) {
+                    groupedChildren[cat] = [];
+                }
+                groupedChildren[cat].push(child);
+            });
+
+            Object.keys(groupedChildren).forEach(cat => {
+                // Render category header row
+                const catHeaderDiv = document.createElement('div');
+                catHeaderDiv.className = 'tree-subcategory-header';
+                catHeaderDiv.style.fontWeight = 'bold';
+                catHeaderDiv.style.fontSize = '12px';
+                catHeaderDiv.style.color = '#718096';
+                catHeaderDiv.style.textTransform = 'uppercase';
+                catHeaderDiv.style.letterSpacing = '0.5px';
+                catHeaderDiv.style.margin = '15px 0 5px 0';
+                catHeaderDiv.style.borderBottom = '1px dashed #ddd';
+                catHeaderDiv.style.paddingBottom = '3px';
+                catHeaderDiv.innerText = cat;
+                childContainer.appendChild(catHeaderDiv);
+
+                groupedChildren[cat].forEach(child => {
+                    const childIdx = children.indexOf(child);
+                    const childDiv = document.createElement('div');
+                    childDiv.className = 'tree-node';
+                    childDiv.innerHTML = `
+                        <div class="node-row" id="row_${child.key}">
+                            <div class="node-label-container">
+                                <span class="node-label">${child.label}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${child.key}', '${child.label.replace(/'/g, "\\'")}', '${child.href.replace(/'/g, "\\'")}', '${(child.subcategory || '').replace(/'/g, "\\'")}', true, '${child.target || ''}')" title="Edit '${child.label}'">
+                                    <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                                </button>
+                                <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${child.key}')" title="Delete '${child.label}'">
+                                    <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                                </button>
+                                <label class="switch">
+                                    <input type="checkbox" id="switch_${child.key}" 
+                                           data-key="${child.key}" 
+                                           ${child.visible ? 'checked' : ''} 
+                                           ${!item.visible ? 'disabled' : ''}
+                                           onchange="toggleChild(${parentIdx}, ${childIdx})">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${child.key}', '${child.label.replace(/'/g, "\\'")}', '${child.href.replace(/'/g, "\\'")}')" title="Edit '${child.label}'">
-                                <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
-                            </button>
-                            <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${child.key}')" title="Delete '${child.label}'">
-                                <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
-                            </button>
-                            <label class="switch">
-                                <input type="checkbox" id="switch_${child.key}" 
-                                       data-key="${child.key}" 
-                                       ${child.visible ? 'checked' : ''} 
-                                       ${!item.visible ? 'disabled' : ''}
-                                       onchange="toggleChild(${parentIdx}, ${childIdx})">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                `;
-                childContainer.appendChild(childDiv);
+                    `;
+                    childContainer.appendChild(childDiv);
+                });
             });
 
             // "+ Add Sub-item" button
@@ -1274,49 +1337,40 @@ function navigation_settings_page() { ?>
             let hasVisibleChildren = false;
             let columnsHtml = '';
 
-            config.columns.forEach(col => {
-                const visibleColLinks = col.linkKeys
-                    .map(k => item.children.find(c => c.key === k))
-                    .filter(c => c && c.visible);
+            // Group visible children by subcategory dynamically
+            const grouped = {};
+            const subcategories = [];
+            (item.children || []).forEach(child => {
+                if (child.visible) {
+                    const cat = child.subcategory || 'Other Links';
+                    if (!grouped[cat]) {
+                        grouped[cat] = [];
+                        subcategories.push(cat);
+                    }
+                    grouped[cat].push(child);
+                }
+            });
 
-                if (visibleColLinks.length > 0) {
-                    hasVisibleChildren = true;
+            if (subcategories.length > 0) {
+                hasVisibleChildren = true;
+                subcategories.forEach(cat => {
                     columnsHtml += `
                         <div class="dropdown-column">
-                            <div class="dropdown-column-heading">${col.heading}</div>
+                            <div class="dropdown-column-heading">${cat}</div>
                             <ul class="dropdown-column-links">
                     `;
-                    visibleColLinks.forEach(link => {
+                    grouped[cat].forEach(link => {
                         const desc = LINK_DESCRIPTIONS[link.key] ? `<div class="dropdown-link-desc">${LINK_DESCRIPTIONS[link.key]}</div>` : '';
+                        const targetAttr = link.target ? `target="${link.target}"` : '';
                         columnsHtml += `
                             <li class="dropdown-link-item">
-                                <a href="#" class="dropdown-link">${link.label}</a>
+                                <a href="#" class="dropdown-link" ${targetAttr}>${link.label}</a>
                                 ${desc}
                             </li>
                         `;
                     });
                     columnsHtml += `</ul></div>`;
-                }
-            });
-
-            // Find any newly created children under this parent that aren't mapped in col.linkKeys
-            const mappedKeys = config.columns.flatMap(col => col.linkKeys);
-            const extraChildren = (item.children || []).filter(c => c.visible && !mappedKeys.includes(c.key));
-            if (extraChildren.length > 0) {
-                hasVisibleChildren = true;
-                columnsHtml += `
-                    <div class="dropdown-column">
-                        <div class="dropdown-column-heading">Other Links</div>
-                        <ul class="dropdown-column-links">
-                `;
-                extraChildren.forEach(child => {
-                    columnsHtml += `
-                        <li class="dropdown-link-item">
-                            <a href="#" class="dropdown-link">${child.label}</a>
-                        </li>
-                    `;
                 });
-                columnsHtml += `</ul></div>`;
             }
 
             let promoHtml = '';
@@ -1508,6 +1562,15 @@ function navigation_settings_page() { ?>
         document.getElementById('modal_item_label').value = '';
         document.getElementById('modal_item_href').value = '';
         
+        const subcatContainer = document.getElementById('modal_subcategory_container');
+        if (subcatContainer) {
+            subcatContainer.style.display = parentKey ? 'block' : 'none';
+            document.getElementById('modal_item_subcategory').value = '';
+        }
+        
+        // Custom added sub-items open in new tab by default
+        document.getElementById('modal_item_target_blank').checked = !!parentKey;
+        
         const titleEl = document.getElementById('modal_title');
         const submitBtn = document.getElementById('modal_submit_btn');
         if (submitBtn) submitBtn.innerText = "Add Menu Item";
@@ -1521,11 +1584,19 @@ function navigation_settings_page() { ?>
         document.getElementById('add_node_modal').style.display = 'block';
     }
 
-    function openEditNodeModal(key, label, href) {
+    function openEditNodeModal(key, label, href, subcategory, isChild, target) {
         modalMode = 'edit';
         editingNodeKey = key;
         document.getElementById('modal_item_label').value = label;
         document.getElementById('modal_item_href').value = href;
+        
+        const subcatContainer = document.getElementById('modal_subcategory_container');
+        if (subcatContainer) {
+            subcatContainer.style.display = isChild ? 'block' : 'none';
+            document.getElementById('modal_item_subcategory').value = subcategory || '';
+        }
+        
+        document.getElementById('modal_item_target_blank').checked = (target === '_blank');
         
         const titleEl = document.getElementById('modal_title');
         titleEl.innerText = `Edit Menu Item "${label}"`;
@@ -1544,6 +1615,8 @@ function navigation_settings_page() { ?>
     function submitAddNode() {
         const label = document.getElementById('modal_item_label').value.trim();
         const href = document.getElementById('modal_item_href').value.trim() || (label.toLowerCase() === 'blog' ? '/about/blog/' : '#');
+        const subcategory = document.getElementById('modal_item_subcategory').value.trim();
+        const target = document.getElementById('modal_item_target_blank').checked ? '_blank' : '';
 
         if (!label) {
             alert("Please enter a menu label.");
@@ -1560,7 +1633,9 @@ function navigation_settings_page() { ?>
                 key: key,
                 label: label,
                 href: href,
-                visible: true
+                visible: true,
+                subcategory: parentKey ? (subcategory || 'Other Links') : '',
+                target: target
             };
 
             if (parentKey) {
@@ -1592,6 +1667,8 @@ function navigation_settings_page() { ?>
                     if (items[i].key === targetKey) {
                         items[i].label = label;
                         items[i].href = href;
+                        items[i].subcategory = subcategory;
+                        items[i].target = target;
                         return true;
                     }
                     if (items[i].children && items[i].children.length > 0) {

@@ -199,53 +199,153 @@
             if (!origParent) {
                 // Newly created parent
                 const activeChildren = dbParent.children ? dbParent.children.filter(c => c.visible) : [];
+                const cols = [];
+                const grouped = {};
+                activeChildren.forEach(c => {
+                    const cat = c.subcategory || 'Links';
+                    if (!grouped[cat]) {
+                        grouped[cat] = [];
+                        cols.push(cat);
+                    }
+                    grouped[cat].push({ label: formatTitleCase(c.label), href: c.href || "#", target: c.target || '' });
+                });
                 return {
                     label: formattedLabel,
                     href: dbParent.href || "#",
                     visible: dbParent.visible,
-                    columns: activeChildren.length > 0 ? [{
-                        heading: "Links",
-                        links: activeChildren.map(c => ({ label: formatTitleCase(c.label), href: (c.href && c.href !== '#') ? c.href : "#" }))
-                    }] : []
+                    columns: cols.map(cat => ({ heading: cat, links: grouped[cat] }))
                 };
             }
 
             const rebuiltColumns = [];
-            if (origParent.columns && dbParent.children) {
-                origParent.columns.forEach(origCol => {
-                    const newLinks = [];
-                    origCol.links.forEach(origLink => {
-                        const dbChild = dbParent.children.find(c => c.label.toLowerCase() === origLink.label.toLowerCase());
-                        if (dbChild && dbChild.visible) {
-                            newLinks.push({
-                                label: dbChild.label,
-                                href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
-                                desc: origLink.desc
-                            });
+            const processedKeys = new Set();
+            const activeChildren = dbParent.children ? dbParent.children.filter(c => c.visible) : [];
+
+            // Dynamic grouping based on child.subcategory
+            const grouped = {};
+            const cats = [];
+            activeChildren.forEach(child => {
+                if (child.subcategory) {
+                    const cat = child.subcategory;
+                    if (!grouped[cat]) {
+                        grouped[cat] = [];
+                        cats.push(cat);
+                    }
+                    let desc = '';
+                    if (origParent.columns) {
+                        for (const col of origParent.columns) {
+                            const origLink = col.links.find(l => l.label.toLowerCase() === child.label.toLowerCase());
+                            if (origLink && origLink.desc) {
+                                desc = origLink.desc;
+                                break;
+                            }
+                        }
+                    }
+                    grouped[cat].push({
+                        label: child.label,
+                        href: (child.href && child.href !== '#') ? child.href : "#",
+                        desc: desc,
+                        target: child.target || ''
+                    });
+                    processedKeys.add(child.key);
+                }
+            });
+
+            cats.forEach(cat => {
+                rebuiltColumns.push({
+                    heading: cat,
+                    links: grouped[cat]
+                });
+            });
+
+            // Fallback matching for remaining children
+            const remainingChildren = activeChildren.filter(c => !processedKeys.has(c.key));
+            if (remainingChildren.length > 0) {
+                if (origParent.columns) {
+                    origParent.columns.forEach(origCol => {
+                        const newLinks = [];
+                        origCol.links.forEach(origLink => {
+                            const dbChild = remainingChildren.find(c => c.label.toLowerCase() === origLink.label.toLowerCase());
+                            if (dbChild) {
+                                newLinks.push({
+                                    label: dbChild.label,
+                                    href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
+                                    desc: origLink.desc,
+                                    target: dbChild.target || ''
+                                });
+                                processedKeys.add(dbChild.key);
+                            }
+                        });
+                        if (newLinks.length > 0) {
+                            const existingCol = rebuiltColumns.find(col => col.heading.toLowerCase() === origCol.heading.toLowerCase());
+                            if (existingCol) {
+                                existingCol.links.push(...newLinks);
+                            } else {
+                                rebuiltColumns.push({
+                                    heading: origCol.heading,
+                                    links: newLinks
+                                });
+                            }
                         }
                     });
-                    if (newLinks.length > 0) {
-                        rebuiltColumns.push({
-                            heading: origCol.heading,
-                            links: newLinks
-                        });
-                    }
-                });
+                }
 
-                // Find any newly created children under this parent
-                const allOriginalLinkLabels = origParent.columns.flatMap(col => col.links.map(l => l.label.toLowerCase()));
-                const newChildren = dbParent.children.filter(c => c.visible && !allOriginalLinkLabels.includes(c.label.toLowerCase()));
-                if (newChildren.length > 0) {
-                    if (rebuiltColumns.length > 0) {
-                        rebuiltColumns[0].links.push(...newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" })));
+                const leftoverChildren = remainingChildren.filter(c => !processedKeys.has(c.key));
+                if (leftoverChildren.length > 0) {
+                    const extraLinks = leftoverChildren.map(c => ({
+                        label: formatTitleCase(c.label),
+                        href: c.href || "#",
+                        target: c.target || ''
+                    }));
+
+                    const heading = (formattedLabel === 'Careers') ? 'Opportunities' : 'Other Links';
+                    const existingCol = rebuiltColumns.find(col => col.heading.toLowerCase() === heading.toLowerCase());
+                    if (existingCol) {
+                        existingCol.links.push(...extraLinks);
                     } else {
-                        rebuiltColumns.push({
-                            heading: "Links",
-                            links: newChildren.map(c => ({ label: formatTitleCase(c.label), href: c.href || "#" }))
-                        });
+                        rebuiltColumns.push({ heading: heading, links: extraLinks });
                     }
                 }
             }
+
+            // Sort rebuiltColumns to make sure original links are always first and custom links are last
+            rebuiltColumns.forEach(column => {
+                let origLinks = [];
+                if (origParent && origParent.columns) {
+                    const origCol = origParent.columns.find(col => col.heading.toLowerCase() === column.heading.toLowerCase());
+                    if (origCol) {
+                        origLinks = origCol.links.map(l => l.label.toLowerCase());
+                    }
+                }
+                
+                const origPart = [];
+                const customPart = [];
+                column.links.forEach(link => {
+                    if (origLinks.includes(link.label.toLowerCase())) {
+                        origPart.push(link);
+                    } else {
+                        customPart.push(link);
+                    }
+                });
+                
+                // Sort original links exactly according to the template order
+                origPart.sort((a, b) => origLinks.indexOf(a.label.toLowerCase()) - origLinks.indexOf(b.label.toLowerCase()));
+                column.links = [...origPart, ...customPart];
+            });
+
+           // Sort rebuiltColumns headings to keep original columns first and custom columns last
+           let origColHeadings = [];
+           if (origParent && origParent.columns) {
+               origColHeadings = origParent.columns.map(col => col.heading.toLowerCase());
+           }
+           rebuiltColumns.sort((a, b) => {
+               const idxA = origColHeadings.indexOf(a.heading.toLowerCase());
+               const idxB = origColHeadings.indexOf(b.heading.toLowerCase());
+               if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+               if (idxA !== -1) return -1;
+               if (idxB !== -1) return 1;
+               return 0;
+           });
 
             return {
                 ...origParent,
