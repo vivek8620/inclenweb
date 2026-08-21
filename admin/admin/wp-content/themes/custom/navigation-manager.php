@@ -43,12 +43,6 @@ add_action('rest_api_init', function () {
         'callback' => 'update_navigation_item',
         'permission_callback' => '__return_true'
     ]);
-
-    register_rest_route('navigation/v1', '/delete', [
-        'methods'  => 'POST',
-        'callback' => 'delete_navigation_item',
-        'permission_callback' => '__return_true'
-    ]);
 });
 
 // Returns default menu structure
@@ -361,58 +355,6 @@ function update_navigation_item($request) {
     }
 
     // Save back to DB
-    if ($id) {
-        $wpdb->update($table, [
-            'menu_structure' => wp_json_encode($structure)
-        ], ['id' => $id]);
-    } else {
-        $wpdb->query("TRUNCATE TABLE $table");
-        $wpdb->insert($table, [
-            'menu_structure' => wp_json_encode($structure)
-        ]);
-    }
-
-    return ['status' => 'success', 'menu_structure' => $structure];
-}
-
-// Delete a navigation item from the database JSON
-function delete_navigation_item($request) {
-    global $wpdb;
-    $table = $wpdb->prefix . 'site_navigation';
-    $params = json_decode($request->get_body(), true);
-
-    $key = isset($params['key']) ? sanitize_key($params['key']) : '';
-
-    if (empty($key)) {
-        return new WP_Error('empty_key', 'Key is required', ['status' => 400]);
-    }
-
-    $settings = get_all_navigation_settings();
-    $structure = $settings['menu_structure'];
-    $id = $settings['id'];
-
-    if (!function_exists('delete_item_recursive_helper')) {
-        function delete_item_recursive_helper(&$items, $target_key) {
-            foreach ($items as $index => &$item) {
-                if ($item['key'] === $target_key) {
-                    array_splice($items, $index, 1);
-                    return true;
-                }
-                if (isset($item['children']) && is_array($item['children'])) {
-                    if (delete_item_recursive_helper($item['children'], $target_key)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-    }
-
-    $success = delete_item_recursive_helper($structure, $key);
-    if (!$success) {
-        return new WP_Error('item_not_found', 'Item not found in menu structure', ['status' => 404]);
-    }
-
     if ($id) {
         $wpdb->update($table, [
             'menu_structure' => wp_json_encode($structure)
@@ -1188,9 +1130,6 @@ function navigation_settings_page() { ?>
                         <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${item.key}', '${item.label.replace(/'/g, "\\'")}', '${item.href.replace(/'/g, "\\'")}', '', false, '${item.target || ''}', '')" title="Edit '${item.label}'">
                             <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                         </button>
-                        <button type="button" class="button button-small" style="color: #b32d2e; border-color: #b32d2e; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${item.key}')" title="Delete '${item.label}'">
-                            <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
-                        </button>
                         <label class="switch">
                             <input type="checkbox" id="switch_${item.key}" 
                                    data-key="${item.key}" 
@@ -1251,9 +1190,6 @@ function navigation_settings_page() { ?>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${child.key}', '${child.label.replace(/'/g, "\\'")}', '${child.href.replace(/'/g, "\\'")}', '${(child.subcategory || '').replace(/'/g, "\\'")}', true, '${child.target || ''}', '${(child.description || child.desc || '').replace(/'/g, "\\'")}')" title="Edit '${child.label}'">
                                     <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
-                                </button>
-                                <button type="button" class="button button-small" style="color: #b32d2e; border-color: #b32d2e; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${child.key}')" title="Delete '${child.label}'">
-                                    <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                                 </button>
                                 <label class="switch">
                                     <input type="checkbox" id="switch_${child.key}" 
@@ -1710,51 +1646,6 @@ function navigation_settings_page() { ?>
         renderLivePreview();
         updateSummary();
     }
-
-    // Delete node handler
-    function deleteNode(key) {
-        if (!confirm("Are you sure you want to delete this menu item?")) return;
-        
-        // Remove from local structure
-        function deleteItemRecursive(items, targetKey) {
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].key === targetKey) {
-                    items.splice(i, 1);
-                    return true;
-                }
-                if (items[i].children && items[i].children.length > 0) {
-                    if (deleteItemRecursive(items[i].children, targetKey)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        if (deleteItemRecursive(menuStructure, key)) {
-            renderTreeControls();
-            renderLivePreview();
-            updateSummary();
-            
-            // Call the delete API
-            fetch(NAV_API_BASE + "/delete", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-WP-Nonce": NAV_WP_NONCE
-                },
-                body: JSON.stringify({ key: key })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.status !== 'success') {
-                    console.error("Failed to delete from DB:", data);
-                }
-            })
-            .catch(err => console.error("Error calling delete API:", err));
-        }
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
         loadNavigation();
     });
