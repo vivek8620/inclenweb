@@ -2,8 +2,8 @@
 add_action('admin_menu', function () {
     add_submenu_page(
         'group-news',
-        'Blog Manager',
-        'Blog Manager',
+        'Create Page',
+        'Create Page',
         'manage_options',
         'blog-manager',
         'blog_manager_page'
@@ -149,7 +149,7 @@ function delete_blog($request) {
 function blog_manager_page() { ?>
 
 <div class="wrap">
-<h1>Blog Manager</h1>
+<h1>Create Page</h1>
 
 <style>
     .error-msg { color: red; font-size: 13px; margin-top: 5px; display: block; font-weight: 500; }
@@ -158,14 +158,14 @@ function blog_manager_page() { ?>
 
 <div style="background:#fff;padding:20px;margin-top:20px;border:1px solid #ccc;border-radius:6px;">
 
-<h2 id="blog-form-heading">Add / Edit Blog</h2>
+<h2 id="blog-form-heading">Add / Edit Page</h2>
 
 <table class="form-table">
 
 <tr>
 <th>Title <span style="color:red;">*</span></th>
 <td>
-    <input type="text" id="blog_title" class="regular-text" placeholder="Enter blog title">
+    <input type="text" id="blog_title" class="regular-text" placeholder="Enter page title">
     <span id="blog_title_error" class="error-msg"></span>
 </td>
 </tr>
@@ -174,7 +174,7 @@ function blog_manager_page() { ?>
 <th>URL / Slug <span style="color:red;">*</span></th>
 <td>
     <input type="text" id="blog_slug" class="regular-text" placeholder="e.g. global-health-research">
-    <p class="description" style="margin-top:4px;">Blog ka URL path (sirf lowercase letters, numbers aur hyphens). Example: <code>my-blog-post</code></p>
+    <p class="description" style="margin-top:4px;">Page ka URL path (sirf lowercase letters, numbers aur hyphens). Example: <code>my-page-post</code></p>
     <span id="blog_slug_error" class="error-msg"></span>
 </td>
 </tr>
@@ -208,14 +208,14 @@ function blog_manager_page() { ?>
 </table>
 
 <p>
-<button class="button button-primary" onclick="saveBlog()">Save Blog</button>
+<button class="button button-primary" onclick="saveBlog()">Save Page</button>
 <button class="button" onclick="resetBlogForm()" style="margin-left:10px;">Clear Form</button>
 </p>
 
 </div>
 
 <div style="margin-top:30px;">
-<h2>All Blogs</h2>
+<h2>All Pages</h2>
 <table class="wp-list-table widefat fixed striped">
 <thead>
 <tr>
@@ -257,7 +257,7 @@ function loadBlogs() {
         .then(data => {
             let html = '';
             if (!data || !data.length) {
-                html = '<tr><td colspan="6" style="text-align:center;color:#999;">No blog posts yet.</td></tr>';
+                html = '<tr><td colspan="6" style="text-align:center;color:#999;">No pages yet.</td></tr>';
             } else {
                 data.forEach(item => {
                     blogDataMap[item.id] = item; // store in map
@@ -356,7 +356,7 @@ function saveBlog() {
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(res => res.json())
         .then(() => {
-            alert(editingBlogId ? 'Blog updated successfully \u2713' : 'Blog saved successfully \u2713');
+            alert(editingBlogId ? 'Page updated successfully \u2713' : 'Page saved successfully \u2713');
             resetBlogForm();
             loadBlogs();
         })
@@ -368,7 +368,7 @@ function editBlog(id) {
     if (!item) { alert('Blog data not found, please refresh.'); return; }
     clearBlogErrors();
     editingBlogId = item.id;
-    document.getElementById('blog-form-heading').innerText = 'Edit Blog';
+    document.getElementById('blog-form-heading').innerText = 'Edit Page';
     document.getElementById('blog_title').value  = item.title || '';
     document.getElementById('blog_slug').value   = item.slug  || '';
     document.getElementById('blog_author').value = item.author || '';
@@ -384,7 +384,7 @@ function editBlog(id) {
 }
 
 function deleteBlog(id) {
-    if (!confirm('Are you sure you want to delete this blog post?')) return;
+    if (!confirm('Are you sure you want to delete this page?')) return;
     fetch(BLOG_API + '/delete/' + id, { method: 'DELETE' })
         .then(res => res.json())
         .then(() => { alert('Deleted successfully \u2713'); loadBlogs(); })
@@ -393,7 +393,7 @@ function deleteBlog(id) {
 
 function resetBlogForm() {
     editingBlogId = null;
-    document.getElementById('blog-form-heading').innerText = 'Add / Edit Blog';
+    document.getElementById('blog-form-heading').innerText = 'Add / Edit Page';
     document.getElementById('blog_title').value  = '';
     document.getElementById('blog_slug').value   = '';
     document.getElementById('blog_author').value = '';
