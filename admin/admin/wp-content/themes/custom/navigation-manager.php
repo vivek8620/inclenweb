@@ -73,12 +73,12 @@ function get_default_menu_structure() {
             'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'work_area', 'label' => 'Area of Work', 'href' => '/area-of-work', 'visible' => true, 'subcategory' => 'Focus Areas'],
-                ['key' => 'work_research', 'label' => 'Research Projects', 'href' => '/research', 'visible' => true, 'subcategory' => 'Focus Areas'],
-                ['key' => 'work_somaarth', 'label' => 'Somaarth Sites', 'href' => '/somarth-sites', 'visible' => true, 'subcategory' => 'Key Initiatives'],
-                ['key' => 'work_capacity', 'label' => 'Capacity Building', 'href' => '/capacity-building', 'visible' => true, 'subcategory' => 'Key Initiatives'],
-                ['key' => 'work_engagement', 'label' => 'Engagement & Advocacy', 'href' => '/engagement-advocacy', 'visible' => true, 'subcategory' => 'Outreach'],
-                ['key' => 'work_community', 'label' => 'Community Activities', 'href' => '/community-activities', 'visible' => true, 'subcategory' => 'Outreach']
+                ['key' => 'work_area', 'label' => 'Area of Work', 'href' => '/area-of-work', 'visible' => true, 'subcategory' => 'Focus Areas', 'description' => 'Explore our key focus areas and strategic impact domains.'],
+                ['key' => 'work_research', 'label' => 'Research Projects', 'href' => '/research', 'visible' => true, 'subcategory' => 'Focus Areas', 'description' => 'Cutting-edge health research, synthesis and analysis.'],
+                ['key' => 'work_somaarth', 'label' => 'Somaarth Sites', 'href' => '/somarth-sites', 'visible' => true, 'subcategory' => 'Key Initiatives', 'description' => 'Demographic Development & Environmental Surveillance.'],
+                ['key' => 'work_capacity', 'label' => 'Capacity Building', 'href' => '/capacity-building', 'visible' => true, 'subcategory' => 'Key Initiatives', 'description' => 'Strengthening healthcare systems and leadership capabilities.'],
+                ['key' => 'work_engagement', 'label' => 'Engagement & Advocacy', 'href' => '/engagement-advocacy', 'visible' => true, 'subcategory' => 'Outreach', 'description' => 'Policy advocacy and multi-stakeholder engagement.'],
+                ['key' => 'work_community', 'label' => 'Community Activities', 'href' => '/community-activities', 'visible' => true, 'subcategory' => 'Outreach', 'description' => 'Community activities and engagement.']
             ]
         ],
         [
@@ -111,9 +111,9 @@ function get_default_menu_structure() {
             'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'involved_academic', 'label' => 'Academic Association', 'href' => '/academic-association', 'visible' => true, 'subcategory' => 'Academic & Research Calls'],
-                ['key' => 'involved_research', 'label' => 'Research Partnership', 'href' => '/partnership', 'visible' => true, 'subcategory' => 'Academic & Research Calls'],
-                ['key' => 'involved_industry', 'label' => 'Industry Partnership', 'href' => '/industry-partnership', 'visible' => true, 'subcategory' => 'Strategic Partnerships']
+                ['key' => 'involved_academic', 'label' => 'Academic Association', 'href' => '/academic-association', 'visible' => true, 'subcategory' => 'Academic & Research Calls', 'description' => 'Join our global network of academic professionals and researchers.'],
+                ['key' => 'involved_research', 'label' => 'Research Partnership', 'href' => '/partnership', 'visible' => true, 'subcategory' => 'Academic & Research Calls', 'description' => 'Collaborate with INCLEN on groundbreaking health studies.'],
+                ['key' => 'involved_industry', 'label' => 'Industry Partnership', 'href' => '/industry-partnership', 'visible' => true, 'subcategory' => 'Strategic Partnerships', 'description' => 'Strategic alliances for healthcare innovation and delivery.']
             ]
         ],
         [
@@ -122,10 +122,10 @@ function get_default_menu_structure() {
             'href' => '#',
             'visible' => true,
             'children' => [
-                ['key' => 'insights_news', 'label' => 'News', 'href' => '/news', 'visible' => true, 'subcategory' => 'Updates'],
-                ['key' => 'insights_events', 'label' => 'Events', 'href' => '/events', 'visible' => true, 'subcategory' => 'Updates'],
-                ['key' => 'insights_announcements', 'label' => 'Announcements', 'href' => '/announcements', 'visible' => true, 'subcategory' => 'Media'],
-                ['key' => 'insights_headlines', 'label' => 'Headlines', 'href' => '/headlines', 'visible' => true, 'subcategory' => 'Media']
+                ['key' => 'insights_news', 'label' => 'News', 'href' => '/news', 'visible' => true, 'subcategory' => 'Updates', 'description' => 'Latest updates and press releases from INCLEN.'],
+                ['key' => 'insights_events', 'label' => 'Events', 'href' => '/events', 'visible' => true, 'subcategory' => 'Updates', 'description' => 'Upcoming conferences, workshops, and webinars.'],
+                ['key' => 'insights_announcements', 'label' => 'Announcements', 'href' => '/announcements', 'visible' => true, 'subcategory' => 'Media', 'description' => 'Official notifications and public notices.'],
+                ['key' => 'insights_headlines', 'label' => 'Headlines', 'href' => '/headlines', 'visible' => true, 'subcategory' => 'Media', 'description' => 'INCLEN in the news and media features.']
             ]
         ],
         [
@@ -196,6 +196,9 @@ function sanitize_menu_structure_recursive($structure) {
         if (isset($item['target'])) {
             $sanitized_item['target'] = sanitize_text_field($item['target']);
         }
+        if (isset($item['description'])) {
+            $sanitized_item['description'] = sanitize_text_field($item['description']);
+        }
         if (isset($item['children']) && is_array($item['children'])) {
             $sanitized_item['children'] = sanitize_menu_structure_recursive($item['children']);
         }
@@ -241,6 +244,7 @@ function create_navigation_item($request) {
     $href = isset($params['href']) ? sanitize_text_field($params['href']) : '#';
     $parent_key = isset($params['parent_key']) ? sanitize_key($params['parent_key']) : '';
     $subcategory = isset($params['subcategory']) ? sanitize_text_field($params['subcategory']) : '';
+    $description = isset($params['description']) ? sanitize_text_field($params['description']) : '';
 
     if (empty($label)) {
         return new WP_Error('empty_label', 'Label is required', ['status' => 400]);
@@ -259,7 +263,8 @@ function create_navigation_item($request) {
         'label' => $label,
         'href' => $href,
         'visible' => true,
-        'subcategory' => $subcategory
+        'subcategory' => $subcategory,
+        'description' => $description
     ];
 
     if (!empty($parent_key)) {
@@ -369,6 +374,7 @@ function update_navigation_item($request) {
     $label = isset($params['label']) ? sanitize_text_field($params['label']) : '';
     $href = isset($params['href']) ? sanitize_text_field($params['href']) : '';
     $subcategory = isset($params['subcategory']) ? sanitize_text_field($params['subcategory']) : '';
+    $description = isset($params['description']) ? sanitize_text_field($params['description']) : '';
 
     if (empty($key)) {
         return new WP_Error('empty_key', 'Key is required', ['status' => 400]);
@@ -383,18 +389,19 @@ function update_navigation_item($request) {
 
     // Recursive update helper
     if (!function_exists('update_item_recursive_helper')) {
-        function update_item_recursive_helper(&$items, $target_key, $new_label, $new_href, $new_subcategory) {
+        function update_item_recursive_helper(&$items, $target_key, $new_label, $new_href, $new_subcategory, $new_description) {
             $updated = false;
             foreach ($items as &$item) {
                 if ($item['key'] === $target_key) {
                     $item['label'] = $new_label;
                     $item['href'] = $new_href;
                     $item['subcategory'] = $new_subcategory;
+                    $item['description'] = $new_description;
                     $updated = true;
                     break;
                 }
                 if (isset($item['children']) && is_array($item['children'])) {
-                    if (update_item_recursive_helper($item['children'], $target_key, $new_label, $new_href, $new_subcategory)) {
+                    if (update_item_recursive_helper($item['children'], $target_key, $new_label, $new_href, $new_subcategory, $new_description)) {
                         $updated = true;
                         break;
                     }
@@ -404,7 +411,7 @@ function update_navigation_item($request) {
         }
     }
 
-    $success = update_item_recursive_helper($structure, $key, $label, $href, $subcategory);
+    $success = update_item_recursive_helper($structure, $key, $label, $href, $subcategory, $description);
     if (!$success) {
         return new WP_Error('item_not_found', 'Item not found in menu structure', ['status' => 404]);
     }
@@ -947,9 +954,13 @@ function navigation_settings_page() { ?>
                 <h2 id="modal_title" style="margin-top:0; font-size:18px; font-weight:600; padding-bottom:12px; border-bottom:1px solid #eee; color:#1d2327;">Add Menu Item</h2>
                 <input type="hidden" id="modal_parent_key">
                 
-                <div style="margin-top:15px; margin-bottom:15px;">
+                 <div style="margin-top:15px; margin-bottom:15px;">
                     <label for="modal_item_label" style="font-weight:600; color:#1d2327;">Menu Label (Display Text):</label>
                     <input type="text" id="modal_item_label" class="regular-text" style="width:100%; margin-top:5px; padding:6px 10px; border-radius:4px; border:1px solid #8c8f94;" placeholder="e.g. Services">
+                </div>
+                <div id="modal_description_container" style="margin-top:15px; margin-bottom:15px;">
+                    <label for="modal_item_description" style="font-weight:600; color:#1d2327;">Paragraph (Optional Description):</label>
+                    <textarea id="modal_item_description" class="regular-text" style="width:100%; margin-top:5px; padding:6px 10px; border-radius:4px; border:1px solid #8c8f94; height: 60px; resize: vertical;" placeholder="e.g. Short explanation or details about this link"></textarea>
                 </div>
                 <div style="margin-top:15px; margin-bottom:20px;">
                     <label for="modal_item_href" style="font-weight:600; color:#1d2327;">Link URL (Href Path):</label>
@@ -1178,7 +1189,7 @@ function navigation_settings_page() { ?>
                         <span class="node-label">${item.label}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${item.key}', '${item.label.replace(/'/g, "\\'")}', '${item.href.replace(/'/g, "\\'")}', '', false, '${item.target || ''}')" title="Edit '${item.label}'">
+                        <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${item.key}', '${item.label.replace(/'/g, "\\'")}', '${item.href.replace(/'/g, "\\'")}', '', false, '${item.target || ''}', '')" title="Edit '${item.label}'">
                             <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                         </button>
                         <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${item.key}')" title="Delete '${item.label}'">
@@ -1242,7 +1253,7 @@ function navigation_settings_page() { ?>
                                 <span class="node-label">${child.label}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${child.key}', '${child.label.replace(/'/g, "\\'")}', '${child.href.replace(/'/g, "\\'")}', '${(child.subcategory || '').replace(/'/g, "\\'")}', true, '${child.target || ''}')" title="Edit '${child.label}'">
+                                <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${child.key}', '${child.label.replace(/'/g, "\\'")}', '${child.href.replace(/'/g, "\\'")}', '${(child.subcategory || '').replace(/'/g, "\\'")}', true, '${child.target || ''}', '${(child.description || child.desc || '').replace(/'/g, "\\'")}')" title="Edit '${child.label}'">
                                     <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                                 </button>
                                 <button type="button" class="button button-small" style="color: #dc3232; border-color: #dc3232; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${child.key}')" title="Delete '${child.label}'">
@@ -1360,7 +1371,8 @@ function navigation_settings_page() { ?>
                             <ul class="dropdown-column-links">
                     `;
                     grouped[cat].forEach(link => {
-                        const desc = LINK_DESCRIPTIONS[link.key] ? `<div class="dropdown-link-desc">${LINK_DESCRIPTIONS[link.key]}</div>` : '';
+                        const descText = link.description || link.desc || LINK_DESCRIPTIONS[link.key] || '';
+                        const desc = descText ? `<div class="dropdown-link-desc">${descText}</div>` : '';
                         const targetAttr = link.target ? `target="${link.target}"` : '';
                         columnsHtml += `
                             <li class="dropdown-link-item">
@@ -1567,6 +1579,12 @@ function navigation_settings_page() { ?>
             subcatContainer.style.display = parentKey ? 'block' : 'none';
             document.getElementById('modal_item_subcategory').value = '';
         }
+
+        const descContainer = document.getElementById('modal_description_container');
+        if (descContainer) {
+            descContainer.style.display = parentKey ? 'block' : 'none';
+            document.getElementById('modal_item_description').value = '';
+        }
         
         // Custom added sub-items open in new tab by default
         document.getElementById('modal_item_target_blank').checked = !!parentKey;
@@ -1584,7 +1602,7 @@ function navigation_settings_page() { ?>
         document.getElementById('add_node_modal').style.display = 'block';
     }
 
-    function openEditNodeModal(key, label, href, subcategory, isChild, target) {
+    function openEditNodeModal(key, label, href, subcategory, isChild, target, description) {
         modalMode = 'edit';
         editingNodeKey = key;
         document.getElementById('modal_item_label').value = label;
@@ -1594,6 +1612,12 @@ function navigation_settings_page() { ?>
         if (subcatContainer) {
             subcatContainer.style.display = isChild ? 'block' : 'none';
             document.getElementById('modal_item_subcategory').value = subcategory || '';
+        }
+        
+        const descContainer = document.getElementById('modal_description_container');
+        if (descContainer) {
+            descContainer.style.display = isChild ? 'block' : 'none';
+            document.getElementById('modal_item_description').value = description || '';
         }
         
         document.getElementById('modal_item_target_blank').checked = (target === '_blank');
@@ -1617,6 +1641,7 @@ function navigation_settings_page() { ?>
         const href = document.getElementById('modal_item_href').value.trim() || (label.toLowerCase() === 'blog' ? '/about/blog/' : '#');
         const subcategory = document.getElementById('modal_item_subcategory').value.trim();
         const target = document.getElementById('modal_item_target_blank').checked ? '_blank' : '';
+        const description = document.getElementById('modal_item_description').value.trim();
 
         if (!label) {
             alert("Please enter a menu label.");
@@ -1635,7 +1660,8 @@ function navigation_settings_page() { ?>
                 href: href,
                 visible: true,
                 subcategory: parentKey ? (subcategory || 'Other Links') : '',
-                target: target
+                target: target,
+                description: parentKey ? description : ''
             };
 
             if (parentKey) {
@@ -1669,6 +1695,7 @@ function navigation_settings_page() { ?>
                         items[i].href = href;
                         items[i].subcategory = subcategory;
                         items[i].target = target;
+                        items[i].description = description;
                         return true;
                     }
                     if (items[i].children && items[i].children.length > 0) {

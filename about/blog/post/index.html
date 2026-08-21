@@ -372,8 +372,8 @@
               grouped[cat] = [];
               cats.push(cat);
             }
-            let desc = '';
-            if (origParent.columns) {
+            let desc = child.description || child.desc || '';
+            if (!desc && origParent.columns) {
               for (const col of origParent.columns) {
                 const origLink = col.links.find(l => l.label.toLowerCase() === child.label.toLowerCase());
                 if (origLink && origLink.desc) {
@@ -409,11 +409,11 @@
                 const dbChild = remainingChildren.find(c => c.label.toLowerCase() === origLink.label.toLowerCase());
                 if (dbChild) {
                   newLinks.push({
-                    label: dbChild.label,
-                    href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
-                    desc: origLink.desc,
-                    target: dbChild.target || ''
-                  });
+                  label: dbChild.label,
+                  href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
+                  desc: dbChild.description || dbChild.desc || origLink.desc || '',
+                  target: dbChild.target || ''
+                });
                   processedKeys.add(dbChild.key);
                 }
               });
@@ -438,6 +438,7 @@
               href: c.label.trim().toLowerCase() === 'service'
                 ? 'https://indianfoundrycongress.com/'
                 : (c.href || "#"),
+              desc: c.description || c.desc || '',
               target: c.target || ''
             }));
 

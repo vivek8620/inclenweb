@@ -231,8 +231,8 @@
                         grouped[cat] = [];
                         cats.push(cat);
                     }
-                    let desc = '';
-                    if (origParent.columns) {
+                    let desc = child.description || child.desc || '';
+                    if (!desc && origParent.columns) {
                         for (const col of origParent.columns) {
                             const origLink = col.links.find(l => l.label.toLowerCase() === child.label.toLowerCase());
                             if (origLink && origLink.desc) {
@@ -270,7 +270,7 @@
                                 newLinks.push({
                                     label: dbChild.label,
                                     href: (dbChild.href && dbChild.href !== '#') ? dbChild.href : origLink.href,
-                                    desc: origLink.desc,
+                                    desc: dbChild.description || dbChild.desc || origLink.desc || '',
                                     target: dbChild.target || ''
                                 });
                                 processedKeys.add(dbChild.key);
@@ -295,6 +295,7 @@
                     const extraLinks = leftoverChildren.map(c => ({
                         label: formatTitleCase(c.label),
                         href: c.href || "#",
+                        desc: c.description || c.desc || '',
                         target: c.target || ''
                     }));
 
