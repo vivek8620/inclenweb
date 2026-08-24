@@ -386,7 +386,12 @@ function editBlog(id) {
 
 function deleteBlog(id) {
     if (!confirm('Are you sure you want to delete this page?')) return;
-    fetch(BLOG_API + '/delete/' + id, { method: 'DELETE' })
+    fetch(BLOG_API + '/delete/' + id, { 
+        method: 'DELETE',
+        headers: {
+            'X-WP-Nonce': BLOG_WP_NONCE
+        }
+    })
         .then(res => res.json())
         .then(() => { alert('Deleted successfully \u2713'); loadBlogs(); })
         .catch(err => alert('Error: ' + err));

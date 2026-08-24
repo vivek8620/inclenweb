@@ -1130,6 +1130,9 @@ function navigation_settings_page() { ?>
                         <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${item.key}', '${item.label.replace(/'/g, "\\'")}', '${item.href.replace(/'/g, "\\'")}', '', false, '${item.target || ''}', '')" title="Edit '${item.label}'">
                             <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                         </button>
+                        <button type="button" class="button button-small" style="color: #b32d2e; border-color: #b32d2e; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNavigationNode('${item.key}')" title="Delete '${item.label}'">
+                            <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                        </button>
                         <label class="switch">
                             <input type="checkbox" id="switch_${item.key}" 
                                    data-key="${item.key}" 
@@ -1190,6 +1193,9 @@ function navigation_settings_page() { ?>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${child.key}', '${child.label.replace(/'/g, "\\'")}', '${child.href.replace(/'/g, "\\'")}', '${(child.subcategory || '').replace(/'/g, "\\'")}', true, '${child.target || ''}', '${(child.description || child.desc || '').replace(/'/g, "\\'")}')" title="Edit '${child.label}'">
                                     <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                                </button>
+                                <button type="button" class="button button-small" style="color: #b32d2e; border-color: #b32d2e; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNavigationNode('${child.key}')" title="Delete '${child.label}'">
+                                    <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                                 </button>
                                 <label class="switch">
                                     <input type="checkbox" id="switch_${child.key}" 
@@ -1532,6 +1538,32 @@ function navigation_settings_page() { ?>
         }
         
         document.getElementById('add_node_modal').style.display = 'block';
+    }
+
+    function deleteNavigationNode(key) {
+        if (!confirm("Are you sure you want to delete this menu item?")) return;
+        
+        // Check top level
+        let index = menuStructure.findIndex(item => item.key === key);
+        if (index !== -1) {
+            menuStructure.splice(index, 1);
+            renderTreeControls();
+            renderLivePreview();
+            return;
+        }
+        
+        // Check children
+        for (let i = 0; i < menuStructure.length; i++) {
+            if (menuStructure[i].children) {
+                let childIndex = menuStructure[i].children.findIndex(child => child.key === key);
+                if (childIndex !== -1) {
+                    menuStructure[i].children.splice(childIndex, 1);
+                    renderTreeControls();
+                    renderLivePreview();
+                    return;
+                }
+            }
+        }
     }
 
     function openEditNodeModal(key, label, href, subcategory, isChild, target, description) {
