@@ -203,7 +203,7 @@ function fcra_registration_page() { ?>
     </div>
 
     <script>
-    const FCRA_API_BASE = "<?php echo site_url('/wp-json/fcra-registration/v1'); ?>";
+    const FCRA_API_BASE = "<?php echo site_url('/index.php?rest_route=/fcra-registration/v1'); ?>";
     let fcraEditingId = null;
 
     function loadFcraRegistrations() {

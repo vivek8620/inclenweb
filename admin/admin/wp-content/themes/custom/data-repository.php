@@ -194,7 +194,7 @@ function data_repository_page() { ?>
     </div>
 
     <script>
-    const DR_API_BASE = "<?php echo site_url('/wp-json/data-repository/v1'); ?>";
+    const DR_API_BASE = "<?php echo site_url('/index.php?rest_route=/data-repository/v1'); ?>";
     let drEditingId = null;
 
     function loadDataRepositories() {

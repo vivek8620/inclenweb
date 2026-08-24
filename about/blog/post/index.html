@@ -733,9 +733,16 @@
           document.getElementById('shared-header').replaceWith(header);
 
           // Load navigation dynamically
-          const navApiUrl = window.location.hostname === 'localhost' && window.location.port === '3000'
-            ? 'http://localhost/inclenweb/admin/admin/index.php?rest_route=/navigation/v1/all'
-            : '/admin/admin/index.php?rest_route=/navigation/v1/all';
+          let navApiUrl;
+          if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            if (window.location.port === '8080') {
+              navApiUrl = '/Ratan_Sir/inclentrust/admin/admin/index.php?rest_route=/navigation/v1/all';
+            } else {
+              navApiUrl = 'http://localhost:8080/Ratan_Sir/inclentrust/admin/admin/index.php?rest_route=/navigation/v1/all';
+            }
+          } else {
+            navApiUrl = '/admin/admin/index.php?rest_route=/navigation/v1/all';
+          }
 
           fetch(navApiUrl)
             .then(res => res.json())
@@ -761,7 +768,17 @@
     const container = document.getElementById('post-container');
     const postId = new URLSearchParams(window.location.search).get('id');
     const escapeHtml = value => { const el = document.createElement('div'); el.textContent = value || ''; return el.innerHTML; };
-    const apiUrl = window.location.hostname === 'localhost' && window.location.port === '3000' ? 'http://localhost/inclenweb/admin/admin/index.php?rest_route=/blogs/v1/public' : '/admin/admin/index.php?rest_route=/blogs/v1/public';
+    
+    let apiUrl;
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      if (window.location.port === '8080') {
+        apiUrl = '/Ratan_Sir/inclentrust/admin/admin/index.php?rest_route=/blogs/v1/public';
+      } else {
+        apiUrl = 'http://localhost:8080/Ratan_Sir/inclentrust/admin/admin/index.php?rest_route=/blogs/v1/public';
+      }
+    } else {
+      apiUrl = '/admin/admin/index.php?rest_route=/blogs/v1/public';
+    }
     if (!postId) { container.innerHTML = '<div class="message error">Blog post was not found.</div>'; }
     else fetch(apiUrl).then(r => { if (!r.ok) throw new Error('Unable to load this blog post.'); return r.json(); }).then(posts => {
       const post = posts.find(item => String(item.id) === String(postId) || String(item.slug) === String(postId));

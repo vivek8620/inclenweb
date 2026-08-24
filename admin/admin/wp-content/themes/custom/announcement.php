@@ -210,7 +210,7 @@ function announcement_manager_page() { ?>
 </div>
 
 <script>
-const API_BASE_ANNO = "<?php echo site_url('/wp-json/announcement/v1'); ?>";
+const API_BASE_ANNO = "<?php echo site_url('/index.php?rest_route=/announcement/v1'); ?>";
 let editingId = null;
 
 

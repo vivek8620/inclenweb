@@ -394,7 +394,7 @@ function about_who_we_are_page() { ?>
     </div>
 
     <script>
-    const WHO_API_BASE = "<?php echo site_url('/wp-json/about-who/v1'); ?>";
+    const WHO_API_BASE = "<?php echo site_url('/index.php?rest_route=/about-who/v1'); ?>";
     const WHO_WP_NONCE = "<?php echo wp_create_nonce('wp_rest'); ?>";
 
     function uploadImage(fileInput) {
@@ -575,7 +575,7 @@ function about_our_journey_page() { ?>
     </div>
 
     <script>
-    const JOURNEY_API_BASE = "<?php echo site_url('/wp-json/about-journey/v1'); ?>";
+    const JOURNEY_API_BASE = "<?php echo site_url('/index.php?rest_route=/about-journey/v1'); ?>";
 
     function addMilestoneCard(data = {}) {
         const container = document.getElementById('milestones_container');
@@ -771,7 +771,7 @@ function about_mission_page() { ?>
     </div>
 
     <script>
-    const MISSION_API_BASE = "<?php echo site_url('/wp-json/about-mission/v1'); ?>";
+    const MISSION_API_BASE = "<?php echo site_url('/index.php?rest_route=/about-mission/v1'); ?>";
     const MISSION_WP_NONCE = "<?php echo wp_create_nonce('wp_rest'); ?>";
 
     function loadMission() {

@@ -197,7 +197,7 @@ function device_products_page() { ?>
     </div>
 
     <script>
-    const DP_API_BASE = "<?php echo site_url('/wp-json/device-products/v1'); ?>";
+    const DP_API_BASE = "<?php echo site_url('/index.php?rest_route=/device-products/v1'); ?>";
     let dpEditingId = null;
 
     function loadDeviceProducts() {

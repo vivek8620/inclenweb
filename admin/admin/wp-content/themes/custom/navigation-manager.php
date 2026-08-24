@@ -938,7 +938,7 @@ function navigation_settings_page() { ?>
         </div>
 
     <script>
-    const NAV_API_BASE = "<?php echo site_url('/wp-json/navigation/v1'); ?>";
+    const NAV_API_BASE = "<?php echo site_url('/index.php?rest_route=/navigation/v1'); ?>";
     const NAV_WP_NONCE = "<?php echo wp_create_nonce('wp_rest'); ?>";
     
     let dbRecordId = null;

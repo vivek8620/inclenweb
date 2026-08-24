@@ -219,7 +219,7 @@ function training_materials_page() { ?>
     </div>
 
     <script>
-    const TM_API_BASE = "<?php echo site_url('/wp-json/training-materials/v1'); ?>";
+    const TM_API_BASE = "<?php echo site_url('/index.php?rest_route=/training-materials/v1'); ?>";
     let tmEditingId = null;
 
     function loadTrainingMaterials() {

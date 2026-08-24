@@ -251,7 +251,7 @@ function opening_manager_page() { ?>
 </div>
 
 <script>
-const API_BASE = "<?php echo site_url('/wp-json/currentopening/v1'); ?>";
+const API_BASE = "<?php echo site_url('/index.php?rest_route=/currentopening/v1'); ?>";
 let editingId = null;
 
 function loadOpenings() {

@@ -227,7 +227,7 @@ function annual_reports_page() { ?>
     </div>
 
     <script>
-    const AR_API_BASE = "<?php echo site_url('/wp-json/annual-reports/v1'); ?>";
+    const AR_API_BASE = "<?php echo site_url('/index.php?rest_route=/annual-reports/v1'); ?>";
     let arEditingId = null;
 
     function loadAnnualReports() {

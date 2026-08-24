@@ -87,18 +87,20 @@ function custom_setup_database_tables() {
 
     // 6. Download Requests Table
     $table_requests = $wpdb->prefix . 'download_requests';
-    $sql_requests = "CREATE TABLE $table_requests (
-        id bigint(20) NOT NULL AUTO_INCREMENT,
-        full_name varchar(255) NOT NULL,
-        email varchar(100) NOT NULL,
-        location varchar(255) DEFAULT '',
-        speciality varchar(255) DEFAULT '',
-        project_title varchar(255) DEFAULT '',
-        pdf_url varchar(255) DEFAULT '',
-        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        PRIMARY KEY  (id)
-    ) $charset_collate;";
-    dbDelta($sql_requests);
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_requests'") != $table_requests) {
+        $sql_requests = "CREATE TABLE $table_requests (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            full_name varchar(255) NOT NULL,
+            email varchar(100) NOT NULL,
+            location varchar(255) DEFAULT '',
+            speciality varchar(255) DEFAULT '',
+            project_title varchar(255) DEFAULT '',
+            pdf_url varchar(255) DEFAULT '',
+            timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+        dbDelta($sql_requests);
+    }
 
     // 7. Partners Table
     $table_partners = $wpdb->prefix . 'partners';

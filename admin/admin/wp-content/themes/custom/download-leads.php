@@ -131,7 +131,7 @@ function download_leads_page() { ?>
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        fetch("<?php echo site_url('/wp-json/downloads/v1/leads'); ?>")
+        fetch("<?php echo site_url('/index.php?rest_route=/downloads/v1/leads'); ?>")
         .then(res => res.json())
         .then(data => {
             let html = '';

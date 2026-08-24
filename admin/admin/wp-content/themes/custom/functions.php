@@ -167,3 +167,10 @@ function custom_use_login_template()
     }
 }
 add_action('login_init', 'custom_use_login_template');
+
+// Allow CORS for local frontend requests (e.g. from localhost:3000 to localhost:8080)
+add_action('init', function() {
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Headers: *");
+    header("Access-Control-Allow-Methods: *");
+});

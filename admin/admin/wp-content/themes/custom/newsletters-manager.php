@@ -227,7 +227,7 @@ function newsletters_page() { ?>
     </div>
 
     <script>
-    const NL_API_BASE = "<?php echo site_url('/wp-json/newsletters/v1'); ?>";
+    const NL_API_BASE = "<?php echo site_url('/index.php?rest_route=/newsletters/v1'); ?>";
     let nlEditingId = null;
 
     function loadNewsletters() {

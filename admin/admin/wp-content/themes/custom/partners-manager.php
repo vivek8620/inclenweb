@@ -338,7 +338,7 @@ function partners_manager_page() { ?>
     </div>
 
     <script>
-    const API_BASE = "<?php echo site_url('/wp-json/partners/v1'); ?>";
+    const API_BASE = "<?php echo site_url('/index.php?rest_route=/partners/v1'); ?>";
     let editingId = null;
 
     function loadPartners() {
@@ -519,7 +519,7 @@ function industry_partnerships_page() { ?>
     </div>
 
     <script>
-    const IND_API_BASE = "<?php echo site_url('/wp-json/industry-partnerships/v1'); ?>";
+    const IND_API_BASE = "<?php echo site_url('/index.php?rest_route=/industry-partnerships/v1'); ?>";
     let indEditingId = null;
 
     function loadIndustryPartners() {
@@ -692,7 +692,7 @@ function research_partnerships_page() { ?>
     </div>
 
     <script>
-    const RES_API_BASE = "<?php echo site_url('/wp-json/research-partnerships/v1'); ?>";
+    const RES_API_BASE = "<?php echo site_url('/index.php?rest_route=/research-partnerships/v1'); ?>";
     let resEditingId = null;
 
     function loadResearchPartners() {

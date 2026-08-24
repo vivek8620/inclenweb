@@ -606,9 +606,16 @@
           document.getElementById('shared-header').replaceWith(header);
           
           // Load navigation dynamically
-          const navApiUrl = window.location.hostname === 'localhost' && window.location.port === '3000'
-            ? 'http://localhost/inclenweb/admin/admin/index.php?rest_route=/navigation/v1/all'
-            : '/admin/admin/index.php?rest_route=/navigation/v1/all';
+          let navApiUrl;
+          if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            if (window.location.port === '8080') {
+              navApiUrl = '/Ratan_Sir/inclentrust/admin/admin/index.php?rest_route=/navigation/v1/all';
+            } else {
+              navApiUrl = 'http://localhost:8080/Ratan_Sir/inclentrust/admin/admin/index.php?rest_route=/navigation/v1/all';
+            }
+          } else {
+            navApiUrl = '/admin/admin/index.php?rest_route=/navigation/v1/all';
+          }
 
           fetch(navApiUrl)
             .then(res => res.json())
@@ -628,9 +635,16 @@
     const plainText = html => { const el = document.createElement('div'); el.innerHTML = html || ''; return el.textContent || ''; };
     // On localhost:3000 the public site runs through Next.js, while WordPress
     // and the Blog API run through XAMPP on localhost (port 80).
-    const blogApiUrl = window.location.hostname === 'localhost' && window.location.port === '3000'
-      ? 'http://localhost/inclenweb/admin/admin/index.php?rest_route=/blogs/v1/public'
-      : '/admin/admin/index.php?rest_route=/blogs/v1/public';
+    let blogApiUrl;
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      if (window.location.port === '8080') {
+        blogApiUrl = '/Ratan_Sir/inclentrust/admin/admin/index.php?rest_route=/blogs/v1/public';
+      } else {
+        blogApiUrl = 'http://localhost:8080/Ratan_Sir/inclentrust/admin/admin/index.php?rest_route=/blogs/v1/public';
+      }
+    } else {
+      blogApiUrl = '/admin/admin/index.php?rest_route=/blogs/v1/public';
+    }
 
     const SITE_ROOT_URL = (function() {
       const path = window.location.pathname;

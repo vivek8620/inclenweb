@@ -299,7 +299,7 @@ function events_manager_page() { ?>
 
 <script>
 
-const API_BASE = "<?php echo site_url('/wp-json/event/v1'); ?>";
+const API_BASE = "<?php echo site_url('/index.php?rest_route=/event/v1'); ?>";
 let editingId=null;
 
 function loadEvents(){

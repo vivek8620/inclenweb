@@ -703,7 +703,7 @@ function home_hero_page() { ?>
     </div>
 
     <script>
-    const HH_API_BASE = "<?php echo site_url('/wp-json/home-hero/v1'); ?>";
+    const HH_API_BASE = "<?php echo site_url('/index.php?rest_route=/home-hero/v1'); ?>";
     let hhEditingId = null;
 
     function addUpdateField(val = '') {
@@ -1001,7 +1001,7 @@ function home_about_page() { ?>
     </div>
 
     <script>
-    const HA_API_BASE = "<?php echo site_url('/wp-json/home-about/v1'); ?>";
+    const HA_API_BASE = "<?php echo site_url('/index.php?rest_route=/home-about/v1'); ?>";
     let haEditingId = null;
 
     function addFeatureBlock(block = {logo_url:'', title:'', description:''}) {
@@ -1293,7 +1293,7 @@ function home_presence_page() { ?>
     </div>
 
     <script>
-    const HP_API_BASE = "<?php echo site_url('/wp-json/home-presence/v1'); ?>";
+    const HP_API_BASE = "<?php echo site_url('/index.php?rest_route=/home-presence/v1'); ?>";
     let hpEditingId = null;
     let allHomePresences = [];
 
@@ -1542,7 +1542,7 @@ function home_collaborators_page() { ?>
     </div>
 
     <script>
-    const HC_API_BASE = "<?php echo site_url('/wp-json/home-collaborators/v1'); ?>";
+    const HC_API_BASE = "<?php echo site_url('/index.php?rest_route=/home-collaborators/v1'); ?>";
     let hcEditingId = null;
 
     function addCollaboratorLogo(url = '') {
@@ -1729,7 +1729,7 @@ function home_impact_page() { ?>
     </div>
 
     <script>
-    const HI_API_BASE = "<?php echo site_url('/wp-json/home-impact/v1'); ?>";
+    const HI_API_BASE = "<?php echo site_url('/index.php?rest_route=/home-impact/v1'); ?>";
     let hiEditingId = null;
 
     function addImpactStat(number = '', label = '') {
@@ -1878,7 +1878,7 @@ function home_research_areas_page() { ?>
     </div>
 
     <script>
-    const HRA_API_BASE = "<?php echo site_url('/wp-json/home-research-areas/v1'); ?>";
+    const HRA_API_BASE = "<?php echo site_url('/index.php?rest_route=/home-research-areas/v1'); ?>";
     const HRA_WP_NONCE = "<?php echo wp_create_nonce('wp_rest'); ?>";
     let hraEditingId = null;
 

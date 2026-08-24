@@ -1619,3 +1619,249 @@ Stack trace:
 [24-Aug-2026 05:04:10 UTC]   Automatic theme updates starting...
 [24-Aug-2026 05:04:10 UTC]   Automatic theme updates complete.
 [24-Aug-2026 05:04:10 UTC] Automatic updates complete.
+[24-Aug-2026 05:50:20 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[24-Aug-2026 05:50:26 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[24-Aug-2026 05:52:26 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[24-Aug-2026 05:52:27 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No connection could be made because the target machine actively refused it in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[24-Aug-2026 05:58:49 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 05:59:50 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:00:26 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:00:27 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:01:28 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:02:28 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:03:56 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:03:57 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:04:45 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:04:46 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:04:47 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:05:16 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:05:17 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:05:18 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:06:19 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:06:55 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:06:56 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:06:57 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:07:27 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:07:51 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:08:53 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[24-Aug-2026 06:09:53 UTC] WordPress database error Table 'wp_download_requests' already exists for query CREATE TABLE wp_download_requests (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(100) NOT NULL,
+        location varchar(255) DEFAULT '',
+        speciality varchar(255) DEFAULT '',
+        project_title varchar(255) DEFAULT '',
+        pdf_url varchar(255) DEFAULT '',
+        timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta

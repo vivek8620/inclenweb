@@ -363,13 +363,13 @@
         const hostname = window.location.hostname;
         const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]' || hostname.startsWith('192.168.');
         
-        const localOrigin = 'http://localhost/inclenweb';
+        const localOrigin = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '[::1]' || window.location.hostname.startsWith('192.168.'))) ? 'http://localhost:8080/Ratan_Sir/inclentrust' : 'http://localhost/inclenweb';
         const prodOrigin = 'https://inclentrust.org';
         
         const origin = isLocal ? localOrigin : window.location.origin;
         
-        const primaryUrl = origin + '/admin/admin/wp-json/navigation/v1/all';
-        const fallbackUrl = origin + '/admin/admin/index.php?rest_route=/navigation/v1/all';
+        const primaryUrl = origin + '/admin/admin/wp-json/navigation/v1/all?t=' + Date.now();
+        const fallbackUrl = origin + '/admin/admin/index.php?rest_route=/navigation/v1/all&t=' + Date.now();
         const prodFallbackUrl = prodOrigin + '/admin/admin/index.php?rest_route=/navigation/v1/all';
 
         fetch(primaryUrl)

@@ -235,7 +235,8 @@ function blog_manager_page() { ?>
 
 
 <script>
-const BLOG_API = "<?php echo site_url('/wp-json/blogs/v1'); ?>";
+const BLOG_API = "<?php echo site_url('/index.php?rest_route=/blogs/v1'); ?>";
+const BLOG_WP_NONCE = "<?php echo wp_create_nonce('wp_rest'); ?>";
 // Frontend site root (e.g. http://localhost:3000 or https://inclentrust.org)
 const FRONTEND_ROOT = "<?php
 $h = (isset($_SERVER['HTTP_HOST']) && (strpos($_SERVER['HTTP_HOST'],'localhost') !== false || strpos($_SERVER['HTTP_HOST'],'127.0.0.1') !== false))
@@ -412,7 +413,13 @@ function setupBlogImageUpload(inputId, hiddenId, previewId, statusId) {
         document.getElementById(statusId).innerText = 'Uploading\u2026';
         const formData = new FormData();
         formData.append('file', file);
-        fetch(BLOG_API + '/upload-image', { method: 'POST', body: formData })
+        fetch(BLOG_API + '/upload-image', { 
+            method: 'POST', 
+            headers: {
+                'X-WP-Nonce': BLOG_WP_NONCE
+            },
+            body: formData 
+        })
             .then(res => res.json())
             .then(data => {
                 if (data.url) {
