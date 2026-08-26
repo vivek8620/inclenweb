@@ -43,6 +43,12 @@ add_action('rest_api_init', function () {
         'callback' => 'update_navigation_item',
         'permission_callback' => '__return_true'
     ]);
+
+    register_rest_route('navigation/v1', '/delete', [
+        'methods'  => 'POST',
+        'callback' => 'delete_navigation_item',
+        'permission_callback' => '__return_true'
+    ]);
 });
 
 // Returns default menu structure
@@ -353,6 +359,68 @@ function update_navigation_item($request) {
     if (!$success) {
         return new WP_Error('item_not_found', 'Item not found in menu structure', ['status' => 404]);
     }
+
+    // Save back to DB
+    if ($id) {
+        $wpdb->update($table, [
+            'menu_structure' => wp_json_encode($structure)
+        ], ['id' => $id]);
+    } else {
+        $wpdb->query("TRUNCATE TABLE $table");
+        $wpdb->insert($table, [
+            'menu_structure' => wp_json_encode($structure)
+        ]);
+    }
+
+    return ['status' => 'success', 'menu_structure' => $structure];
+}
+
+// Delete a navigation item from the database JSON
+function delete_navigation_item($request) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'site_navigation';
+    $params = json_decode($request->get_body(), true);
+
+    $key = isset($params['key']) ? sanitize_key($params['key']) : '';
+
+    if (empty($key)) {
+        return new WP_Error('empty_key', 'Key is required', ['status' => 400]);
+    }
+
+    $settings = get_all_navigation_settings();
+    $structure = $settings['menu_structure'];
+    $id = $settings['id'];
+
+    // Recursive delete helper
+    if (!function_exists('delete_item_recursive_helper')) {
+        function delete_item_recursive_helper(&$items, $target_key) {
+            $deleted = false;
+            foreach ($items as $index => &$item) {
+                if ($item['key'] === $target_key) {
+                    unset($items[$index]);
+                    $deleted = true;
+                    break;
+                }
+                if (isset($item['children']) && is_array($item['children'])) {
+                    if (delete_item_recursive_helper($item['children'], $target_key)) {
+                        // Re-index children array after unset
+                        $item['children'] = array_values($item['children']);
+                        $deleted = true;
+                        break;
+                    }
+                }
+            }
+            return $deleted;
+        }
+    }
+
+    $success = delete_item_recursive_helper($structure, $key);
+    if (!$success) {
+        return new WP_Error('item_not_found', 'Item not found in menu structure', ['status' => 404]);
+    }
+
+    // Re-index top-level structure array after potential unset
+    $structure = array_values($structure);
 
     // Save back to DB
     if ($id) {
@@ -1117,6 +1185,14 @@ function navigation_settings_page() { ?>
         container.innerHTML = '';
 
         menuStructure.forEach((item, parentIdx) => {
+            // Check if this parent node is custom-added
+            const isCustomParent = item.key.startsWith('custom_');
+            const parentDeleteBtn = isCustomParent
+                ? `<button type="button" class="button button-small" style="color: #b32d2e; border-color: #b32d2e; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${item.key}')" title="Delete '${item.label}'">
+                      <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                   </button>`
+                : '';
+
             // Parent Row Node
             const parentDiv = document.createElement('div');
             parentDiv.className = 'tree-node parent-node';
@@ -1130,6 +1206,7 @@ function navigation_settings_page() { ?>
                         <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${item.key}', '${item.label.replace(/'/g, "\\'")}', '${item.href.replace(/'/g, "\\'")}', '', false, '${item.target || ''}', '')" title="Edit '${item.label}'">
                             <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                         </button>
+                        ${parentDeleteBtn}
                         <label class="switch">
                             <input type="checkbox" id="switch_${item.key}" 
                                    data-key="${item.key}" 
@@ -1180,6 +1257,15 @@ function navigation_settings_page() { ?>
 
                 groupedChildren[cat].forEach(child => {
                     const childIdx = children.indexOf(child);
+                    
+                    // Check if this child node is custom-added
+                    const isCustomChild = child.key.startsWith('custom_');
+                    const childDeleteBtn = isCustomChild
+                        ? `<button type="button" class="button button-small" style="color: #b32d2e; border-color: #b32d2e; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteNode('${child.key}')" title="Delete '${child.label}'">
+                              <span class="dashicons dashicons-trash" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
+                           </button>`
+                        : '';
+
                     const childDiv = document.createElement('div');
                     childDiv.className = 'tree-node';
                     childDiv.innerHTML = `
@@ -1191,6 +1277,7 @@ function navigation_settings_page() { ?>
                                 <button type="button" class="button button-small" style="color: #2271b1; border-color: #2271b1; padding: 0 6px; height: 24px; min-height: 24px; line-height: 22px; display: inline-flex; align-items: center; justify-content: center;" onclick="openEditNodeModal('${child.key}', '${child.label.replace(/'/g, "\\'")}', '${child.href.replace(/'/g, "\\'")}', '${(child.subcategory || '').replace(/'/g, "\\'")}', true, '${child.target || ''}', '${(child.description || child.desc || '').replace(/'/g, "\\'")}')" title="Edit '${child.label}'">
                                     <span class="dashicons dashicons-edit" style="font-size: 13px; width: 13px; height: 13px; line-height: 13px; margin: 0;"></span>
                                 </button>
+                                ${childDeleteBtn}
                                 <label class="switch">
                                     <input type="checkbox" id="switch_${child.key}" 
                                            data-key="${child.key}" 
@@ -1409,6 +1496,52 @@ function navigation_settings_page() { ?>
 
         renderLivePreview();
         updateSummary();
+    }
+
+    // Delete menu item handler via REST API
+    function deleteNode(key) {
+        if (!confirm("Are you sure you want to delete this menu item?")) return;
+
+        const data = {
+            key: key
+        };
+
+        const primaryUrl = NAV_API_BASE + "/delete";
+        const fallbackUrl = "<?php echo site_url('/index.php?rest_route=/navigation/v1/delete'); ?>";
+
+        function sendRequest(url) {
+            return fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-WP-Nonce": NAV_WP_NONCE
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Delete request failed");
+                return res.json();
+            });
+        }
+
+        function handleDeleteSuccess(result) {
+            if (result.status === 'success') {
+                alert("Menu item deleted successfully!");
+                loadNavigation();
+            } else {
+                alert("Error deleting menu item.");
+            }
+        }
+
+        sendRequest(primaryUrl)
+        .then(result => handleDeleteSuccess(result))
+        .catch(err => {
+            sendRequest(fallbackUrl)
+            .then(result => handleDeleteSuccess(result))
+            .catch(err2 => {
+                alert("Error sending request: " + err2.message);
+            });
+        });
     }
 
     // Update bottom summary counts

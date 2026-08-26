@@ -10,12 +10,24 @@ add_action('admin_menu', function () {
     );
 });
 
+add_action('admin_enqueue_scripts', function($hook) {
+    if (isset($_GET['page']) && $_GET['page'] === 'research-projects') {
+        wp_enqueue_script('jquery-ui-sortable');
+    }
+});
+
 
 add_action('rest_api_init', function () {
 
     register_rest_route('research/v1', '/all', [
         'methods'  => 'GET',
         'callback' => 'get_all_research_projects',
+        'permission_callback' => '__return_true',
+    ]);
+
+    register_rest_route('research/v1', '/years', [
+        'methods'  => 'GET',
+        'callback' => 'get_research_project_years',
         'permission_callback' => '__return_true',
     ]);
 
@@ -37,6 +49,12 @@ add_action('rest_api_init', function () {
         'permission_callback' => '__return_true',
     ]);
 
+    register_rest_route('research/v1', '/update-order', [
+        'methods'  => 'POST',
+        'callback' => 'update_research_projects_order',
+        'permission_callback' => '__return_true',
+    ]);
+
     // Uploads
     register_rest_route('research/v1', '/upload-image', [
         'methods'  => 'POST',
@@ -55,9 +73,13 @@ add_action('rest_api_init', function () {
 function research_projects_page() {
     $nonce = wp_create_nonce('research_projects_nonce');
     ?>
-    <div class="wrap">
-        <h1 class="wp-heading-inline">Research Projects</h1>
-        <hr class="wp-header-end">
+        <style>
+            .ui-state-highlight {
+                background: #f0f6fc;
+                border: 1px dashed #2271b1;
+                height: 50px;
+            }
+        </style>
 
         <div id="pub-notice" style="display:none; margin:10px 0;"></div>
 
@@ -147,9 +169,16 @@ function research_projects_page() {
         </div>
 
         <h2>All Research Projects</h2>
+        <div style="margin-bottom:15px; display:flex; align-items:center; gap:10px;">
+            <label for="year-filter" style="font-weight:600; font-size:14px;">Filter by Year:</label>
+            <select id="year-filter" style="min-width:150px; padding: 4px 8px; height: auto;">
+                <option value="">All Years</option>
+            </select>
+        </div>
         <table id="projects-table" class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
+                    <th style="width:40px; text-align:center;">Sort</th>
                     <th style="width:60px;">ID</th>
                     <th style="width:80px;">Image</th>
                     <th>Project Title</th>
@@ -161,13 +190,14 @@ function research_projects_page() {
                 </tr>
             </thead>
             <tbody>
-                <tr><td colspan="7" style="text-align:center;padding:60px;">Loading...</td></tr>
+                <tr><td colspan="9" style="text-align:center;padding:60px;">Loading...</td></tr>
             </tbody>
         </table>
     </div>
 
     <script>
     jQuery(document).ready(function($) {
+        const RESEARCH_API_BASE = "<?php echo site_url('/index.php?rest_route=/research/v1'); ?>";
         let editId = 0;
         const MAX_IMAGE = 5 * 1024 * 1024;
         const MAX_PDF   = 10 * 1024 * 1024;
@@ -193,18 +223,45 @@ function research_projects_page() {
             return valid;
         }
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function loadYearFilter(callback) {
+            const currentSelected = $('#year-filter').val() || '';
+            $.get(RESEARCH_API_BASE + '/years', function(res) {
+                const years = res.value || [];
+                let html = '<option value="">All Years</option>';
+                years.forEach(function(year) {
+                    html += `<option value="${escapeHtml(year)}">${escapeHtml(year)}</option>`;
+                });
+                $('#year-filter').html(html).val(currentSelected);
+                if (callback) callback();
+            });
+        }
+
         // Load Projects
         function loadProjects() {
-            $.get('<?php echo rest_url('research/v1/all'); ?>', function(res) {
+            const selectedYear = $('#year-filter').val() || '';
+            $.get(RESEARCH_API_BASE + '/all', { year: selectedYear }, function(res) {
                 let html = '';
                 const data = res.value || [];
                 if (!data || data.length === 0) {
-                    html = '<tr><td colspan="7" style="text-align:center;padding:50px;">No research projects found.</td></tr>';
+                    html = '<tr><td colspan="9" style="text-align:center;padding:50px;">No research projects found.</td></tr>';
                 } else {
                     data.forEach(function(p) {
                         const img = p.image_url ? `<img src="${p.image_url}" style="max-width:80px;max-height:80px;object-fit:cover;border-radius:6px;" alt="">` : '<em style="color:#999;">—</em>';
                         html += `
-                            <tr>
+                            <tr data-id="${p.id}">
+                                <td class="drag-handle" style="cursor:move; text-align:center; vertical-align:middle; color:#888;">
+                                    <span class="dashicons dashicons-menu"></span>
+                                </td>
                                 <td>${p.id}</td>
                                 <td>${img}</td>
                                 <td><strong>${p.title}</strong></td>
@@ -215,7 +272,6 @@ function research_projects_page() {
                                 <td>
                                     <button class="button button-small edit-btn" data-id="${p.id}">Edit</button>
                                     <button class="button button-small delete-btn" data-id="${p.id}" style="color:#b32d2e;margin-left:4px;">Delete</button>
-                                    
                                 </td>
                             </tr>`;
                     });
@@ -238,7 +294,7 @@ function research_projects_page() {
 
             $('#image-progress').show();
             $.ajax({
-                url: '<?php echo rest_url('research/v1/upload-image'); ?>',
+                url: RESEARCH_API_BASE + '/upload-image',
                 method: 'POST',
                 data: formData,
                 processData: false,
@@ -275,7 +331,7 @@ function research_projects_page() {
 
             $('#pdf-progress').show();
             $.ajax({
-                url: '<?php echo rest_url('research/v1/upload-pdf'); ?>',
+                url: RESEARCH_API_BASE + '/upload-pdf',
                 method: 'POST',
                 data: formData,
                 processData: false,
@@ -314,8 +370,8 @@ function research_projects_page() {
             };
 
             const url = editId 
-                ? '<?php echo rest_url('research/v1/update/'); ?>' + editId 
-                : '<?php echo rest_url('research/v1/add'); ?>';
+                ? RESEARCH_API_BASE + '/update/' + editId 
+                : RESEARCH_API_BASE + '/add';
 
             $.ajax({
                 url: url,
@@ -326,7 +382,9 @@ function research_projects_page() {
                     if (res.status) {
                         showNotice(editId ? 'Project updated successfully!' : 'Project added successfully!');
                         resetForm();
-                        loadProjects();
+                        loadYearFilter(function() {
+                            loadProjects();
+                        });
                     }
                 },
                 error: function() {
@@ -345,7 +403,7 @@ function research_projects_page() {
             $('#save-btn').text('Update Project');
             $('#cancel-btn').show();
 
-            $.get('<?php echo rest_url('research/v1/all'); ?>', function(res) {
+            $.get(RESEARCH_API_BASE + '/all', function(res) {
                 const data = res.value || [];
                 const p = data.find(item => item.id == editId);
                 if (!p) return;
@@ -382,30 +440,122 @@ function research_projects_page() {
             if (!confirm('Delete this research project?')) return;
             const id = $(this).data('id');
             $.ajax({
-                url: '<?php echo rest_url('research/v1/delete/'); ?>' + id,
+                url: RESEARCH_API_BASE + '/delete/' + id,
                 method: 'DELETE',
                 success: function() {
                     showNotice('Project deleted successfully!');
-                    loadProjects();
+                    loadYearFilter(function() {
+                        loadProjects();
+                    });
                 }
             });
         });
 
-        loadProjects();
+        $('#year-filter').on('change', function() {
+            loadProjects();
+        });
+
+        // Initialize Sortable
+        $('#projects-table tbody').sortable({
+            handle: '.drag-handle',
+            placeholder: 'ui-state-highlight',
+            helper: function(e, tr) {
+                var $originals = tr.children();
+                var $helper = tr.clone();
+                $helper.children().each(function(index) {
+                    $(this).width($originals.eq(index).width());
+                });
+                return $helper;
+            },
+            update: function(event, ui) {
+                const order = [];
+                $('#projects-table tbody tr').each(function() {
+                    const id = $(this).data('id');
+                    if (id) {
+                        order.push(id);
+                    }
+                });
+
+                $('#projects-table tbody').css('opacity', '0.5');
+
+                $.ajax({
+                    url: RESEARCH_API_BASE + '/update-order',
+                    method: 'POST',
+                    data: JSON.stringify({ order: order }),
+                    contentType: 'application/json',
+                    success: function(res) {
+                        if (res.status === 'success') {
+                            showNotice('Position arranged successfully!');
+                        } else {
+                            showNotice('Failed to update order.', 'error');
+                        }
+                    },
+                    error: function() {
+                        showNotice('Failed to update order.', 'error');
+                    },
+                    complete: function() {
+                        $('#projects-table tbody').css('opacity', '1');
+                    }
+                });
+            }
+        });
+
+        loadYearFilter(function() {
+            loadProjects();
+        });
     });
     </script>
     <?php
 }
 
 
-function get_all_research_projects() {
+function get_all_research_projects($request) {
     global $wpdb;
     $table = $wpdb->prefix . 'research_projects';
-    $results = $wpdb->get_results("SELECT * FROM $table ORDER BY id DESC") ?: [];
+    $year = $request->get_param('year');
+
+    if (!empty($year)) {
+        $results = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM $table WHERE year = %s ORDER BY sort_order ASC, id DESC",
+            $year
+        )) ?: [];
+    } else {
+        $results = $wpdb->get_results("SELECT * FROM $table ORDER BY sort_order ASC, id DESC") ?: [];
+    }
     return [
         'value' => $results,
         'Count' => count($results)
     ];
+}
+
+function get_research_project_years() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'research_projects';
+    $results = $wpdb->get_col("SELECT DISTINCT year FROM $table WHERE year != '' ORDER BY year DESC") ?: [];
+    return [
+        'value' => $results
+    ];
+}
+
+function update_research_projects_order($request) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'research_projects';
+    $params = $request->get_json_params();
+    $order = $params['order'] ?? [];
+
+    if (empty($order)) {
+        return ['status' => 'error', 'message' => 'No order provided'];
+    }
+
+    foreach ($order as $position => $id) {
+        $wpdb->update(
+            $table,
+            ['sort_order' => $position],
+            ['id' => absint($id)]
+        );
+    }
+
+    return ['status' => 'success'];
 }
 
 function add_research_project($request) {
@@ -418,6 +568,8 @@ function add_research_project($request) {
         return new WP_Error('missing_fields', 'Required fields missing.', ['status' => 400]);
     }
 
+    $max_order = $wpdb->get_var("SELECT MAX(sort_order) FROM $table") ?: 0;
+
     $wpdb->insert($table, [
         'title'                  => sanitize_text_field($params['title']),
         'year'                   => sanitize_text_field($params['year']),
@@ -427,6 +579,7 @@ function add_research_project($request) {
         'summary'                => sanitize_textarea_field($params['summary'] ?? ''),
         'image_url'              => esc_url_raw($params['image_url'] ?? ''),
         'pdf_url'                => esc_url_raw($params['pdf_url'] ?? ''),
+        'sort_order'             => intval($max_order) + 1,
         'created_at'             => current_time('mysql')
     ]);
 

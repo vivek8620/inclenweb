@@ -34,10 +34,17 @@ function custom_setup_database_tables() {
         image_url varchar(255) DEFAULT '',
         pdf_url varchar(255) DEFAULT '',
         summary text DEFAULT '',
+        sort_order int(11) DEFAULT 0,
         created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
         PRIMARY KEY  (id)
     ) $charset_collate;";
     dbDelta($sql_research);
+
+    // Make sure sort_order column exists
+    $row = $wpdb->get_results("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '$table_research' AND COLUMN_NAME = 'sort_order'");
+    if(empty($row)) {
+        $wpdb->query("ALTER TABLE $table_research ADD COLUMN sort_order int(11) DEFAULT 0");
+    }
 
     // 3. Completed Projects (New)
     $table_completed = $wpdb->prefix . 'completed_projects';

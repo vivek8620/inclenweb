@@ -1865,3 +1865,54 @@ Stack trace:
         timestamp datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
         PRIMARY KEY  (id)
     ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci made by do_action('admin_init'), WP_Hook->do_action, WP_Hook->apply_filters, custom_setup_database_tables, dbDelta
+[25-Aug-2026 05:41:09 UTC] Automatic updates starting...
+[25-Aug-2026 05:41:10 UTC]   Automatic plugin updates starting...
+[25-Aug-2026 05:41:10 UTC]   Automatic plugin updates complete.
+[25-Aug-2026 05:41:11 UTC]   Automatic theme updates starting...
+[25-Aug-2026 05:41:11 UTC]   Automatic theme updates complete.
+[25-Aug-2026 05:41:11 UTC] Automatic updates complete.
+[25-Aug-2026 07:16:29 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:17:29 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:19:30 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:21:31 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:22:36 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:23:36 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:24:37 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:25:38 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:27:18 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:27:39 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 07:28:03 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:03 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:15 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:15 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:15 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:15 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:15 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:15 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:18 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:47:18 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 10:48:03 UTC] PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'inclen_user'@'localhost' (using password: YES) in D:\xampp\htdocs\Ratan_Sir\inclentrust\admin\admin\wp-includes\class-wpdb.php on line 1988
+[25-Aug-2026 11:49:35 UTC] WordPress database error Deadlock found when trying to get lock; try restarting transaction for query DELETE FROM `wp_options` WHERE `option_name` = '_site_transient_timeout_theme_roots' made by require('wp-blog-header.php'), require_once('wp-load.php'), require_once('wp-config.php'), require_once('wp-settings.php'), wp_get_theme, WP_Theme->__construct, search_theme_directories, get_site_transient, delete_site_option, delete_network_option, delete_option
+[25-Aug-2026 11:49:35 UTC] WordPress database error Deadlock found when trying to get lock; try restarting transaction for query INSERT INTO `wp_options` (`option_name`, `option_value`, `autoload`) VALUES ('_site_transient_timeout_theme_roots', '1787660375', 'off') ON DUPLICATE KEY UPDATE `option_name` = VALUES(`option_name`), `option_value` = VALUES(`option_value`), `autoload` = VALUES(`autoload`) made by require('wp-blog-header.php'), require_once('wp-load.php'), require_once('wp-config.php'), require_once('wp-settings.php'), wp_get_theme, WP_Theme->__construct, search_theme_directories, set_site_transient, add_site_option, add_network_option, add_option
+[25-Aug-2026 11:49:35 UTC] WordPress database error Deadlock found when trying to get lock; try restarting transaction for query INSERT INTO `wp_options` (`option_name`, `option_value`, `autoload`) VALUES ('_site_transient_timeout_theme_roots', '1787660375', 'off') ON DUPLICATE KEY UPDATE `option_name` = VALUES(`option_name`), `option_value` = VALUES(`option_value`), `autoload` = VALUES(`autoload`) made by require('wp-blog-header.php'), require_once('wp-load.php'), require_once('wp-config.php'), require_once('wp-settings.php'), wp_get_theme, WP_Theme->__construct, search_theme_directories, set_site_transient, add_site_option, add_network_option, add_option
+[25-Aug-2026 11:49:35 UTC] WordPress database error Deadlock found when trying to get lock; try restarting transaction for query INSERT INTO `wp_options` (`option_name`, `option_value`, `autoload`) VALUES ('_site_transient_timeout_theme_roots', '1787660375', 'off') ON DUPLICATE KEY UPDATE `option_name` = VALUES(`option_name`), `option_value` = VALUES(`option_value`), `autoload` = VALUES(`autoload`) made by require('wp-blog-header.php'), require_once('wp-load.php'), require_once('wp-config.php'), require_once('wp-settings.php'), wp_get_theme, WP_Theme->__construct, search_theme_directories, set_site_transient, add_site_option, add_network_option, add_option
+[25-Aug-2026 12:23:02 UTC] Automatic updates starting...
+[25-Aug-2026 12:23:04 UTC]   Automatic plugin updates starting...
+[25-Aug-2026 12:23:04 UTC]   Automatic plugin updates complete.
+[25-Aug-2026 12:23:05 UTC]   Automatic theme updates starting...
+[25-Aug-2026 12:23:05 UTC]   Automatic theme updates complete.
+[25-Aug-2026 12:23:05 UTC] Automatic updates complete.
+[26-Aug-2026 05:03:25 UTC] Automatic updates starting...
+[26-Aug-2026 05:03:26 UTC]   Automatic plugin updates starting...
+[26-Aug-2026 05:03:26 UTC]   Automatic plugin updates complete.
+[26-Aug-2026 05:03:28 UTC]   Automatic theme updates starting...
+[26-Aug-2026 05:03:28 UTC]   Automatic theme updates complete.
+[26-Aug-2026 05:03:28 UTC] Automatic updates complete.

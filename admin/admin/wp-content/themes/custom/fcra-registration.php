@@ -140,6 +140,21 @@ function fcra_registration_page() { ?>
         <style>
             .error-msg { color: red; font-size: 13px; margin-top: 5px; display: block; font-weight: 500; }
             .input-error { border-color: red !important; }
+            .fcra-loader {
+                border: 2px solid rgba(0, 0, 0, 0.1);
+                border-top: 2px solid #2271b1;
+                border-radius: 50%;
+                width: 16px;
+                height: 16px;
+                animation: fcra-spin 0.8s linear infinite;
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 5px;
+            }
+            @keyframes fcra-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
         </style>
 
         <div style="background:#fff;padding:20px;margin-top:20px;border:1px solid #ccc;border-radius:6px;">
@@ -169,6 +184,9 @@ function fcra_registration_page() { ?>
                     <th>PDF Document</th>
                     <td>
                         <input type="file" id="fcra_pdf_file" accept=".pdf">
+                        <span id="fcra_upload_loader" style="display:none; margin-left:10px; vertical-align:middle; font-weight:500; color:#666;">
+                            <span class="fcra-loader"></span> Uploading...
+                        </span>
                         <input type="hidden" id="fcra_pdf_url">
                         <div style="margin-top:10px;">
                             <label>PDF Size (auto-calculated or manual): </label>
@@ -309,6 +327,15 @@ function fcra_registration_page() { ?>
     document.getElementById("fcra_pdf_file").addEventListener("change", function() {
         let file = this.files[0];
         if(!file) return;
+
+        const fileInput = this;
+        const loader = document.getElementById("fcra_upload_loader");
+        const saveButton = document.querySelector("button[onclick='saveFcraRegistration()']");
+
+        loader.style.display = "inline-block";
+        fileInput.disabled = true;
+        if (saveButton) saveButton.disabled = true;
+
         let formData = new FormData();
         formData.append("file", file);
         fetch(FCRA_API_BASE + "/upload-file", { method: "POST", body: formData })
@@ -320,8 +347,17 @@ function fcra_registration_page() { ?>
                 document.getElementById("fcra_preview_pdf").href = data.url;
                 document.getElementById("fcra_preview_pdf").style.display = "inline-block";
             } else {
-                alert("Upload Failed");
+                alert("Upload Failed: " + (data.error || "Unknown error"));
             }
+        })
+        .catch(err => {
+            console.error("Upload error:", err);
+            alert("Upload Failed: " + err.message);
+        })
+        .finally(() => {
+            loader.style.display = "none";
+            fileInput.disabled = false;
+            if (saveButton) saveButton.disabled = false;
         });
     });
 
