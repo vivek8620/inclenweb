@@ -53,7 +53,7 @@ add_action('rest_api_init', function () {
 
     // 4. Update News
     register_rest_route('news/v1', '/update/(?P<id>\d+)', [
-        'methods'             => ['POST', 'PUT'],
+        'methods'             => 'POST',
         'callback'            => 'update_news',
         'permission_callback' => '__return_true'
     ]);
@@ -76,7 +76,7 @@ add_action('rest_api_init', function () {
 /**
  * Upload file to Cloudflare R2 with Local Uploads Fallback
  */
-function inclen_upload_news_file_to_storage($fileTmp, $originalName) {
+function inclen_upload_news_file_to_storage($fileTmp, $originalName, $mimeType = 'image/jpeg') {
     $accId   = defined('R2_ACCOUNT_ID') ? R2_ACCOUNT_ID : ($GLOBALS['accountId'] ?? '');
     $accKey  = defined('R2_ACCESS_KEY') ? R2_ACCESS_KEY : ($GLOBALS['accessKey'] ?? '');
     $secKey  = defined('R2_SECRET_KEY') ? R2_SECRET_KEY : ($GLOBALS['secretKey'] ?? '');
@@ -101,14 +101,16 @@ function inclen_upload_news_file_to_storage($fileTmp, $originalName) {
                 ],
             ]);
 
-            $mime = function_exists('mime_content_type') && file_exists($fileTmp) ? mime_content_type($fileTmp) : 'image/jpeg';
-            if (!$mime) $mime = 'image/jpeg';
+            if (empty($mimeType) && function_exists('mime_content_type') && file_exists($fileTmp)) {
+                $mimeType = mime_content_type($fileTmp);
+            }
+            if (empty($mimeType)) $mimeType = 'image/jpeg';
 
             $client->putObject([
                 'Bucket'      => $bkt,
                 'Key'         => $r2Key,
                 'SourceFile'  => $fileTmp,
-                'ContentType' => $mime,
+                'ContentType' => $mimeType,
             ]);
 
             return $pubBase . '/news/' . $fileName;
@@ -132,80 +134,23 @@ function inclen_upload_news_file_to_storage($fileTmp, $originalName) {
 }
 
 /**
- * Automatically convert any embedded base64 images inside HTML to clean URLs
- */
-function inclen_clean_base64_images_in_html($html_content) {
-    if (empty($html_content) || strpos($html_content, 'data:image/') === false) {
-        return $html_content;
-    }
-
-    $pattern = '/src=["\'](data:image\/([a-zA-Z0-9]+);base64,([^"\']+))["\']/i';
-
-    return preg_replace_callback($pattern, function ($matches) {
-        $imageExt   = strtolower($matches[2]);
-        $base64Data = $matches[3];
-
-        if ($imageExt === 'jpeg') $imageExt = 'jpg';
-
-        $decoded = base64_decode($base64Data);
-        if (!$decoded) {
-            return $matches[0];
-        }
-
-        $tmpPath = wp_tempnam('news_embed');
-        file_put_contents($tmpPath, $decoded);
-
-        $uploadedUrl = inclen_upload_news_file_to_storage($tmpPath, 'pasted-image.' . $imageExt);
-        @unlink($tmpPath);
-
-        if ($uploadedUrl) {
-            return 'src="' . esc_url($uploadedUrl) . '"';
-        }
-
-        return $matches[0];
-    }, $html_content);
-}
-
-/**
- * Handle base64 in featured image field if user pasted data URI
- */
-function inclen_process_featured_image($image_field) {
-    $img = trim($image_field ?? '');
-    if (empty($img)) return '';
-
-    if (preg_match('/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/i', $img, $m)) {
-        $ext = strtolower($m[1]);
-        if ($ext === 'jpeg') $ext = 'jpg';
-        $decoded = base64_decode($m[2]);
-        if ($decoded) {
-            $tmpPath = wp_tempnam('news_cover');
-            file_put_contents($tmpPath, $decoded);
-            $url = inclen_upload_news_file_to_storage($tmpPath, 'cover-image.' . $ext);
-            @unlink($tmpPath);
-            if ($url) return $url;
-        }
-    }
-
-    return esc_url_raw($img);
-}
-
-/**
  * REST: Upload file endpoint
  */
 function upload_image_to_r2_news() {
     if (!isset($_FILES['file']) || empty($_FILES['file']['tmp_name'])) {
-        return new WP_REST_Response(['error' => 'No file uploaded'], 400);
+        return ['error' => 'No file uploaded'];
     }
 
     $fileTmp  = $_FILES['file']['tmp_name'];
     $fileName = sanitize_file_name($_FILES['file']['name']);
+    $mimeType = $_FILES['file']['type'] ?? 'image/jpeg';
 
-    $url = inclen_upload_news_file_to_storage($fileTmp, $fileName);
+    $url = inclen_upload_news_file_to_storage($fileTmp, $fileName, $mimeType);
 
     if ($url) {
-        return new WP_REST_Response(['url' => $url, 'status' => 'success'], 200);
+        return ['url' => $url, 'status' => 'success'];
     } else {
-        return new WP_REST_Response(['error' => 'Failed to upload image'], 500);
+        return ['error' => 'Failed to upload image'];
     }
 }
 
@@ -233,29 +178,8 @@ function inclen_get_request_data($request) {
 function get_all_news() {
     global $wpdb;
     $table = $wpdb->prefix . 'news';
-
-    // One-time sanitization of any existing large base64 strings in database
-    static $cleaned_db = false;
-    if (!$cleaned_db) {
-        $cleaned_db = true;
-        $items_with_base64 = $wpdb->get_results("SELECT id, content, image FROM $table WHERE content LIKE '%data:image/%' OR image LIKE 'data:image/%' LIMIT 10");
-        if (!empty($items_with_base64)) {
-            foreach ($items_with_base64 as $row) {
-                $cleaned_content = inclen_clean_base64_images_in_html($row->content);
-                $cleaned_image = inclen_process_featured_image($row->image);
-                $wpdb->update($table, [
-                    'content' => $cleaned_content,
-                    'image'   => $cleaned_image
-                ], ['id' => $row->id]);
-            }
-        }
-    }
-
     $results = $wpdb->get_results("SELECT * FROM $table ORDER BY id DESC");
-    if (!is_array($results)) {
-        $results = [];
-    }
-    return new WP_REST_Response($results, 200);
+    return is_array($results) ? $results : [];
 }
 
 /**
@@ -267,7 +191,7 @@ function get_single_news_item($request) {
     $id_or_slug = sanitize_text_field($request['id_or_slug'] ?? '');
 
     if (empty($id_or_slug)) {
-        return new WP_REST_Response(['error' => 'Missing ID or slug'], 400);
+        return ['error' => 'Missing ID or slug'];
     }
 
     if (is_numeric($id_or_slug)) {
@@ -277,10 +201,10 @@ function get_single_news_item($request) {
     }
 
     if (!$item) {
-        return new WP_REST_Response(['error' => 'News not found'], 404);
+        return ['error' => 'News not found'];
     }
 
-    return new WP_REST_Response($item, 200);
+    return $item;
 }
 
 /**
@@ -293,7 +217,8 @@ function add_news($request) {
 
     $title   = sanitize_text_field($params['title'] ?? '');
     $author  = sanitize_text_field($params['author'] ?? '');
-    $rawSlug = sanitize_title($params['slug'] ?? ($params['title'] ?? ''));
+    $slugInput = trim($params['slug'] ?? '');
+    $rawSlug = sanitize_title(!empty($slugInput) ? $slugInput : $title);
     if (empty($rawSlug)) {
         $rawSlug = 'news-' . time();
     }
@@ -304,35 +229,29 @@ function add_news($request) {
         $slug = $rawSlug . '-' . time();
     }
 
-    // Clean base64 from content and featured image
-    $rawContent = $params['content'] ?? '';
-    $cleanContent = inclen_clean_base64_images_in_html($rawContent);
-    $cleanImage = inclen_process_featured_image($params['image'] ?? '');
+    $content = wp_kses_post($params['content'] ?? '');
+    $image   = esc_url_raw($params['image'] ?? '');
 
     $inserted = $wpdb->insert($table, [
         'title'      => $title,
         'slug'       => $slug,
-        'content'    => $cleanContent,
+        'content'    => $content,
         'author'     => $author,
-        'image'      => $cleanImage,
+        'image'      => $image,
         'created_at' => current_time('mysql')
     ]);
 
     if ($inserted === false) {
-        return new WP_REST_Response([
+        return [
             'status' => 'error',
             'error'  => $wpdb->last_error ?: 'Failed to insert into database'
-        ], 500);
+        ];
     }
 
-    $newId = $wpdb->insert_id;
-    $newItem = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $newId));
-
-    return new WP_REST_Response([
+    return [
         'status' => 'success',
-        'id'     => $newId,
-        'data'   => $newItem
-    ], 200);
+        'id'     => $wpdb->insert_id
+    ];
 }
 
 /**
@@ -345,12 +264,12 @@ function update_news($request) {
     $id = intval($request['id'] ?? ($params['id'] ?? 0));
 
     if (!$id) {
-        return new WP_REST_Response(['status' => 'error', 'error' => 'Invalid news ID'], 400);
+        return ['status' => 'error', 'error' => 'Invalid news ID'];
     }
 
     $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $id));
     if (!$existing) {
-        return new WP_REST_Response(['status' => 'error', 'error' => 'News item not found'], 404);
+        return ['status' => 'error', 'error' => 'News item not found'];
     }
 
     $title  = isset($params['title']) ? sanitize_text_field($params['title']) : $existing->title;
@@ -361,38 +280,28 @@ function update_news($request) {
         $slug = sanitize_title($params['slug']);
     }
 
-    $cleanContent = $existing->content;
-    if (isset($params['content'])) {
-        $cleanContent = inclen_clean_base64_images_in_html($params['content']);
-    }
-
-    $cleanImage = $existing->image;
-    if (isset($params['image'])) {
-        $cleanImage = inclen_process_featured_image($params['image']);
-    }
+    $content = isset($params['content']) ? wp_kses_post($params['content']) : $existing->content;
+    $image   = isset($params['image']) ? esc_url_raw($params['image']) : $existing->image;
 
     $updated = $wpdb->update($table, [
         'title'   => $title,
         'slug'    => $slug,
-        'content' => $cleanContent,
+        'content' => $content,
         'author'  => $author,
-        'image'   => $cleanImage,
+        'image'   => $image,
     ], ['id' => $id]);
 
     if ($updated === false) {
-        return new WP_REST_Response([
+        return [
             'status' => 'error',
             'error'  => $wpdb->last_error ?: 'Failed to update database'
-        ], 500);
+        ];
     }
 
-    $updatedItem = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $id));
-
-    return new WP_REST_Response([
+    return [
         'status' => 'updated',
-        'id'     => $id,
-        'data'   => $updatedItem
-    ], 200);
+        'id'     => $id
+    ];
 }
 
 /**
@@ -405,12 +314,12 @@ function delete_news($request) {
     $id = intval($request['id'] ?? ($params['id'] ?? 0));
 
     if (!$id) {
-        return new WP_REST_Response(['status' => 'error', 'error' => 'Invalid ID'], 400);
+        return ['status' => 'error', 'error' => 'Invalid ID'];
     }
 
     $deleted = $wpdb->delete($table, ['id' => $id]);
 
-    return new WP_REST_Response(['status' => 'deleted', 'id' => $id, 'success' => (bool)$deleted], 200);
+    return ['status' => 'deleted', 'id' => $id, 'success' => (bool)$deleted];
 }
 
 /**
@@ -517,6 +426,14 @@ function news_manager_page() { ?>
 
 <script>
 const API_BASE = "<?php echo site_url('/index.php?rest_route=/news/v1'); ?>";
+const WP_NONCE = "<?php echo wp_create_nonce('wp_rest'); ?>";
+const FRONTEND_ROOT = "<?php
+$h = (isset($_SERVER['HTTP_HOST']) && (strpos($_SERVER['HTTP_HOST'],'localhost') !== false || strpos($_SERVER['HTTP_HOST'],'127.0.0.1') !== false))
+    ? 'http://localhost:3000'
+    : 'https://inclentrust.org';
+echo $h;
+?>";
+
 let editingId = null;
 const newsDataMap = {};
 
@@ -529,11 +446,19 @@ function copyNewsUrl(url, btn) {
     }).catch(() => alert('URL: ' + url));
 }
 
+function resolveImgUrl(url) {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url) || url.startsWith('data:image/')) return url;
+    return FRONTEND_ROOT + (url.startsWith('/') ? url : '/' + url);
+}
+
 function loadNews(){
     const listEl = document.getElementById("newsList");
     listEl.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#666;padding:20px;">Loading news articles...</td></tr>';
 
-    fetch(API_BASE + "/all")
+    fetch(API_BASE + "/all", {
+        headers: { "X-WP-Nonce": WP_NONCE }
+    })
     .then(res => res.json())
     .then(data => {
         let html = '';
@@ -542,10 +467,11 @@ function loadNews(){
         } else {
             data.forEach(item => {
                 newsDataMap[item.id] = item;
-                const imgHtml = item.image ? '<img src="' + item.image + '" width="60" height="42" style="border-radius:4px;border:1px solid #ddd;object-fit:cover;">' : '<span style="color:#aaa;font-size:11px;">No image</span>';
+                const resolvedImg = resolveImgUrl(item.image);
+                const imgHtml = resolvedImg ? '<img src="' + resolvedImg + '" width="60" height="42" style="border-radius:4px;border:1px solid #ddd;object-fit:cover;">' : '<span style="color:#aaa;font-size:11px;">No image</span>';
                 const itemSlug = item.slug || ('news-' + item.id);
                 const pageUrl = '/news/post/?id=' + encodeURIComponent(itemSlug);
-                const fullFrontUrl = 'http://localhost:3000' + pageUrl;
+                const fullFrontUrl = FRONTEND_ROOT + pageUrl;
                 
                 const linkHtml = `
                     <div style="display:flex;align-items:center;gap:6px;">
@@ -610,6 +536,12 @@ function resetNewsForm() {
     }
 }
 
+function sanitizePastedHtml(html) {
+    if (!html) return '';
+    // Fix broken base64 src missing data: prefix like src="image/png;base64,...
+    return html.replace(/src=["']image\/([a-zA-Z0-9]+);base64,([^"']+)["']/gi, 'src="data:image/$1;base64,$2"');
+}
+
 function editNews(id) {
     clearErrors();
     const item = newsDataMap[id];
@@ -626,26 +558,78 @@ function editNews(id) {
     document.getElementById("image").value = item.image || '';
 
     if (item.image) {
-        document.getElementById("preview_image").src = item.image;
+        document.getElementById("preview_image").src = resolveImgUrl(item.image);
         document.getElementById("preview_image").style.display = "block";
     } else {
         document.getElementById("preview_image").src = '';
         document.getElementById("preview_image").style.display = "none";
     }
 
+    const cleanContent = sanitizePastedHtml(item.content || '');
     if (document.getElementById("content_editor")) {
-        document.getElementById("content_editor").value = item.content || '';
+        document.getElementById("content_editor").value = cleanContent;
     }
     if (typeof tinymce !== 'undefined' && tinymce.get("content_editor")) {
         try {
-            tinymce.get("content_editor").setContent(item.content || '');
+            tinymce.get("content_editor").setContent(cleanContent);
         } catch (e) {}
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function addNews(){
+/**
+ * Scan content for any base64 embedded images and upload them cleanly
+ */
+async function processBase64ImagesInContent(html) {
+    if (!html) return '';
+    
+    // Fix src="image/png;base64,...
+    html = sanitizePastedHtml(html);
+
+    if (!html.includes('data:image/')) {
+        return html;
+    }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const images = doc.querySelectorAll('img');
+    let hasChanges = false;
+
+    for (const img of images) {
+        const src = img.getAttribute('src') || '';
+        if (src.startsWith('data:image/')) {
+            try {
+                const blob = await fetch(src).then(r => r.blob());
+                const extMatch = src.match(/^data:image\/([a-zA-Z0-9]+);/);
+                let ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
+                if (ext === 'jpeg') ext = 'jpg';
+                
+                const file = new File([blob], 'news-inline-' + Date.now() + '.' + ext, { type: blob.type || 'image/jpeg' });
+                
+                const formData = new FormData();
+                formData.append("file", file);
+                
+                const uploadRes = await fetch(API_BASE + "/upload-image", {
+                    method: "POST",
+                    headers: { "X-WP-Nonce": WP_NONCE },
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+                if (uploadData.url) {
+                    img.setAttribute('src', uploadData.url);
+                    hasChanges = true;
+                }
+            } catch(e) {
+                console.warn("Could not convert inline image", e);
+            }
+        }
+    }
+
+    return hasChanges ? doc.body.innerHTML : html;
+}
+
+async function addNews(){
     clearErrors();
     
     const titleVal = document.getElementById("title").value.trim();
@@ -692,46 +676,43 @@ function addNews(){
     saveBtn.innerText = editingId ? "Updating..." : "Saving...";
     saveBtn.disabled = true;
 
-    const payload = {
-        title: titleVal,
-        slug: slugVal,
-        content: contentVal,
-        author: authorVal,
-        image: imageVal
-    };
-    
-    let url = API_BASE + "/add";
-    if (editingId) {
-        url = API_BASE + "/update/" + editingId;
-    }
+    try {
+        // Upload any embedded base64 images if present before saving
+        contentVal = await processBase64ImagesInContent(contentVal);
 
-    fetch(url, {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(async (res) => {
+        const payload = {
+            title: titleVal,
+            slug: slugVal,
+            content: contentVal,
+            author: authorVal,
+            image: imageVal
+        };
+        
+        const url = editingId ? (API_BASE + "/update/" + editingId) : (API_BASE + "/add");
+
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "X-WP-Nonce": WP_NONCE
+            },
+            body: JSON.stringify(payload)
+        });
+
         const json = await res.json();
-        if (!res.ok || json.status === 'error') {
-            throw new Error(json.error || 'Server error (' + res.status + ')');
+        if (json.status === 'error' || json.error) {
+            throw new Error(json.error || 'Failed to save');
         }
-        return json;
-    })
-    .then(res => { 
-        alert(editingId ? "News updated successfully!" : "News published successfully!"); 
+
+        alert(editingId ? "News updated successfully \u2713" : "News published successfully \u2713"); 
         resetNewsForm();
         loadNews(); 
-    })
-    .catch(err => {
+    } catch(err) {
         alert("Failed to save news: " + err.message);
-    })
-    .finally(() => {
+    } finally {
         saveBtn.innerText = origBtnText;
         saveBtn.disabled = false;
-    });
+    }
 }
 
 function deleteNews(id){
@@ -739,7 +720,10 @@ function deleteNews(id){
     
     fetch(API_BASE + "/delete/" + id, { 
         method: "DELETE",
-        headers: { "Accept": "application/json" }
+        headers: { 
+            "Accept": "application/json",
+            "X-WP-Nonce": WP_NONCE
+        }
     })
     .then(res => res.json())
     .then((res) => {
@@ -752,8 +736,7 @@ function deleteNews(id){
 // Helper to compress/resize high-resolution images in the browser before upload
 function compressImageForUpload(file, maxWidth = 1600, maxHeight = 1200, quality = 0.85) {
     return new Promise((resolve) => {
-        // If file is already small (under 400KB), no need to compress
-        if (file.size < 400 * 1024) {
+        if (!file || file.size < 400 * 1024) {
             return resolve(file);
         }
 
@@ -817,32 +800,26 @@ document.getElementById("image_file").addEventListener("change", async function(
     } catch(e) {}
 
     try {
-        // Compress image in browser if larger than 400KB
         const optimizedFile = await compressImageForUpload(file);
         
         let formData = new FormData();
         formData.append("file", optimizedFile);
 
         const res = await fetch(API_BASE + "/upload-image", { 
-            method: "POST", 
+            method: "POST",
+            headers: { "X-WP-Nonce": WP_NONCE },
             body: formData 
         });
 
         if (res.status === 413) {
-            throw new Error("File is too large for the server. Please choose a smaller image.");
+            throw new Error("File is too large for the server.");
         }
 
-        const text = await res.text();
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch(e) {
-            throw new Error("Server error (" + res.status + "): " + text.replace(/<[^>]*>/g, '').substring(0, 100));
-        }
+        const data = await res.json();
 
         if (data.url) {
             document.getElementById("image").value = data.url;
-            document.getElementById("preview_image").src = data.url;
+            document.getElementById("preview_image").src = resolveImgUrl(data.url);
             document.getElementById("preview_image").style.display = "block";
             statusEl.innerText = "✓ Uploaded Successfully";
             statusEl.style.color = "#27ae60";
