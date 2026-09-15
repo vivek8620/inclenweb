@@ -126,7 +126,8 @@ $managers = [
     'data-repository.php',
     'home-manager.php',
     'about-manager.php',
-    'navigation-manager.php'
+    'navigation-manager.php',
+    'contact-manager.php'
 ];
 
 foreach ($managers as $manager) {

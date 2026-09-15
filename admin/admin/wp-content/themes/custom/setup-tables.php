@@ -406,6 +406,58 @@ function custom_setup_database_tables() {
         PRIMARY KEY  (id)
     ) $charset_collate;";
     dbDelta($sql_news);
+
+    // 29. Contact & Site Information Table
+    $table_contact = $wpdb->prefix . 'contact_info';
+    $sql_contact = "CREATE TABLE $table_contact (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        office_title varchar(255) DEFAULT 'Executive Office',
+        address_line1 text DEFAULT '',
+        address_line2 text DEFAULT '',
+        phone varchar(100) DEFAULT '',
+        phone_footer varchar(100) DEFAULT '',
+        email varchar(150) DEFAULT '',
+        map_query text DEFAULT '',
+        map_embed_url text DEFAULT '',
+        hero_title varchar(255) DEFAULT '',
+        hero_subtitle text DEFAULT '',
+        research_title varchar(255) DEFAULT '',
+        research_description text DEFAULT '',
+        stat1_value varchar(100) DEFAULT '',
+        stat1_label varchar(255) DEFAULT '',
+        stat2_value varchar(100) DEFAULT '',
+        stat2_label varchar(255) DEFAULT '',
+        stat3_value varchar(100) DEFAULT '',
+        stat3_label varchar(255) DEFAULT '',
+        created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+    dbDelta($sql_contact);
+
+    // Seed default if empty
+    $contact_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_contact");
+    if (!$contact_count || $contact_count == 0) {
+        $wpdb->insert($table_contact, [
+            'office_title'         => 'Executive Office',
+            'address_line1'        => 'A-157–158, 3rd Floor, DDA Shed, Okhla Phase-II',
+            'address_line2'        => 'New Delhi – 110020',
+            'phone'                => '+91-11-47730000',
+            'phone_footer'         => '+91 11 47730000 - 99',
+            'email'                => 'ieodelhi@inclentrust.org',
+            'map_query'            => 'A-157 DDA Shed, Okhla Phase-II, New Delhi 110020',
+            'map_embed_url'        => 'https://maps.google.com/maps?q=A-157%20DDA%20Shed%2C%20Okhla%20Phase-II%2C%20New%20Delhi%20110020&t=&z=16&ie=UTF8&iwloc=&output=embed',
+            'hero_title'           => "Let's start a Conversation",
+            'hero_subtitle'        => "Connect with the INCLEN Executive Office. Whether it's data access, institutional partnership, or global research inquiries.",
+            'research_title'       => 'A Global Research Infrastructure',
+            'research_description' => 'With 89 Clinical Epidemiology Units across 34 countries, our network provides a unique platform for high-impact multicentric studies.',
+            'stat1_value'          => '34',
+            'stat1_label'          => 'Countries Connected',
+            'stat2_value'          => '89',
+            'stat2_label'          => 'Partner Institutes',
+            'stat3_value'          => '400k+',
+            'stat3_label'          => 'Population Monitored'
+        ]);
+    }
 }
 
 // Hook to run during theme load or admin init
